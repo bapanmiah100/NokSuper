@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video - NOK Super</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <script src="nok-video-db.js"></script>
+</head>
+<body class="video-body long-video-v2 has-bottom-nav">
+    <div class="bg long-video__bg" style="background-image:url(../bg.png);background-size:cover;background-position:center;background-repeat:no-repeat;"></div>
+
+    <!-- Header: Logo, Search, Subscribe, Avatar -->
+    <header class="long-video__header">
+        <div class="long-video__header-left">
+            <button type="button" class="long-video__back" id="header-back-btn" aria-label="Back" title="Back to previous page">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <button type="button" class="long-video__menu" id="header-menu-btn" aria-label="Menu" title="Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <a href="home.html" class="long-video__logo">
+                <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+            </a>
+        </div>
+        <div class="long-video__search">
+            <div class="home-search">
+                <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input type="text" class="home-search__input" placeholder="Search">
+                <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+            </div>
+        </div>
+        <div class="long-video__header-right">
+            <button type="button" class="long-video__header-icon" id="video-notification-btn" aria-label="Notifications" title="Notifications (click to turn off/on)">
+                <span class="long-video__icon-bell-wrap"><svg class="long-video__icon-bell" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+                <span class="long-video__icon-bell-off-wrap" style="display:none"><svg class="long-video__icon-bell-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="1" y1="1" x2="23" y2="23"/></svg></span>
+            </button>
+            <div class="header-caption-wrap">
+                <button type="button" class="header-caption-btn" id="video-caption-toggle" title="Caption share">Caption</button>
+                <div class="header-caption-dropdown header-caption-dropdown--full" id="video-caption-dropdown" aria-hidden="true">
+                    <div class="caption-bar-dropdown__quick-post">
+                        <span class="caption-bar-dropdown__quick-post-avatar">Y</span>
+                        <a href="upload.html?type=photo" class="caption-bar-dropdown__quick-post-input" title="Caption share">What's on your mind?</a>
+                        <a href="upload.html?type=photo" class="caption-bar-dropdown__quick-post-photo" title="Photo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Photo</span></a>
+                    </div>
+                    <div class="caption-bar-dropdown__title">Captions</div>
+                    <div class="caption-bar-dropdown__list" id="video-caption-list"></div>
+                </div>
+            </div>
+            <a href="channel.html" class="long-video__profile-wrap" id="long-video-profile-wrap" style="display:none;text-decoration:none;color:inherit;" title="Channel">
+                <div class="long-video__avatar" id="long-video-avatar">AZ</div>
+            </a>
+            <div class="long-video__auth-btns" id="long-video-auth-btns">
+                <a href="login.html" class="home-header__btn home-header__btn--ghost">Log In</a>
+                <a href="signup.html" class="home-header__btn home-header__btn--primary">Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Header menu drawer (3-line menu) -->
+    <div class="header-drawer-backdrop" id="header-drawer-backdrop" aria-hidden="true"></div>
+    <aside class="header-drawer" id="header-drawer" aria-label="Main menu" aria-hidden="true">
+        <div class="header-drawer__head">
+            <span class="header-drawer__title">Menu</span>
+            <button type="button" class="header-drawer__close" id="header-drawer-close" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <nav class="header-drawer__nav">
+            <a href="home.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+            <a href="shorts.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+            <a href="studio.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span><span>Studio</span></a>
+            <a href="library.html#watch-later" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Watch later</span></a>
+            <a href="library.html#saved" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span><span>Saved videos</span></a>
+            <a href="library.html#library-files" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span><span>Your files</span></a>
+            <a href="upload.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+            <div class="header-drawer__divider"></div>
+            <a href="settings.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+        </nav>
+    </aside>
+
+    <!-- Scroll area: tabs + main (tabs scroll up with content) -->
+    <div class="long-video__scroll-wrap">
+        <!-- Category Tabs -->
+        <nav class="long-video__tabs">
+            <button class="long-video__tab long-video__tab--active">Recommended <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polyline points="6 9 12 15 18 9"/></svg></button>
+            <button class="long-video__tab">Music</button>
+            <button class="long-video__tab">Entertainment</button>
+            <button class="long-video__tab">Education</button>
+            <button class="long-video__tab">Gaming</button>
+            <button class="long-video__tab">Travel</button>
+            <button class="long-video__tab">Tech</button>
+        </nav>
+
+        <!-- Main: Left Nav | Center | Comments -->
+        <div class="long-video__main">
+        <!-- Left Sidebar: Vertical Nav (image style) -->
+        <aside class="long-video__left-nav">
+            <div class="long-video__left-nav-title">Subscriptions</div>
+            <div class="long-video__subscribed-list" id="video-subscriptions-list"></div>
+        </aside>
+
+        <!-- Center Content -->
+        <main class="long-video__center">
+            <div class="long-video__featured-wrap" id="featured-wrap">
+            <article class="long-video__card long-video__card--featured" id="featured-video-card">
+                <div class="long-video__player-wrap">
+                    <button type="button" class="long-video__lock-btn" id="video-lock-btn" aria-label="Lock screen" title="Lock screen (tap to unlock)" style="display:none"><span class="long-video__lock-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="long-video__unlock-icon" style="display:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 5.83-4.92"/></svg></span></button>
+                    <button class="long-video__close" id="video-close-btn" aria-label="Close" title="Close / Exit fullscreen"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                    <div class="long-video__super-display" id="long-video-super-display" aria-hidden="true">
+                        <div class="long-video__super-display__content">
+                            <div class="long-video__super-display__header">
+                                <span class="long-video__super-display__badge">Super</span>
+                                <button type="button" class="long-video__super-display__close" id="long-video-super-display-close" aria-label="Close" title="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                            </div>
+                            <div class="long-video__super-display__scroll" id="long-video-super-scroll"></div>
+                        </div>
+                    </div>
+                    <!-- Fullscreen: bottom pill to open related videos (swipe up or tap) -->
+                    <button type="button" class="long-video__drop-up-pill" id="video-drop-up-pill" aria-label="Related videos" title="Related videos – swipe up or tap">
+                        <span class="long-video__drop-up-pill-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></span>
+                        <span class="long-video__drop-up-pill-label">Related</span>
+                    </button>
+                    <!-- Fullscreen drop-up: related long videos (swipe up or tap icon) -->
+                    <div class="long-video__drop-up-backdrop" id="video-drop-up-backdrop" aria-hidden="true"></div>
+                    <div class="long-video__drop-up" id="video-drop-up" aria-hidden="true">
+                        <div class="long-video__drop-up-handle" id="video-drop-up-handle"></div>
+                        <div class="long-video__drop-up-head">
+                            <div>
+                                <span class="long-video__drop-up-title">Related videos</span>
+                                <span class="long-video__drop-up-sub">Long videos only · 70–80</span>
+                            </div>
+                            <button type="button" class="long-video__drop-up-close" id="video-drop-up-close" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                        </div>
+                        <div class="long-video__drop-up-list" id="video-drop-up-list"></div>
+                    </div>
+                    <video id="video-player-el" class="long-video__video" playsinline><track id="video-captions-track" kind="captions" label="English" srclang="en" src="data:text/vtt;base64,V0VCVFRUCgowMDowMDowMC4wMDAgLS0+IDAwOjAwOjMwLjAwMApDYXB0aW9ucyBvbi4="></track></video>
+                    <div class="long-video__player-bg" id="video-player"></div>
+                    <button class="long-video__play-btn" id="video-play" aria-label="Play"><svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+                    <div class="long-video__player-controls">
+                        <div class="long-video__controls-row long-video__controls-row--top">
+                            <div class="long-video__time-box">
+                                <span class="long-video__time" id="video-time-current">00:22</span>
+                                <span class="long-video__time-sep">/</span>
+                                <span class="long-video__time" id="video-time-duration">18:43</span>
+                            </div>
+                            <div class="long-video__progress-wrap" id="progress-wrap">
+                                <div class="long-video__progress" id="video-progress-bar"></div>
+                                <span class="long-video__progress-thumb" id="progress-thumb" aria-label="Seek"></span>
+                            </div>
+                        </div>
+                        <div class="long-video__controls-row long-video__controls-row--bottom">
+                            <div class="long-video__center-controls">
+                                <button type="button" class="long-video__glossy-btn long-video__control-prev" aria-label="Previous" title="Previous 10s"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6v12h2V6H6zm4 0v12l8-6-8-6z"/></svg></button>
+                                <button type="button" class="long-video__glossy-btn long-video__glossy-btn--play" id="control-play-pause" aria-label="Play/Pause" title="Play/Pause">
+                                    <svg class="long-video__icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                                    <svg class="long-video__icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                                </button>
+                                <button type="button" class="long-video__glossy-btn long-video__control-next" aria-label="Next" title="Next 10s"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18V6l8 6-8 6zm10 0V6h2v12h-2z"/></svg></button>
+                            </div>
+                            <div class="long-video__controls-reactions">
+                                <button type="button" class="long-video__reaction-btn" data-reaction="love" aria-label="Love" title="Love">❤️</button>
+                                <button type="button" class="long-video__reaction-btn" data-reaction="like" aria-label="Like" title="Like">👍</button>
+                                <button type="button" class="long-video__reaction-btn" data-reaction="clap" aria-label="Clap" title="Clap">👏</button>
+                                <button type="button" class="long-video__reaction-btn" data-reaction="fire" aria-label="Fire" title="Fire">🔥</button>
+                            </div>
+                            <div class="long-video__controls-right">
+                                <div class="long-video__volume-wrap" id="volume-wrap" title="Volume 0–100">
+                                    <button type="button" class="long-video__control-icon long-video__volume-btn" id="control-volume-btn" aria-label="Mute/Unmute" title="Mute/Unmute">
+                                        <span class="long-video__volume-icon" id="volume-icon" aria-hidden="true">
+                                            <svg class="long-video__icon-volume-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                                            <svg class="long-video__icon-volume-muted" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                                        </span>
+                                    </button>
+                                    <input type="range" class="long-video__volume-slider" id="volume-slider" min="0" max="100" value="100" aria-label="Volume 0–100">
+                                </div>
+                                <span class="long-video__settings-wrap">
+                            <button class="long-video__control-icon" id="control-settings" aria-label="Settings" title="Settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                            <div class="long-video__settings-menu" id="settings-menu" aria-hidden="true">
+                                <div class="long-video__settings-row-wrap">
+                                    <button type="button" class="long-video__settings-item" id="settings-quality"><span class="long-video__settings-label">Video quality</span><span class="long-video__settings-value" id="settings-quality-value">Auto</span></button>
+                                    <div class="long-video__quality-dropdown" id="quality-dropdown" aria-hidden="true">
+                                        <button type="button" class="long-video__quality-opt long-video__quality-opt--active" data-quality="auto">Auto</button>
+                                        <button type="button" class="long-video__quality-opt" data-quality="high">High picture quality</button>
+                                        <div class="long-video__quality-advance-wrap">
+                                            <button type="button" class="long-video__quality-opt" id="quality-advance-btn" data-quality="advance">Advance</button>
+                                            <div class="long-video__advance-dropdown" id="advance-dropdown" aria-hidden="true">
+                                                <button type="button" class="long-video__resolution-opt" data-res="144">144p</button>
+                                                <button type="button" class="long-video__resolution-opt" data-res="240">240p</button>
+                                                <button type="button" class="long-video__resolution-opt" data-res="360">360p</button>
+                                                <button type="button" class="long-video__resolution-opt" data-res="480">480p</button>
+                                                <button type="button" class="long-video__resolution-opt" data-res="720">720p</button>
+                                                <button type="button" class="long-video__resolution-opt" data-res="1080">1080p</button>
+                                                <button type="button" class="long-video__resolution-opt" data-res="1440">1440p</button>
+                                                <button type="button" class="long-video__resolution-opt" data-res="2160">2160p</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="long-video__settings-row-wrap long-video__settings-row-wrap--speed">
+                                    <button type="button" class="long-video__settings-item" id="settings-speed"><span class="long-video__settings-label">Playback speed</span><span class="long-video__settings-value" id="settings-speed-value">1x</span></button>
+                                    <div class="long-video__speed-control-line" id="speed-dropdown" aria-hidden="true">
+                                        <span class="long-video__speed-slider-wrap">
+                                            <input type="range" class="long-video__speed-slider" id="speed-slider" min="25" max="200" value="100" step="25" aria-label="Playback speed 0.25x–2x">
+                                            <span class="long-video__speed-slider-value" id="settings-speed-slider-value">1x</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <button type="button" class="long-video__settings-item" id="settings-captions"><span class="long-video__settings-label">Captions</span><span class="long-video__settings-value" id="settings-captions-value">Off</span></button>
+                                <button type="button" class="long-video__settings-item" id="settings-ambient"><span class="long-video__settings-label">Ambient mode</span><span class="long-video__settings-value" id="settings-ambient-value">Off</span></button>
+                                <button type="button" class="long-video__settings-item" id="settings-stable-volume"><span class="long-video__settings-label">Stable volume</span><span class="long-video__settings-value" id="settings-stable-volume-value">Off</span></button>
+                            </div>
+                                </span>
+                                <button class="long-video__control-icon" aria-label="Fullscreen"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                                <button type="button" class="long-video__control-icon long-video__drop-up-btn" id="video-drop-up-btn" aria-label="Related videos" title="Related videos (swipe up)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
+                                <button type="button" class="long-video__play-mode-btn" id="play-mode-btn" title="Off / Auto Next / Auto Rewind / Mix">Off</button>
+                                <button type="button" class="long-video__menu-icon" aria-label="Menu">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="6" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="18" r="1.5"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="long-video__channel-actions-line">
+                    <button type="button" class="long-video__subscribe-btn" id="video-subscribe-btn" aria-pressed="false"><span class="long-video__subscribe-text">Subscribe</span></button>
+                    <a href="#" class="long-video__creator-profile" aria-label="Creator profile">
+                        <span class="long-video__creator-avatar" id="video-creator-avatar">A</span>
+                        <span class="long-video__channel-name"><span id="video-channel-name">A2Zen</span> <span class="long-video__verified">✓</span></span>
+                    </a>
+                    <button type="button" class="long-video__action long-video__action--icon" id="video-like-btn" aria-label="Like" title="Like"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg><span id="video-like-count">120K</span></button>
+                    <button type="button" class="long-video__action long-video__action--icon" id="video-comment-btn" aria-label="Comment" title="Comment"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span id="video-comment-count">2.4K</span></button>
+                    <button type="button" class="long-video__action long-video__action--icon" id="video-share-btn" aria-label="Share" title="Share"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
+                    <button type="button" class="long-video__action long-video__action--icon" id="video-watch-later-btn" aria-label="Watch later" title="Watch later"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>
+                    <button type="button" class="long-video__action long-video__action--icon" id="video-favorite-btn" aria-label="Save video" title="Save video"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+                </div>
+                <h1 class="long-video__title" id="video-title">Dreamy Expedition</h1>
+                <p class="long-video__tags" id="video-tags">#travel #nature #adventure</p>
+                <div class="long-video__desc-wrap" id="video-desc-wrap">
+                    <p class="long-video__desc" id="video-desc">A breathtaking journey through the mountains... #travel #natures #adventure</p>
+                    <button type="button" class="long-video__desc-more" id="video-desc-more" style="display:none">more</button>
+                </div>
+            </article>
+            </div>
+
+            <!-- From this creator: small video cards with thumbnail, filled by JS -->
+            <section class="long-video__card long-video__more long-video__creator-uploads-section" id="video-creator-uploads-section">
+                <h2 class="long-video__section-title" id="video-creator-uploads-title">From this creator</h2>
+                <div class="long-video__creator-uploads-grid" id="video-creator-uploads-grid">
+                    <!-- Filled by JS: same channel videos/shorts as small thumbnail cards -->
+                </div>
+            </section>
+
+            <!-- More like this: same category, filled by JS -->
+            <section class="long-video__card long-video__more">
+                <h2 class="long-video__section-title">More like this</h2>
+                <div class="long-video__more-grid" id="video-more-grid">
+                    <!-- Filled by JS: same category videos, link reloads page with that video -->
+                </div>
+            </section>
+            <!-- Related videos: same category as playing video, 3 per row -->
+            <section class="long-video__card long-video__more long-video__related-section" id="video-related-section">
+                <h2 class="long-video__section-title">Related videos</h2>
+                <div class="long-video__creator-grid" id="video-related-grid">
+                    <!-- Filled by JS: related (same category) videos, 3 per row -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Right: Live Chat + Neon Shorts -->
+        <aside class="long-video__right-sidebar">
+            <div class="long-video__chat">
+                <div class="long-video__chat-header">
+                    <h3 class="long-video__chat-title">Comments</h3>
+                </div>
+                <div class="long-video__chat-messages" id="video-chat-messages">
+                    <div class="long-video__chat-msg"><span class="long-video__chat-avatar">P</span><div class="long-video__chat-body"><span class="long-video__chat-user">Phoebe:</span> <span class="long-video__chat-text">Hi, stunning!</span></div></div>
+                    <div class="long-video__chat-msg"><span class="long-video__chat-avatar">D</span><div class="long-video__chat-body"><span class="long-video__chat-user">Dennis:</span> <span class="long-video__chat-text">Wow!</span></div></div>
+                    <div class="long-video__chat-msg"><span class="long-video__chat-avatar">R</span><div class="long-video__chat-body"><span class="long-video__chat-user">Robert:</span> <span class="long-video__chat-text">amazing!</span></div></div>
+                    <div class="long-video__chat-msg"><span class="long-video__chat-avatar">P</span><div class="long-video__chat-body"><span class="long-video__chat-text">Pure magic!</span></div></div>
+                    <div class="long-video__chat-msg"><span class="long-video__chat-avatar">A</span><div class="long-video__chat-body"><span class="long-video__chat-user">Alex:</span> <span class="long-video__chat-text">Love this video, keep it up!</span></div></div>
+                    <div class="long-video__chat-msg"><span class="long-video__chat-avatar">S</span><div class="long-video__chat-body"><span class="long-video__chat-user">Sam:</span> <span class="long-video__chat-text">So good, shared with friends.</span></div></div>
+                    <div class="long-video__chat-msg"><span class="long-video__chat-avatar">M</span><div class="long-video__chat-body"><span class="long-video__chat-user">Maya:</span> <span class="long-video__chat-text">Waiting for more content like this.</span></div></div>
+                    <div class="long-video__chat-msg"><span class="long-video__chat-avatar">J</span><div class="long-video__chat-body"><span class="long-video__chat-user">Jay:</span> <span class="long-video__chat-text">Best one so far, respect!</span></div></div>
+                    <div class="long-video__chat-msg"><span class="long-video__chat-avatar">K</span><div class="long-video__chat-body"><span class="long-video__chat-user">Kira:</span> <span class="long-video__chat-text">Subscribed. Don't stop posting.</span></div></div>
+                </div>
+                <div class="long-video__chat-input-wrap" id="long-video-comment-input-wrap">
+                    <input type="text" class="long-video__chat-input" id="long-video-chat-input" placeholder="Add a comment..." maxlength="200">
+                    <button type="button" class="long-video__chat-super-btn" data-type="super" aria-label="Super comment" title="Super comment">Super</button>
+                    <button type="button" class="long-video__chat-send" id="long-video-chat-send" aria-label="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+                </div>
+            </div>
+            <!-- Neon Shorts (in right sidebar) -->
+            <section class="long-video__neon long-video__neon--sidebar">
+                <h4 class="long-video__neon-heading">Neon Shorts</h4>
+                <div class="long-video__neon-preview">
+                    <div class="long-video__neon-thumb"></div>
+                    <span class="long-video__neon-label">Neon Streets - 1.8M views</span>
+                </div>
+                <a href="shorts.html" class="long-video__neon-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Neon shorts</a>
+                <div class="long-video__neon-stats">
+                    <span>8.5K</span><span>1.6K</span><span>2.1K</span><span>2.8K</span>
+                </div>
+                <button type="button" class="long-video__neon-trending" aria-label="Trending"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Trending</button>
+            </section>
+            <!-- More Shorts -->
+            <div class="long-video__shorts-list">
+                <a href="shorts.html" class="long-video__shorts-card">
+                    <div class="long-video__shorts-thumb long-video__shorts-thumb--1"></div>
+                    <span class="long-video__shorts-title">City Nights</span>
+                    <span class="long-video__shorts-views">256K views</span>
+                </a>
+                <a href="shorts.html" class="long-video__shorts-card">
+                    <div class="long-video__shorts-thumb long-video__shorts-thumb--2"></div>
+                    <span class="long-video__shorts-title">Quick Tips</span>
+                    <span class="long-video__shorts-views">89K views</span>
+                </a>
+                <a href="shorts.html" class="long-video__shorts-card">
+                    <div class="long-video__shorts-thumb long-video__shorts-thumb--3"></div>
+                    <span class="long-video__shorts-title">Nature Clip</span>
+                    <span class="long-video__shorts-views">412K views</span>
+                </a>
+                <a href="shorts.html" class="long-video__shorts-card">
+                    <div class="long-video__shorts-thumb long-video__shorts-thumb--4"></div>
+                    <span class="long-video__shorts-title">Tech in 60s</span>
+                    <span class="long-video__shorts-views">1.2M views</span>
+                </a>
+                <a href="shorts.html" class="long-video__shorts-card">
+                    <div class="long-video__shorts-thumb long-video__shorts-thumb--5"></div>
+                    <span class="long-video__shorts-title">Vibe Check</span>
+                    <span class="long-video__shorts-views">67K views</span>
+                </a>
+            </div>
+        </aside>
+        </div>
+    </div>
+
+    <!-- Super comment: amount & time modal ($0.10 to $1000) -->
+    <div class="long-video__super-modal" id="long-video-super-modal" aria-hidden="true">
+        <div class="long-video__super-modal__backdrop" id="long-video-super-backdrop"></div>
+        <div class="long-video__super-modal__box">
+            <h3 class="long-video__super-modal__title">Super Comment</h3>
+            <p class="long-video__super-modal__sub">Select amount. Creator will approve to pin this comment on the video.</p>
+            <div class="long-video__super-modal__options" id="long-video-super-options">
+                <button type="button" class="long-video__super-modal__opt" data-amount="0.10" data-time="30s" data-minutes="0.5">$0.10 – 30 sec</button>
+                <button type="button" class="long-video__super-modal__opt" data-amount="0.50" data-time="1m" data-minutes="1">$0.50 – 1 min</button>
+                <button type="button" class="long-video__super-modal__opt" data-amount="1" data-time="2m" data-minutes="2">$1 – 2 min</button>
+                <button type="button" class="long-video__super-modal__opt" data-amount="2" data-time="5m" data-minutes="5">$2 – 5 min</button>
+                <button type="button" class="long-video__super-modal__opt" data-amount="5" data-time="15m" data-minutes="15">$5 – 15 min</button>
+                <button type="button" class="long-video__super-modal__opt" data-amount="10" data-time="30m" data-minutes="30">$10 – 30 min</button>
+                <button type="button" class="long-video__super-modal__opt" data-amount="20" data-time="1h" data-minutes="60">$20 – 1 hour</button>
+                <button type="button" class="long-video__super-modal__opt" data-amount="50" data-time="3h" data-minutes="180">$50 – 3 hours</button>
+                <button type="button" class="long-video__super-modal__opt" data-amount="100" data-time="6h" data-minutes="360">$100 – 6 hours</button>
+                <button type="button" class="long-video__super-modal__opt" data-amount="200" data-time="12h" data-minutes="720">$200 – 12 hours</button>
+                <button type="button" class="long-video__super-modal__opt" data-amount="500" data-time="24h" data-minutes="1440">$500 – 24 hours</button>
+                <button type="button" class="long-video__super-modal__opt" data-amount="1000" data-time="7d" data-minutes="10080">$1000 – 7 days</button>
+            </div>
+            <button type="button" class="long-video__super-modal__cancel" id="long-video-super-cancel">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+        <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+        <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+        <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+        <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+    </nav>
+
+    <!-- Chat Overlay - same card as Home/Shorts/Settings -->
+    <div class="chat-overlay" id="chat-overlay" aria-hidden="true">
+        <div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div>
+        <div class="chat-overlay__card">
+            <div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div>
+            <header class="nok-chat__header">
+                <a href="home.html" class="nok-chat__brand">
+                    <span class="nok-chat__logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                    <span class="nok-chat__logo-text">NOK Chat</span>
+                </a>
+                <div class="nok-chat__actions">
+                    <button type="button" class="nok-chat__action" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+                    <button type="button" class="nok-chat__action nok-chat__action--badge" aria-label="Notifications" data-badge="1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                    <button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize" title="Full screen"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><svg class="chat-resize-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                    <div class="nok-chat__menu-wrap">
+                        <button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+                        <div class="nok-chat__menu" id="chat-menu">
+                            <button type="button" class="nok-chat__menu-item">New chat</button>
+                            <button type="button" class="nok-chat__menu-item">New group</button>
+                            <a href="settings.html" class="nok-chat__menu-item">Settings</a>
+                            <button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="chat-login" id="chat-login">
+                <div class="chat-login__inner chat-login__step-login" id="chat-step-login">
+                    <h3 class="chat-login__title">Log in to Chat</h3>
+                    <p class="chat-login__sub">Sign in to start chatting with your subscriptions</p>
+                    <a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a>
+                    <p class="chat-login__legal">Don't have an account? <a href="signup.html" class="chat-login__link">Sign Up</a></p>
+                </div>
+                <div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none">
+                    <h3 class="chat-login__title">Verify Mobile Number</h3>
+                    <p class="chat-login__sub">Verify your mobile number to use Chat</p>
+                    <form class="chat-login__form" id="chat-verify-form">
+                        <div class="chat-login__phone-row">
+                            <select id="chat-verify-country" class="chat-login__select"><option value="880">+880 BD</option><option value="91">+91 IN</option><option value="1">+1 US</option><option value="44">+44 UK</option></select>
+                            <input type="tel" id="chat-verify-phone" class="chat-login__input chat-login__input--phone" placeholder="Mobile number" required>
+                        </div>
+                        <button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button>
+                    </form>
+                    <div id="chat-otp-step" style="display:none">
+                        <p class="chat-login__sub" style="margin-bottom:12px">Enter 6-digit code sent to your number</p>
+                        <div class="chat-login__otp-inputs">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
+                        <button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-content" id="chat-content">
+                <nav class="nok-chat__tabs">
+                    <button type="button" class="nok-chat__tab">Status</button>
+                    <button type="button" class="nok-chat__tab">Groups</button>
+                    <button type="button" class="nok-chat__tab nok-chat__tab--active">Updates</button>
+                    <button type="button" class="nok-chat__tab">Contacts</button>
+                </nav>
+                <a href="#" class="nok-chat__archived"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg><span>Archived Chats</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+                <div class="nok-chat__list">
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar nok-chat__avatar--verified">AR</span><div class="nok-chat__info"><span class="nok-chat__name">Amella Roy</span><span class="nok-chat__preview">Typing...</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--blue"></span>1h ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AN</span><div class="nok-chat__info"><span class="nok-chat__name">Ayesha Noor</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">11:36 AM</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">SD</span><div class="nok-chat__info"><span class="nok-chat__name">Sandeep Das</span><span class="nok-chat__preview">Catch you later!</span></div><span class="nok-chat__meta">20 min ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">TG</span><div class="nok-chat__info"><span class="nok-chat__name">Tanisha Gupta</span><span class="nok-chat__preview">Missed voice call</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--yellow"></span>1 hour ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">RK</span><div class="nok-chat__info"><span class="nok-chat__name">Rohit Kumar</span><span class="nok-chat__preview">Hey what's up?</span></div><span class="nok-chat__meta">11 hours ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">LA</span><div class="nok-chat__info"><span class="nok-chat__name">Lucas Ahmed</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">Yesterday</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">PD</span><div class="nok-chat__info"><span class="nok-chat__name">Priya Das</span><span class="nok-chat__preview">Okay, thanks!</span></div><span class="nok-chat__meta">Yesterday</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">J</span><div class="nok-chat__info"><span class="nok-chat__name">Jonathen</span><span class="nok-chat__preview">Sure, see you</span></div><span class="nok-chat__meta">Yesterday</span></a>
+                </div>
+            </div>
+            <div class="chat-overlay__resize-handle" id="chat-resize-handle" aria-label="Resize"></div>
+            <nav class="nok-chat__bottom">
+                <a href="home.html" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+                <a href="#" class="nok-chat__bottom-item nok-chat__bottom-item--active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Chat</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Call</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="3"/><path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855"/></svg><span>You</span></a>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            var menuBtn = document.getElementById('header-menu-btn');
+            var drawer = document.getElementById('header-drawer');
+            var backdrop = document.getElementById('header-drawer-backdrop');
+            var closeBtn = document.getElementById('header-drawer-close');
+            function openDrawer() {
+                if (drawer) { drawer.classList.add('header-drawer--open'); drawer.setAttribute('aria-hidden', 'false'); }
+                if (backdrop) { backdrop.classList.add('header-drawer-backdrop--open'); backdrop.setAttribute('aria-hidden', 'false'); }
+            }
+            function closeDrawer() {
+                if (drawer) { drawer.classList.remove('header-drawer--open'); drawer.setAttribute('aria-hidden', 'true'); }
+                if (backdrop) { backdrop.classList.remove('header-drawer-backdrop--open'); backdrop.setAttribute('aria-hidden', 'true'); }
+            }
+            if (menuBtn) menuBtn.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); openDrawer(); });
+            if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+            if (backdrop) backdrop.addEventListener('click', closeDrawer);
+
+            var captionToggle = document.getElementById('video-caption-toggle');
+            var captionDropdown = document.getElementById('video-caption-dropdown');
+            var captionListEl = document.getElementById('video-caption-list');
+            function closeCaption() {
+                if (!captionDropdown) return;
+                captionDropdown.classList.remove('header-caption-dropdown--open');
+                captionDropdown.setAttribute('aria-hidden', 'true');
+            }
+            function openCaption() {
+                if (!captionDropdown) return;
+                renderVideoCaptionList();
+                captionDropdown.classList.add('header-caption-dropdown--open');
+                captionDropdown.setAttribute('aria-hidden', 'false');
+            }
+            function getCaptionPosts() { try { return JSON.parse(localStorage.getItem('nokCaptionPosts') || '[]'); } catch (e) { return []; } }
+            function timeAgoCaption(ts) { var d = Date.now() - ts; if (d < 60000) return 'Just now'; if (d < 3600000) return Math.floor(d / 60000) + 'm ago'; if (d < 86400000) return Math.floor(d / 3600000) + 'h ago'; if (d < 604800000) return Math.floor(d / 86400000) + 'd ago'; return new Date(ts).toLocaleDateString(); }
+            function capInitial(str) { return (str || '?').toString().trim().charAt(0).toUpperCase(); }
+            function escapeCap(str) { if (!str) return ''; return String(str).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+            function renderVideoCaptionList() {
+                if (!captionListEl) return;
+                var posts = getCaptionPosts();
+                captionListEl.innerHTML = '';
+                posts.forEach(function(post) {
+                    var card = document.createElement('a');
+                    card.className = 'caption-mini-card';
+                    card.href = 'studio.html#content';
+                    var author = post.author || 'You';
+                    var text = (post.caption || '').trim();
+                    var textEsc = escapeCap(text).substring(0, 120);
+                    if (text.length > 120) textEsc += '…';
+                    var thumbHtml = post.photoData ? '<div class="caption-mini-card__thumb"><img src="' + escapeCap(post.photoData) + '" alt=""></div>' : '';
+                    var likes = post.likes || 0;
+                    var commentsCount = (post.comments && post.comments.length) || 0;
+                    var sharesCount = post.shares || 0;
+                    var actionsHtml = '<div class="caption-mini-card__actions"><span class="cap-like">❤ ' + likes + '</span><span class="cap-comment">💬 ' + commentsCount + '</span><span class="cap-share">🔗 ' + sharesCount + '</span></div>';
+                    card.innerHTML = '<div class="caption-mini-card__row"><div class="caption-mini-card__avatar">' + capInitial(author) + '</div><span class="caption-mini-card__author">' + escapeCap(author) + '</span></div>' + (textEsc ? '<div class="caption-mini-card__text">' + textEsc + '</div>' : '') + thumbHtml + '<div class="caption-mini-card__meta">' + timeAgoCaption(post.createdAt) + '</div>' + actionsHtml;
+                    captionListEl.appendChild(card);
+                });
+            }
+            if (captionToggle) {
+                captionToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!captionDropdown) return;
+                    if (captionDropdown.classList.contains('header-caption-dropdown--open')) closeCaption();
+                    else openCaption();
+                });
+            }
+            if (captionDropdown) captionDropdown.addEventListener('click', function(e) { e.stopPropagation(); });
+            document.addEventListener('click', function(e) {
+                if (captionDropdown && captionDropdown.classList.contains('header-caption-dropdown--open') && !captionDropdown.contains(e.target) && e.target !== captionToggle) closeCaption();
+            });
+            document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeCaption(); });
+        })();
+    </script>
+    <script src="nok-header-drawer.js"></script>
+    <script src="video-long.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

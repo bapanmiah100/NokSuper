@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In - NOK Super</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <script src="nok-config.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="home-body">
+    <div class="home-layout">
+        <div class="bg"></div>
+
+        <header class="long-video__header">
+            <div class="long-video__header-left">
+                <button type="button" class="long-video__menu" aria-label="Menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <a href="home.html" class="long-video__logo">
+                    <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+                </a>
+            </div>
+            <div class="long-video__search">
+                <div class="home-search">
+                    <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" class="home-search__input" placeholder="Search">
+                    <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+                </div>
+            </div>
+            <div class="long-video__header-right">
+                <button type="button" class="long-video__header-icon" id="login-notification-btn" aria-label="Notifications" title="Notifications">
+                    <span class="long-video__icon-bell-wrap"><svg class="long-video__icon-bell" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+                    <span class="long-video__icon-bell-off-wrap" style="display:none"><svg class="long-video__icon-bell-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="1" y1="1" x2="23" y2="23"/></svg></span>
+                </button>
+                <div class="long-video__profile-wrap" id="login-profile-wrap" style="display:none">
+                    <div class="long-video__avatar" id="login-avatar">AZ</div>
+                </div>
+                <div class="long-video__auth-btns" id="login-auth-btns">
+                    <a href="login.html" class="home-header__btn home-header__btn--ghost">Log In</a>
+                    <a href="signup.html" class="home-header__btn home-header__btn--primary">Sign Up</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="content content--centered" style="position:relative;z-index:1;">
+            <div class="glass glass--login">
+                <div id="login-step">
+                    <img src="../noklogo.png" alt="NOK SUPER" class="glass__logo">
+                    <h2 class="glass__title">Log In</h2>
+                    <p class="glass__subtitle glass__success" id="login-reset-msg" style="display:none">Password updated. You can log in now.</p>
+                    <div class="glass__tabs">
+                        <button type="button" class="glass__tab glass__tab--active" data-type="email">Email</button>
+                        <button type="button" class="glass__tab" data-type="phone">Phone</button>
+                    </div>
+                    <form class="glass__form" id="login-form">
+                        <div id="email-field" class="glass__field">
+                            <input type="email" id="login-input" class="glass__input" placeholder="Enter your email">
+                        </div>
+                        <div id="phone-field" class="glass__field glass__field--hidden">
+                            <div class="glass__phone-row">
+                                <div class="glass__country-picker" id="country-picker-wrap">
+                                    <input type="text" class="glass__country-input" id="country-code-trigger" value="+880" inputmode="numeric" placeholder="+1" maxlength="5" aria-haspopup="listbox" aria-expanded="false" autocomplete="off">
+                                    <button type="button" class="glass__country-arrow" id="country-code-arrow" aria-label="Open country list">▼</button>
+                                    <input type="hidden" id="country-code" value="880">
+                                    <ul class="glass__country-dropdown" id="country-code-list" role="listbox" aria-hidden="true"></ul>
+                                </div>
+                                <input type="tel" id="phone-input" class="glass__input glass__input--phone" placeholder="Phone number">
+                            </div>
+                        </div>
+                        <div class="glass__input-wrap">
+                            <input type="password" id="password-input" class="glass__input glass__input--with-icon" placeholder="Password">
+                            <button type="button" class="glass__eye" id="toggle-password" aria-label="Show password">
+                                <svg class="glass__eye-icon glass__eye--show" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="glass__eye-icon glass__eye--hide" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="glass__forgot-wrap"><a href="forgot-password.html" class="glass__forgot">Forgot password?</a></p>
+                        <button type="submit" class="glass__btn glass__btn--primary">Log In</button>
+                    </form>
+                    <div class="glass__divider"><span>or</span></div>
+                    <div id="google-signin-container" class="glass__google-wrap">
+                        <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="glass__btn glass__btn--google" title="Add Google Client ID in nok-config.js to enable"><svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg> Continue with Google</a>
+                    </div>
+                    <p class="glass__legal">Don't have an account? <a href="signup.html" class="glass__link">Sign Up</a></p>
+                </div>
+                <div id="otp-step" style="display:none" class="glass--otp-wrap">
+                    <button type="button" class="glass__back" id="otp-back" aria-label="Back">←</button>
+                    <img src="../noklogo.png" alt="NOK SUPER" class="glass__logo">
+                    <h2 class="glass__title glass__title--verify-otp">Verify OTP</h2>
+                    <p class="glass__subtitle" id="otp-subtitle">Enter the 6-digit code sent to your email/phone</p>
+                    <form class="glass__form" id="otp-form">
+                        <div class="otp-inputs">
+                            <input type="text" class="otp__digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp__digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp__digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp__digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp__digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp__digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
+                        <button type="submit" class="glass__btn glass__btn--primary">Verify</button>
+                    </form>
+                    <p class="glass__legal">Didn't receive the code? <span id="otp-timer" class="otp-timer">Resend OTP in <span id="timer-count">30</span>s</span><a href="#" class="glass__link" id="resend-otp" style="display:none">Resend OTP</a></p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        (function() {
+            var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+            if (isLoggedIn) {
+                var next = new URLSearchParams(window.location.search).get('next');
+                window.location.replace((next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'home.html');
+                return;
+            }
+        })();
+        window.handleGoogleCredential = function(response) {
+            if (response && response.credential) {
+                sessionStorage.setItem('nokAuth', 'loggedIn');
+                localStorage.setItem('nokAuth', 'loggedIn');
+                localStorage.removeItem('nokMobileVerified');
+                var next = new URLSearchParams(window.location.search).get('next');
+                window.location.href = (next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'home.html';
+            }
+        };
+        if (new URLSearchParams(window.location.search).get('reset') === '1') {
+            var resetMsg = document.getElementById('login-reset-msg');
+            if (resetMsg) resetMsg.style.display = 'block';
+            history.replaceState({}, '', 'login.html');
+        }
+        (function(){
+            var countries=[{n:"Afghanistan",c:"93"},{n:"Albania",c:"355"},{n:"Algeria",c:"213"},{n:"Argentina",c:"54"},{n:"Australia",c:"61"},{n:"Austria",c:"43"},{n:"Azerbaijan",c:"994"},{n:"Bahrain",c:"973"},{n:"Bangladesh",c:"880"},{n:"Belgium",c:"32"},{n:"Brazil",c:"55"},{n:"Bulgaria",c:"359"},{n:"Cambodia",c:"855"},{n:"Canada",c:"1"},{n:"Chile",c:"56"},{n:"China",c:"86"},{n:"Colombia",c:"57"},{n:"Croatia",c:"385"},{n:"Czech Republic",c:"420"},{n:"Denmark",c:"45"},{n:"Egypt",c:"20"},{n:"Estonia",c:"372"},{n:"Ethiopia",c:"251"},{n:"Finland",c:"358"},{n:"France",c:"33"},{n:"Germany",c:"49"},{n:"Ghana",c:"233"},{n:"Greece",c:"30"},{n:"Hong Kong",c:"852"},{n:"Hungary",c:"36"},{n:"India",c:"91"},{n:"Indonesia",c:"62"},{n:"Iran",c:"98"},{n:"Iraq",c:"964"},{n:"Ireland",c:"353"},{n:"Israel",c:"972"},{n:"Italy",c:"39"},{n:"Japan",c:"81"},{n:"Jordan",c:"962"},{n:"Kazakhstan",c:"7"},{n:"Kenya",c:"254"},{n:"Kuwait",c:"965"},{n:"Malaysia",c:"60"},{n:"Mexico",c:"52"},{n:"Morocco",c:"212"},{n:"Nepal",c:"977"},{n:"Netherlands",c:"31"},{n:"Nigeria",c:"234"},{n:"Norway",c:"47"},{n:"Pakistan",c:"92"},{n:"Peru",c:"51"},{n:"Philippines",c:"63"},{n:"Poland",c:"48"},{n:"Portugal",c:"351"},{n:"Qatar",c:"974"},{n:"Romania",c:"40"},{n:"Russia",c:"7"},{n:"Saudi Arabia",c:"966"},{n:"Singapore",c:"65"},{n:"South Africa",c:"27"},{n:"South Korea",c:"82"},{n:"Spain",c:"34"},{n:"Sri Lanka",c:"94"},{n:"Sweden",c:"46"},{n:"Switzerland",c:"41"},{n:"Taiwan",c:"886"},{n:"Thailand",c:"66"},{n:"Turkey",c:"90"},{n:"Ukraine",c:"380"},{n:"UAE",c:"971"},{n:"UK",c:"44"},{n:"USA",c:"1"},{n:"Vietnam",c:"84"},{n:"Zimbabwe",c:"263"}];
+            countries.sort(function(a,b){return a.n.localeCompare(b.n)});
+            var listEl=document.getElementById("country-code-list");
+            var triggerEl=document.getElementById("country-code-trigger");
+            var inputEl=document.getElementById("country-code");
+            var wrapEl=document.getElementById("country-picker-wrap");
+            var groups={};
+            countries.forEach(function(x){var L=x.n[0].toUpperCase();if(!groups[L])groups[L]=[];groups[L].push(x)});
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(function(L){
+                if(!groups[L])return;
+                groups[L].forEach(function(x){
+                    var c=x.c.replace(/-.*/,"");
+                    var li=document.createElement("li");
+                    li.setAttribute("role","option");
+                    li.dataset.code=c;
+                    li.textContent=x.n+" +"+c;
+                    listEl.appendChild(li);
+                });
+            });
+            function closeDropdown(){ listEl.setAttribute("aria-hidden","true"); if(triggerEl) triggerEl.setAttribute("aria-expanded","false"); }
+            function openDropdown(){ listEl.setAttribute("aria-hidden","false"); if(triggerEl) triggerEl.setAttribute("aria-expanded","true"); }
+            var arrowBtn=document.getElementById("country-code-arrow");
+            if(arrowBtn) arrowBtn.addEventListener("click",function(e){ e.stopPropagation(); if(listEl.getAttribute("aria-hidden")==="true") openDropdown(); else closeDropdown(); });
+            if(triggerEl) triggerEl.addEventListener("input",function(){ var v=this.value.replace(/\D/g,""); if(v) { inputEl.value=v; this.value="+"+v; } });
+            if(triggerEl) triggerEl.addEventListener("blur",function(){ var v=this.value.replace(/\D/g,""); if(v){ inputEl.value=v; this.value="+"+v; } else { this.value="+880"; inputEl.value="880"; } });
+            listEl.addEventListener("click",function(e){ var li=e.target.closest("li[role=option]"); if(li){ var code=li.dataset.code; inputEl.value=code; triggerEl.value="+"+code; closeDropdown(); } });
+            document.addEventListener("click",function(e){ if(!wrapEl.contains(e.target)) closeDropdown(); });
+        })();
+        document.querySelectorAll('.glass__tab').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.glass__tab').forEach(b => b.classList.remove('glass__tab--active'));
+                this.classList.add('glass__tab--active');
+                const emailField = document.getElementById('email-field');
+                const phoneField = document.getElementById('phone-field');
+                const emailInput = document.getElementById('login-input');
+                const phoneInput = document.getElementById('phone-input');
+                if (this.dataset.type === 'email') {
+                    emailField.classList.remove('glass__field--hidden');
+                    phoneField.classList.add('glass__field--hidden');
+                    emailInput.required = true;
+                    phoneInput.required = false;
+                    emailInput.value = '';
+                    phoneInput.value = '';
+                    emailInput.focus();
+                } else {
+                    emailField.classList.add('glass__field--hidden');
+                    phoneField.classList.remove('glass__field--hidden');
+                    emailInput.required = false;
+                    phoneInput.required = true;
+                    emailInput.value = '';
+                    phoneInput.value = '';
+                    phoneInput.focus();
+                }
+            });
+        });
+        (function() {
+            var USERS_KEY = 'nokUsers';
+            function getUsers() { try { var j = localStorage.getItem(USERS_KEY); return j ? JSON.parse(j) : []; } catch (e) { return []; } }
+            function showError(msg) {
+                var wrap = document.getElementById('login-error');
+                if (!wrap) {
+                    wrap = document.createElement('div');
+                    wrap.id = 'login-error';
+                    wrap.className = 'glass__error';
+                    wrap.setAttribute('role', 'alert');
+                    document.getElementById('login-form').insertBefore(wrap, document.querySelector('#login-form .glass__btn'));
+                }
+                wrap.textContent = msg;
+                wrap.style.display = 'block';
+            }
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var emailField = document.getElementById('email-field');
+                var phoneField = document.getElementById('phone-field');
+                var isEmail = !emailField.classList.contains('glass__field--hidden');
+                var email = (document.getElementById('login-input').value || '').trim().toLowerCase();
+                var phoneInput = document.getElementById('phone-input');
+                var country = (document.getElementById('country-code') && document.getElementById('country-code').value) || '';
+                var phone = (phoneInput && phoneInput.value) ? (country + '_' + phoneInput.value.trim()).toLowerCase() : '';
+                var password = (document.getElementById('password-input').value || '');
+                var key = isEmail ? email : phone;
+                if (!key) { showError(isEmail ? 'Enter your email.' : 'Enter your phone number.'); return; }
+                if (!password) { showError('Enter your password.'); return; }
+
+                var users = getUsers();
+                var user = users.find(function(u) {
+                    if (u.email && u.email.toLowerCase() === key) return true;
+                    if (u.phoneKey && u.phoneKey.toLowerCase() === key) return true;
+                    return false;
+                });
+                if (!user || user.password !== password) {
+                    showError('Invalid email/phone or password.');
+                    return;
+                }
+                var userKey = user.email || user.phoneKey || key;
+                sessionStorage.setItem('nokUserEmail', userKey);
+                sessionStorage.setItem('otpFrom', 'login');
+                localStorage.removeItem('nokMobileVerified');
+                var sentTo = isEmail ? key : ('+' + (document.getElementById('country-code') && document.getElementById('country-code').value) + ' ' + (phoneInput && phoneInput.value ? phoneInput.value.trim() : ''));
+                document.getElementById('otp-subtitle').textContent = 'Enter the 6-digit code sent to ' + (sentTo || 'your email/phone');
+                document.getElementById('login-step').style.display = 'none';
+                document.getElementById('otp-step').style.display = 'block';
+                document.querySelectorAll('.otp__digit').forEach(function(d){ d.value = ''; });
+                startOtpTimer();
+                var errEl = document.getElementById('login-error');
+                if (errEl) errEl.style.display = 'none';
+            });
+        })();
+        document.getElementById('otp-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            sessionStorage.setItem('nokAuth', 'loggedIn');
+            localStorage.setItem('nokAuth', 'loggedIn');
+            sessionStorage.removeItem('otpFrom');
+            localStorage.removeItem('nokMobileVerified');
+            var next = new URLSearchParams(window.location.search).get('next');
+            window.location.href = (next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'home.html';
+        });
+        var digits = document.querySelectorAll('.otp__digit');
+        digits.forEach(function(input, i) {
+            input.addEventListener('input', function() {
+                if (this.value.length === 1 && i < digits.length - 1) digits[i + 1].focus();
+            });
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && i > 0) digits[i - 1].focus();
+            });
+        });
+        function startOtpTimer() {
+            var count = 30;
+            var timerEl = document.getElementById('timer-count');
+            var timerWrap = document.getElementById('otp-timer');
+            var resendBtn = document.getElementById('resend-otp');
+            if (resendBtn) resendBtn.style.display = 'none';
+            if (timerWrap) timerWrap.style.display = 'inline';
+            var iv = setInterval(function() {
+                count--;
+                if (timerEl) timerEl.textContent = count;
+                if (count <= 0) {
+                    clearInterval(iv);
+                    if (timerWrap) timerWrap.style.display = 'none';
+                    if (resendBtn) resendBtn.style.display = 'inline';
+                }
+            }, 1000);
+        }
+        document.getElementById('resend-otp').addEventListener('click', function(e) {
+            e.preventDefault();
+            startOtpTimer();
+        });
+        document.getElementById('otp-back').addEventListener('click', function() {
+            document.getElementById('otp-step').style.display = 'none';
+            document.getElementById('login-step').style.display = 'block';
+            digits.forEach(function(d) { d.value = ''; });
+        });
+        function initGoogleSignIn() {
+            var clientId = (window.NOK_GOOGLE_CLIENT_ID || '').trim();
+            var container = document.getElementById('google-signin-container');
+            if (!container) return;
+            if (clientId && typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                container.innerHTML = '';
+                google.accounts.id.initialize({ client_id: clientId, callback: handleGoogleCredential });
+                google.accounts.id.renderButton(container, { type: 'standard', theme: 'filled_black', size: 'large', text: 'continue_with', width: 320 });
+            }
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function() { setTimeout(initGoogleSignIn, 500); });
+        else setTimeout(initGoogleSignIn, 500);
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const input = document.getElementById('password-input');
+            const showIcon = this.querySelector('.glass__eye--show');
+            const hideIcon = this.querySelector('.glass__eye--hide');
+            if (input.type === 'password') {
+                input.type = 'text';
+                showIcon.style.display = 'none';
+                hideIcon.style.display = 'block';
+                this.setAttribute('aria-label', 'Hide password');
+            } else {
+                input.type = 'password';
+                showIcon.style.display = 'block';
+                hideIcon.style.display = 'none';
+                this.setAttribute('aria-label', 'Show password');
+            }
+        });
+    </script>
+    <button type="button" class="chat-trigger chat-trigger--float" aria-label="Chat"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+    <div class="chat-overlay" id="chat-overlay" aria-hidden="true">
+        <div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div>
+        <div class="chat-overlay__card">
+            <div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div>
+            <header class="nok-chat__header">
+                <a href="home.html" class="nok-chat__brand"><span class="nok-chat__logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="nok-chat__logo-text">NOK Chat</span></a>
+                <div class="nok-chat__actions">
+                    <button type="button" class="nok-chat__action" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+                    <button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize" title="Full screen"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><svg class="chat-resize-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                    <div class="nok-chat__menu-wrap"><button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button><div class="nok-chat__menu" id="chat-menu"><button type="button" class="nok-chat__menu-item">New chat</button><button type="button" class="nok-chat__menu-item">New group</button><a href="settings.html" class="nok-chat__menu-item">Settings</a><button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button></div></div>
+                </div>
+            </header>
+            <div class="chat-login" id="chat-login">
+                <div class="chat-login__inner chat-login__step-login" id="chat-step-login"><h3 class="chat-login__title">Log in to Chat</h3><p class="chat-login__sub">Sign in to start chatting</p><a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a><p class="chat-login__legal">Don't have an account? <a href="signup.html" class="chat-login__link">Sign Up</a></p></div>
+                <div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none"><h3 class="chat-login__title">Verify Mobile Number</h3><p class="chat-login__sub">Verify your mobile number to use Chat</p><form class="chat-login__form" id="chat-verify-form"><div class="chat-login__phone-row"><select id="chat-verify-country" class="chat-login__select"><option value="880">+880 BD</option><option value="91">+91 IN</option><option value="1">+1 US</option><option value="44">+44 UK</option></select><input type="tel" id="chat-verify-phone" class="chat-login__input chat-login__input--phone" placeholder="Mobile number" required></div><button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button></form><div id="chat-otp-step" style="display:none"><p class="chat-login__sub" style="margin-bottom:12px">Enter 6-digit code</p><div class="chat-login__otp-inputs"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"></div><button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button></div></div>
+            </div>
+            <div class="chat-content" id="chat-content">
+                <nav class="nok-chat__tabs"><button type="button" class="nok-chat__tab">Status</button><button type="button" class="nok-chat__tab">Groups</button><button type="button" class="nok-chat__tab nok-chat__tab--active">Updates</button><button type="button" class="nok-chat__tab">Contacts</button></nav>
+                <a href="#" class="nok-chat__archived"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg><span>Archived Chats</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+                <div class="nok-chat__list"><a href="#" class="nok-chat__item"><span class="nok-chat__avatar nok-chat__avatar--verified">AR</span><div class="nok-chat__info"><span class="nok-chat__name">Amella Roy</span><span class="nok-chat__preview">Typing...</span></div><span class="nok-chat__meta">1h ago</span></a><a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AN</span><div class="nok-chat__info"><span class="nok-chat__name">Ayesha Noor</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">11:36 AM</span></a></div>
+            </div>
+            <div class="chat-overlay__resize-handle" id="chat-resize-handle" aria-label="Resize"></div>
+            <nav class="nok-chat__bottom"><a href="home.html" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a><a href="#" class="nok-chat__bottom-item nok-chat__bottom-item--active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Chat</span></a><a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Call</span></a><a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="3"/><path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855"/></svg><span>You</span></a></nav>
+        </div>
+    </div>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

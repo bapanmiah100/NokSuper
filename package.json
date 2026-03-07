@@ -1,0 +1,8 @@
+{
+  "name": "nok-super",
+  "version": "1.0.0",
+  "description": "NOK Super app",
+  "scripts": {
+    "start": "npx serve . -p 3000"
+  }
+}

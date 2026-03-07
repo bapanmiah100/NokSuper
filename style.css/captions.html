@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captions - NOK Super</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <style>
+        .captions-body { min-height: 100vh; background: var(--glass-bg); }
+        .captions-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .captions-back { color: rgba(255,255,255,0.9); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 0.95rem; }
+        .captions-back:hover { color: var(--accent-light); }
+        .captions-title { font-size: 1.25rem; font-weight: 700; color: #fff; margin: 0; }
+        .captions-feed { max-width: 640px; margin: 0 auto; padding: 16px; padding-bottom: 100px; }
+        .caption-card { background: rgba(22,22,42,0.5); border: 1px solid rgba(139,92,246,0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+        .caption-card__head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .caption-card__avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; overflow: hidden; }
+        .caption-card__avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .caption-card__meta { flex: 1; min-width: 0; }
+        .caption-card__author { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .caption-card__time { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+        .caption-card__text { font-size: 0.95rem; color: rgba(255,255,255,0.9); line-height: 1.5; margin-bottom: 12px; white-space: pre-wrap; word-break: break-word; }
+        .caption-card__photo { border-radius: 12px; overflow: hidden; margin-bottom: 12px; background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
+        .caption-card__photo img { max-width: 100%; width: auto; max-height: 75vh; height: auto; object-fit: contain; display: block; }
+        .caption-card__actions { display: flex; align-items: center; gap: 20px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); }
+        .caption-card__btn { display: inline-flex; align-items: center; gap: 6px; background: none; border: none; color: rgba(255,255,255,0.7); font-size: 0.9rem; cursor: pointer; padding: 4px 0; }
+        .caption-card__btn:hover { color: var(--accent-light); }
+        .caption-card__btn svg { width: 20px; height: 20px; }
+        .caption-comments { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); }
+        .caption-comments__list { margin-bottom: 12px; }
+        .caption-comment { display: flex; gap: 10px; margin-bottom: 12px; }
+        .caption-comment__avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(139,92,246,0.4); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; flex-shrink: 0; }
+        .caption-comment__body { flex: 1; min-width: 0; }
+        .caption-comment__line { font-size: 0.9rem; color: rgba(255,255,255,0.9); }
+        .caption-comment__line strong { color: #fff; margin-right: 6px; }
+        .caption-comment__reply-btn { background: none; border: none; color: rgba(139,92,246,0.9); font-size: 0.8rem; cursor: pointer; padding: 2px 0; margin-top: 2px; }
+        .caption-comment__reply-btn:hover { text-decoration: underline; }
+        .caption-comment__replies { margin-left: 42px; margin-top: 8px; }
+        .caption-comment--reply .caption-comment__avatar { width: 28px; height: 28px; font-size: 0.7rem; }
+        .caption-comment--reply .caption-comment__line { font-size: 0.85rem; }
+        .caption-comments__input-wrap { display: flex; gap: 8px; margin-top: 12px; }
+        .caption-comments__input { flex: 1; padding: 10px 14px; border: 1px solid rgba(139,92,246,0.3); border-radius: 20px; background: rgba(0,0,0,0.3); color: #fff; font-size: 0.9rem; }
+        .caption-comments__input::placeholder { color: rgba(255,255,255,0.4); }
+        .caption-comments__submit { padding: 10px 20px; border: none; border-radius: 20px; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+        .caption-comments__submit:hover { opacity: 0.9; }
+        .caption-reply-input-wrap { margin-top: 8px; margin-left: 42px; display: flex; gap: 8px; }
+        .caption-empty { text-align: center; padding: 48px 24px; color: rgba(255,255,255,0.5); }
+        .caption-empty a { color: var(--accent-light); text-decoration: none; }
+        .caption-empty a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body class="captions-body has-bottom-nav">
+    <div class="home-layout">
+        <div class="bg"></div>
+        <header class="long-video__header">
+            <div class="long-video__header-left">
+                <a href="home.html" class="long-video__menu" aria-label="Back" style="padding:8px;color:inherit;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </a>
+                <a href="home.html" class="long-video__logo">
+                    <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+                </a>
+            </div>
+            <div class="long-video__header-right">
+                <a href="upload.html?type=photo" class="home-header__btn home-header__btn--primary" style="padding:8px 16px;font-size:0.9rem;">Share caption</a>
+            </div>
+        </header>
+
+        <main class="captions-feed" id="captions-feed">
+            <div class="caption-empty" id="captions-empty" style="display:none;">
+                <p>No captions yet.</p>
+                <p><a href="upload.html?type=photo">Share a caption</a> to get started.</p>
+            </div>
+            <div id="captions-list"></div>
+        </main>
+
+        <nav class="home-bottom-nav">
+            <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+            <a href="captions.html" class="home-bottom-nav__item home-bottom-nav__item--active"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span><span>Captions</span></a>
+            <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+            <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+        </nav>
+    </div>
+
+    <script>
+    (function() {
+        var listEl = document.getElementById('captions-list');
+        var emptyEl = document.getElementById('captions-empty');
+        var currentUser = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You';
+
+        function getPosts() {
+            try { return JSON.parse(localStorage.getItem('nokCaptionPosts') || '[]'); } catch (e) { return []; }
+        }
+        function savePosts(posts) {
+            try { localStorage.setItem('nokCaptionPosts', JSON.stringify(posts)); } catch (e) {}
+        }
+        function timeAgo(ts) {
+            var d = Date.now() - ts;
+            if (d < 60000) return 'Just now';
+            if (d < 3600000) return Math.floor(d / 60000) + 'm ago';
+            if (d < 86400000) return Math.floor(d / 3600000) + 'h ago';
+            if (d < 604800000) return Math.floor(d / 86400000) + 'd ago';
+            return new Date(ts).toLocaleDateString();
+        }
+        function initial(str) { return (str || '?').toString().trim().charAt(0).toUpperCase(); }
+
+        function renderComment(c, isReply) {
+            var div = document.createElement('div');
+            div.className = 'caption-comment' + (isReply ? ' caption-comment--reply' : '');
+            div.dataset.commentId = c.id;
+            var line = (c.author || 'User') + ': ' + (c.text || '');
+            div.innerHTML = '<div class="caption-comment__avatar">' + initial(c.author) + '</div><div class="caption-comment__body"><div class="caption-comment__line"><strong>' + (c.author || 'User') + '</strong>' + (c.text || '') + '</div>' + (!isReply ? '<button type="button" class="caption-comment__reply-btn" data-reply-to="' + c.id + '">Reply</button>' : '') + '</div>';
+            return div;
+        }
+
+        function renderComments(postId, comments, container) {
+            container.innerHTML = '';
+            (comments || []).forEach(function(c) {
+                var wrap = document.createElement('div');
+                wrap.appendChild(renderComment(c, false));
+                if (c.replies && c.replies.length) {
+                    var repliesDiv = document.createElement('div');
+                    repliesDiv.className = 'caption-comment__replies';
+                    c.replies.forEach(function(r) { repliesDiv.appendChild(renderComment(r, true)); });
+                    wrap.querySelector('.caption-comment__body').appendChild(repliesDiv);
+                }
+                container.appendChild(wrap);
+            });
+        }
+
+        function renderPost(post) {
+            var card = document.createElement('article');
+            card.className = 'caption-card';
+            card.dataset.postId = post.id;
+            var avatarHtml = initial(post.author);
+            var photoHtml = post.photoData ? '<div class="caption-card__photo"><img src="' + post.photoData.replace(/"/g, '&quot;') + '" alt=""></div>' : '';
+            card.innerHTML = '<div class="caption-card__head"><div class="caption-card__avatar">' + avatarHtml + '</div><div class="caption-card__meta"><div class="caption-card__author">' + (post.author || 'User') + '</div><div class="caption-card__time">' + timeAgo(post.createdAt) + '</div></div></div>' + (post.caption ? '<div class="caption-card__text">' + (post.caption || '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div>' : '') + photoHtml + '<div class="caption-card__actions"><button type="button" class="caption-card__btn caption-like-btn" data-post-id="' + post.id + '" aria-label="Like"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg><span class="like-count">' + (post.likes || 0) + '</span></button><button type="button" class="caption-card__btn caption-comment-toggle" data-post-id="' + post.id + '" aria-label="Comment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="comment-count">' + (post.comments ? post.comments.length : 0) + '</span></button><button type="button" class="caption-card__btn caption-share-btn" data-post-id="' + post.id + '" aria-label="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span class="share-count">' + (post.shares || 0) + '</span></button></div><div class="caption-comments" id="comments-' + post.id + '" style="display:none;"><div class="caption-comments__list"></div><div class="caption-comments__input-wrap"><input type="text" class="caption-comments__input" placeholder="Add a comment..." maxlength="300" data-post-id="' + post.id + '"><button type="button" class="caption-comments__submit" data-post-id="' + post.id + '">Comment</button></div></div>';
+            listEl.appendChild(card);
+
+            var commentsContainer = card.querySelector('.caption-comments__list');
+            renderComments(post.id, post.comments, commentsContainer);
+
+            card.querySelector('.caption-like-btn').addEventListener('click', function() {
+                var posts = getPosts();
+                var p = posts.find(function(x) { return x.id === post.id; });
+                if (p) { p.likes = (p.likes || 0) + 1; savePosts(posts); this.querySelector('.like-count').textContent = p.likes; }
+            });
+            card.querySelector('.caption-share-btn').addEventListener('click', function() {
+                var posts = getPosts();
+                var p = posts.find(function(x) { return x.id === post.id; });
+                if (p) { p.shares = (p.shares || 0) + 1; savePosts(posts); this.querySelector('.share-count').textContent = p.shares; }
+            });
+            card.querySelector('.caption-comment-toggle').addEventListener('click', function() {
+                var commentsDiv = card.querySelector('.caption-comments');
+                commentsDiv.style.display = commentsDiv.style.display === 'none' ? 'block' : 'none';
+            });
+            card.querySelector('.caption-comments__submit').addEventListener('click', function() {
+                var input = card.querySelector('.caption-comments__input');
+                var text = (input && input.value || '').trim();
+                if (!text) return;
+                var posts = getPosts();
+                var p = posts.find(function(x) { return x.id === post.id; });
+                if (!p) return;
+                p.comments = p.comments || [];
+                p.comments.push({ id: 'c_' + Date.now(), text: text, author: currentUser, createdAt: Date.now(), replies: [] });
+                savePosts(posts);
+                renderComments(p.id, p.comments, commentsContainer);
+                input.value = '';
+                card.querySelector('.comment-count').textContent = p.comments.length;
+                card.querySelector('.caption-comments').style.display = 'block';
+            });
+            card.addEventListener('click', function(e) {
+                var replyBtn = e.target.closest('.caption-comment__reply-btn');
+                if (replyBtn) {
+                    e.preventDefault();
+                    var commentId = replyBtn.dataset.replyTo;
+                    var wrap = replyBtn.closest('.caption-comment__body');
+                    var existing = wrap.querySelector('.caption-reply-input-wrap');
+                    if (existing) { existing.remove(); return; }
+                    var replyWrap = document.createElement('div');
+                    replyWrap.className = 'caption-reply-input-wrap';
+                    replyWrap.innerHTML = '<input type="text" class="caption-comments__input" placeholder="Write a reply..." maxlength="300" data-post-id="' + post.id + '" data-parent-id="' + commentId + '"><button type="button" class="caption-comments__submit" data-post-id="' + post.id + '" data-parent-id="' + commentId + '">Reply</button>';
+                    wrap.appendChild(replyWrap);
+                    replyWrap.querySelector('input').focus();
+                    replyWrap.querySelector('button').addEventListener('click', function() {
+                        var inp = replyWrap.querySelector('input');
+                        var replyText = (inp && inp.value || '').trim();
+                        if (!replyText) return;
+                        var posts = getPosts();
+                        var p = posts.find(function(x) { return x.id === post.id; });
+                        if (!p || !p.comments) return;
+                        var parent = p.comments.find(function(c) { return c.id === commentId; });
+                        if (!parent) return;
+                        parent.replies = parent.replies || [];
+                        parent.replies.push({ id: 'r_' + Date.now(), text: replyText, author: currentUser, createdAt: Date.now() });
+                        savePosts(posts);
+                        replyWrap.remove();
+                        renderComments(p.id, p.comments, commentsContainer);
+                    });
+                }
+            });
+        }
+
+        function render() {
+            var posts = getPosts();
+            listEl.innerHTML = '';
+            if (posts.length === 0) {
+                emptyEl.style.display = 'block';
+                return;
+            }
+            emptyEl.style.display = 'none';
+            posts.forEach(renderPost);
+            var hash = (window.location.hash || '').replace(/^#/, '');
+            if (hash) {
+                var card = listEl.querySelector('[data-post-id="' + hash + '"]');
+                if (card) { card.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+            }
+        }
+        render();
+        window.addEventListener('pageshow', render);
+    })();
+    </script>
+</body>
+</html>

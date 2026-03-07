@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Video - NOK Super</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <script src="nok-video-db.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Upload page - dark purple, futuristic theme */
+        .upload-layout { min-height: 100vh; font-family: 'Outfit', -apple-system, sans-serif; display: flex; flex-direction: column; position: relative; z-index: 1; background: radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.12) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(99,102,241,0.08) 0%, transparent 40%); }
+        .upload-layout::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 24px 24px; pointer-events: none; z-index: 0; }
+        .upload-main { position: relative; z-index: 1; flex: 1; display: flex; gap: 24px; padding: 24px; padding-top: calc(24px + 56px); overflow: auto; }
+        .upload-main__left { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+        .upload-main__right { width: 360px; flex-shrink: 0; }
+        .upload-card { background: rgba(30,27,60,0.6); border: 1px solid rgba(139,92,246,0.25); border-radius: 16px; padding: 24px; box-shadow: 0 0 40px rgba(139,92,246,0.08); }
+        .upload-drop-zone { border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; padding: 48px 24px; text-align: center; cursor: pointer; transition: all 0.25s; background: rgba(0,0,0,0.2); }
+        .upload-drop-zone:hover { border-color: rgba(139,92,246,0.6); background: rgba(139,92,246,0.05); }
+        .upload-drop-zone.upload-drop-zone--active { border-color: #8b5cf6; background: rgba(139,92,246,0.1); }
+        .upload-drop-zone h2 { font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .upload-drop-zone p { font-size: 0.95rem; color: rgba(255,255,255,0.6); margin-bottom: 16px; }
+        .upload-drop-hint { font-size: 0.8rem; color: rgba(255,255,255,0.45); margin-top: 16px; margin-bottom: 0; }
+        .upload-select-btn { display: inline-block; padding: 10px 24px; border: 2px solid rgba(255,255,255,0.8); border-radius: 8px; background: transparent; color: #fff; font-size: 0.95rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+        .upload-select-btn:hover { background: rgba(255,255,255,0.1); }
+        .upload-progress { display: none; }
+        .upload-progress.upload-progress--show { display: block; }
+        .upload-progress-bar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin: 12px 0 8px; }
+        .upload-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #8b5cf6, #6366f1); border-radius: 4px; transition: width 0.3s; }
+        .upload-progress-text { display: flex; justify-content: space-between; font-size: 0.9rem; color: rgba(255,255,255,0.8); }
+        .upload-resolutions { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin-top: 12px; }
+        .upload-res-item { font-size: 0.85rem; color: rgba(255,255,255,0.7); }
+        .upload-res-item .bar { height: 4px; background: rgba(34,197,94,0.5); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+        .upload-res-item .bar-fill { height: 100%; background: #22c55e; border-radius: 2px; }
+        .upload-encoding { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
+        .upload-enc-item { flex: 1; min-width: 80px; display: flex; align-items: center; gap: 8px; }
+        .upload-enc-bar { flex: 1; height: 6px; background: rgba(139,92,246,0.2); border-radius: 3px; overflow: hidden; }
+        .upload-enc-fill { height: 100%; background: linear-gradient(90deg, #8b5cf6, #6366f1); border-radius: 3px; }
+        .upload-enc-pct { font-size: 0.8rem; color: rgba(255,255,255,0.7); min-width: 36px; }
+        .upload-enc-queued { font-size: 0.8rem; color: #22c55e; margin-left: auto; }
+        .upload-processing-time { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 12px; }
+        .upload-preview { aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 50%, #4a7ba5 100%); position: relative; display: none; }
+        .upload-preview.upload-preview--show { display: block; }
+        .upload-preview__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+        .upload-preview__progress-wrap { position: absolute; bottom: 64px; left: 0; right: 0; padding: 0 16px; cursor: pointer; z-index: 2; }
+        .upload-preview__progress-bar { height: 6px; background: rgba(255,255,255,0.25); border-radius: 3px; overflow: hidden; }
+        .upload-preview__progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #8b5cf6, #6366f1); border-radius: 3px; transition: width 0.1s; pointer-events: none; }
+        .upload-preview__progress-wrap:hover .upload-preview__progress-bar { background: rgba(255,255,255,0.35); }
+        .upload-preview__controls { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 16px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .upload-preview__controls button { width: 36px; height: 36px; border: none; background: rgba(255,255,255,0.2); color: #fff; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .upload-preview__controls button:hover { background: rgba(255,255,255,0.3); }
+        .upload-preview__time { font-size: 0.85rem; color: rgba(255,255,255,0.9); }
+        .upload-preview__thumbnails { display: flex; gap: 12px; margin-top: 16px; align-items: flex-start; flex-wrap: wrap; }
+        .upload-preview__thumbnails .upload-thumb__dropdown { width: 140px; margin-bottom: 0; }
+        .upload-thumb { width: 120px; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.1); cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; }
+        .upload-thumb:hover { border-color: rgba(139,92,246,0.5); }
+        .upload-thumb.upload-thumb--selected { border-color: #8b5cf6; box-shadow: 0 0 12px rgba(139,92,246,0.4); }
+        .upload-thumb__img { width: 100%; height: 100%; object-fit: cover; background: linear-gradient(135deg, #1e3a5f, #2d5a87); }
+        .upload-thumb__label { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-top: 4px; text-align: center; }
+        .upload-thumb__set-btn { margin-top: 6px; padding: 6px 12px; font-size: 0.8rem; }
+        .upload-thumbnav { display: flex; align-items: center; gap: 8px; }
+        .upload-thumbnav__arrow { width: 32px; height: 32px; border: 1px solid rgba(255,255,255,0.4); background: rgba(0,0,0,0.3); color: #fff; border-radius: 6px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .upload-thumbnav__arrow:hover { background: rgba(139,92,246,0.3); }
+        .upload-thumbnav__btn { padding: 6px 12px; border: 2px solid rgba(255,255,255,0.6); background: transparent; color: #fff; border-radius: 6px; font-size: 0.85rem; cursor: pointer; }
+        .upload-thumb__dropdown { margin-bottom: 8px; padding: 6px 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(139,92,246,0.3); color: #fff; border-radius: 6px; font-size: 0.85rem; }
+        .upload-preview__quality { margin-left: auto; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; }
+        .upload-sidebar .upload-field { margin-bottom: 20px; }
+        .upload-sidebar .upload-field label { display: block; font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.9); margin-bottom: 8px; }
+        .upload-sidebar .upload-field input[type="text"], .upload-sidebar .upload-field input[type="date"], .upload-sidebar .upload-field input[type="time"], .upload-sidebar .upload-field textarea, .upload-sidebar .upload-field select { width: 100%; padding: 10px 14px; border: 1px solid rgba(139,92,246,0.3); border-radius: 8px; background: rgba(0,0,0,0.3); color: #fff; font-size: 0.95rem; font-family: inherit; }
+        .upload-sidebar .upload-field input::placeholder, .upload-sidebar .upload-field textarea::placeholder { color: rgba(255,255,255,0.4); }
+        .upload-sidebar .upload-field input:focus, .upload-sidebar .upload-field textarea:focus, .upload-sidebar .upload-field select:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 2px rgba(139,92,246,0.2); }
+        .upload-field__counter { font-size: 0.8rem; color: rgba(255,255,255,0.5); float: right; }
+        .upload-field textarea { min-height: 80px; resize: vertical; }
+        .upload-thumbnails-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .upload-thumb-mini { width: 72px; aspect-ratio: 16/9; border-radius: 6px; overflow: hidden; cursor: pointer; border: 2px solid transparent; }
+        .upload-thumb-mini.upload-thumb-mini--sel { border-color: #8b5cf6; }
+        .upload-thumb-mini__img { width: 100%; height: 100%; object-fit: cover; background: linear-gradient(135deg, #1e3a5f, #2d5a87); }
+        .upload-radios { display: flex; flex-wrap: wrap; gap: 16px; }
+        .upload-radio { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; color: rgba(255,255,255,0.9); }
+        .upload-radio input { width: 18px; height: 18px; accent-color: #8b5cf6; }
+        .upload-toggle { display: flex; align-items: center; justify-content: space-between; }
+        .upload-toggle__label { font-size: 0.9rem; color: rgba(255,255,255,0.9); }
+        .upload-toggle__wrap { display: flex; align-items: center; gap: 10px; }
+        .upload-toggle__state { font-size: 0.85rem; color: rgba(255,255,255,0.7); }
+        .upload-category-wrap { display: flex; gap: 8px; align-items: center; }
+        .upload-category-wrap select { flex: 1; }
+        .upload-category-plus { width: 36px; height: 36px; border: 1px solid rgba(139,92,246,0.5); background: rgba(139,92,246,0.2); color: #fff; border-radius: 8px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .upload-category-plus:hover { background: rgba(139,92,246,0.35); }
+        .upload-thumb-mini-wrap { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .upload-thumb-mini-wrap input { display: none; }
+        .upload-thumb-radio-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-top: 4px; }
+        .upload-thumb-upload-btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; padding: 8px 14px; border: 1px dashed rgba(139,92,246,0.5); background: rgba(139,92,246,0.1); color: #c4b5fd; font-size: 0.85rem; font-weight: 500; border-radius: 8px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+        .upload-thumb-upload-btn:hover { background: rgba(139,92,246,0.2); border-color: #8b5cf6; }
+        .upload-thumb-upload-btn--mini { padding: 4px 10px; font-size: 0.75rem; margin-top: 4px; width: 100%; }
+        .upload-thumb-custom-slot { display: flex; flex-direction: column; align-items: center; }
+        .upload-thumb-mini__placeholder { width: 100%; height: 100%; min-height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(139,92,246,0.2); color: rgba(255,255,255,0.6); font-size: 1.2rem; }
+        .upload-thumb-mini.upload-thumb-mini--has-img .upload-thumb-mini__placeholder { display: none; }
+        .upload-thumb-mini__img-custom { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+        .upload-thumb-mini:has(.upload-thumb-mini__img-custom) { padding: 0; display: block; position: relative; }
+        .upload-toggle__switch { width: 48px; height: 26px; background: rgba(255,255,255,0.2); border-radius: 13px; position: relative; cursor: pointer; transition: background 0.2s; }
+        .upload-toggle__switch.upload-toggle__switch--on { background: #8b5cf6; }
+        .upload-toggle__switch::after { content: ''; position: absolute; width: 20px; height: 20px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: transform 0.2s; }
+        .upload-toggle__switch.upload-toggle__switch--on::after { transform: translateX(22px); }
+        .upload-publish { width: 100%; padding: 14px 24px; border: none; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 8px; transition: all 0.2s; }
+        .upload-publish:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(139,92,246,0.4); }
+        .upload-publish:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        .upload-publish .upload-spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: upload-spin 0.8s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
+        @keyframes upload-spin { to { transform: rotate(360deg); } }
+        .upload-schedule { margin-top: 12px; display: none; }
+        .upload-schedule.upload-schedule--show { display: flex; gap: 12px; flex-wrap: wrap; }
+        .upload-schedule input { width: 140px; }
+        .upload-success { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
+        .upload-success.upload-success--show { opacity: 1; visibility: visible; }
+        .upload-success__card { background: linear-gradient(145deg, #2a1f4e 0%, #1a1435 100%); border: 1px solid rgba(139,92,246,0.4); border-radius: 20px; padding: 32px; text-align: center; transform: scale(0.9); transition: transform 0.3s; }
+        .upload-success.upload-success--show .upload-success__card { transform: scale(1); }
+        .upload-success__icon { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; background: linear-gradient(135deg, #22c55e, #10b981); display: flex; align-items: center; justify-content: center; }
+        .upload-success__icon svg { width: 32px; height: 32px; color: #fff; }
+        .upload-success__title { font-size: 1.25rem; font-weight: 600; color: #fff; margin-bottom: 8px; }
+        .upload-success__text { font-size: 0.9rem; color: rgba(200,210,255,0.7); }
+        .upload-uploads__head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+        .upload-uploads__title { font-size: 1rem; font-weight: 700; color: #fff; }
+        .upload-sort-select { padding: 8px 12px; border: 1px solid rgba(139,92,246,0.3); border-radius: 8px; background: rgba(0,0,0,0.3); color: #fff; font-size: 0.85rem; font-family: inherit; cursor: pointer; }
+        .upload-uploads__list { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; max-height: 280px; overflow-y: auto; overflow-x: visible; }
+        .upload-uploads__card { display: block; text-decoration: none; color: inherit; border-radius: 10px; overflow: hidden; background: rgba(0,0,0,0.2); transition: transform 0.2s; }
+        .upload-uploads__card:hover { transform: scale(1.02); }
+        .upload-uploads__thumb-wrap { position: relative; aspect-ratio: 16/9; overflow: hidden; }
+        .upload-uploads__thumb { position: absolute; inset: 0; background: linear-gradient(135deg, #1e3a5f, #2d5a87); background-size: cover; background-position: center; background-repeat: no-repeat; }
+        .upload-uploads__thumb-wrap video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; }
+        .upload-uploads__card:hover .upload-uploads__thumb-wrap video { opacity: 1; }
+        .upload-uploads__play-btn { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+        .upload-uploads__card:hover .upload-uploads__play-btn { opacity: 1; }
+        .upload-uploads__play-btn svg { width: 48px; height: 48px; color: #fff; }
+        .upload-uploads__thumb--waterfall { background: linear-gradient(135deg, #0f4c5c, #1b6b7a); }
+        .upload-uploads__thumb--city { background: linear-gradient(135deg, #1a1a2e, #16213e); }
+        .upload-uploads__thumb--wild { background: linear-gradient(135deg, #2d5016, #3d6b1f); }
+        .upload-uploads__thumb--portrait { background: linear-gradient(135deg, #4a2c2a, #6b3a36); }
+        .upload-uploads__thumb--night { background: linear-gradient(135deg, #1a1a2e, #2d2d44); }
+        .upload-uploads__thumb--hike { background: linear-gradient(135deg, #1e3a5f, #2d5a87); }
+        .upload-uploads__thumb--beach { background: linear-gradient(135deg, #0f4c5c, #38b2ac); }
+        .upload-uploads__info { padding: 8px; position: relative; }
+        .upload-uploads__title-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+        .upload-uploads__card-title { flex: 1; font-size: 0.85rem; font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+        .upload-uploads__menu-btn { flex-shrink: 0; width: 28px; height: 28px; border: none; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+        .upload-uploads__menu-btn:hover { background: rgba(255,255,255,0.2); }
+        .upload-uploads__menu-btn svg { width: 18px; height: 18px; }
+        .upload-uploads__dropdown { display: none; position: absolute; bottom: 100%; right: 0; margin-bottom: 4px; min-width: 170px; background: rgba(30,27,60,0.98); border: 1px solid rgba(139,92,246,0.3); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 100; overflow: hidden; }
+        .upload-uploads__dropdown.upload-uploads__dropdown--open { display: block; }
+        .upload-uploads__dropdown-item { display: block; width: 100%; padding: 10px 14px; border: none; background: none; color: #fff; font-size: 0.9rem; text-align: left; cursor: pointer; font-family: inherit; transition: background 0.2s; }
+        .upload-uploads__dropdown-item:hover { background: rgba(139,92,246,0.2); }
+        .upload-uploads__dropdown-item--danger { color: #f87171; }
+        .upload-uploads__dropdown-item--danger:hover { background: rgba(248,113,113,0.15); }
+        .upload-uploads__card-meta { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+        .upload-uploads__badge { display: inline-block; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; margin-top: 4px; font-weight: 600; }
+        .upload-uploads__badge--long { background: rgba(34,197,94,0.3); color: #86efac; }
+        .upload-uploads__badge--shorts { background: rgba(139,92,246,0.4); color: #c4b5fd; }
+        .upload-shorts-note { display: none; margin-top: 8px; font-size: 0.85rem; color: #c4b5fd; }
+        .upload-shorts-note.upload-shorts-note--show { display: block; }
+        /* Rating post & Caption share */
+        .upload-post-mode .upload-main__left { max-width: 560px; }
+        .upload-post-mode .upload-main__right { display: none; }
+        .upload-rating-wrap, .upload-photo-wrap { display: none; }
+        .upload-rating-wrap.upload-rating-wrap--show, .upload-photo-wrap.upload-photo-wrap--show { display: block; }
+        .upload-video-wrap.upload-video-wrap--hide { display: none !important; }
+        .upload-rating-wrap .upload-card, .upload-photo-wrap .upload-card { margin-bottom: 20px; }
+        .upload-rating-stars { display: flex; gap: 8px; margin: 12px 0 20px; }
+        .upload-rating-stars button { width: 44px; height: 44px; border: 2px solid rgba(139,92,246,0.4); background: rgba(0,0,0,0.2); color: rgba(255,255,255,0.6); border-radius: 50%; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .upload-rating-stars button:hover { border-color: #8b5cf6; color: #fbbf24; background: rgba(139,92,246,0.15); }
+        .upload-rating-stars button.upload-rating-star--on { border-color: #fbbf24; color: #fbbf24; background: rgba(251,191,36,0.2); }
+        .upload-photo-drop { border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; padding: 40px 24px; text-align: center; cursor: pointer; transition: all 0.25s; background: rgba(0,0,0,0.2); }
+        .upload-photo-drop:hover { border-color: rgba(139,92,246,0.6); background: rgba(139,92,246,0.05); }
+        .upload-photo-drop.upload-photo-drop--active { border-color: #8b5cf6; background: rgba(139,92,246,0.1); }
+        .upload-photo-preview { display: none; margin-top: 16px; border-radius: 12px; overflow: hidden; max-height: 320px; }
+        .upload-photo-preview.upload-photo-preview--show { display: block; }
+        .upload-photo-preview img { width: 100%; height: auto; display: block; }
+    </style>
+</head>
+<body class="video-body has-bottom-nav">
+    <div class="bg"></div>
+
+    <div class="upload-layout">
+        <header class="long-video__header">
+            <div class="long-video__header-left">
+                <button type="button" class="long-video__back" id="header-back-btn" aria-label="Back" title="Back to previous page">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </button>
+                <button type="button" class="long-video__menu" id="header-menu-btn" aria-label="Menu" title="Menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <a href="home.html" class="long-video__logo">
+                    <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+                </a>
+            </div>
+            <div class="long-video__search">
+                <div class="home-search">
+                    <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" class="home-search__input" placeholder="Search">
+                    <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+                </div>
+            </div>
+            <div class="long-video__header-right">
+                <button type="button" class="long-video__header-icon" id="upload-notification-btn" aria-label="Notifications" title="Notifications">
+                    <span class="long-video__icon-bell-wrap"><svg class="long-video__icon-bell" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+                    <span class="long-video__icon-bell-off-wrap" style="display:none"><svg class="long-video__icon-bell-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="1" y1="1" x2="23" y2="23"/></svg></span>
+                </button>
+                <a href="channel.html" class="long-video__profile-wrap" id="upload-profile-wrap" style="display:none;text-decoration:none;color:inherit;" title="Channel">
+                    <div class="long-video__avatar" id="upload-avatar">UP</div>
+                </a>
+                <div class="long-video__auth-btns" id="upload-auth-btns">
+                    <a href="login.html" class="home-header__btn home-header__btn--ghost">Log In</a>
+                    <a href="signup.html" class="home-header__btn home-header__btn--primary">Sign Up</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="header-drawer-backdrop" id="header-drawer-backdrop" aria-hidden="true"></div>
+        <aside class="header-drawer" id="header-drawer" aria-label="Main menu" aria-hidden="true">
+            <div class="header-drawer__head">
+                <span class="header-drawer__title">Menu</span>
+                <button type="button" class="header-drawer__close" id="header-drawer-close" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+            <nav class="header-drawer__nav">
+                <a href="home.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+                <a href="shorts.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+                <a href="studio.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span><span>Studio</span></a>
+                <a href="library.html#watch-later" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Watch later</span></a>
+                <a href="library.html#saved" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span><span>Saved videos</span></a>
+                <a href="library.html#library-files" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span><span>Your files</span></a>
+                <a href="upload.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+                <div class="header-drawer__divider"></div>
+                <a href="settings.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+            </nav>
+        </aside>
+
+        <div class="upload-main" id="upload-main">
+            <div class="upload-main__left">
+                <!-- Rating post (type=rating) -->
+                <div class="upload-rating-wrap upload-card" id="upload-rating-wrap">
+                    <h2 style="font-size:1.25rem;font-weight:700;color:#fff;margin:0 0 16px;">Rating post</h2>
+                    <p style="font-size:0.9rem;color:rgba(255,255,255,0.65);margin:0 0 16px;">Share a post with a star rating (e.g. product or place review).</p>
+                    <form id="upload-rating-form">
+                        <div class="upload-field">
+                            <label>Title</label>
+                            <input type="text" id="rating-title" placeholder="What are you rating?" maxlength="100" style="width:100%;padding:10px 14px;border:1px solid rgba(139,92,246,0.3);border-radius:8px;background:rgba(0,0,0,0.3);color:#fff;font-size:0.95rem;">
+                        </div>
+                        <div class="upload-field" style="margin-top:16px;">
+                            <label>Your rating (1–5 stars)</label>
+                            <div class="upload-rating-stars" id="rating-stars">
+                                <button type="button" data-rating="1" class="upload-rating-star" aria-label="1 star">1</button>
+                                <button type="button" data-rating="2" class="upload-rating-star" aria-label="2 stars">2</button>
+                                <button type="button" data-rating="3" class="upload-rating-star" aria-label="3 stars">3</button>
+                                <button type="button" data-rating="4" class="upload-rating-star" aria-label="4 stars">4</button>
+                                <button type="button" data-rating="5" class="upload-rating-star" aria-label="5 stars">5</button>
+                            </div>
+                        </div>
+                        <div class="upload-field" style="margin-top:16px;">
+                            <label>Description (optional)</label>
+                            <textarea id="rating-desc" placeholder="Write your review or thoughts..." style="width:100%;min-height:80px;padding:10px 14px;border:1px solid rgba(139,92,246,0.3);border-radius:8px;background:rgba(0,0,0,0.3);color:#fff;font-size:0.95rem;resize:vertical;"></textarea>
+                        </div>
+                        <button type="submit" class="upload-publish" style="margin-top:20px;">Post rating</button>
+                    </form>
+                </div>
+                <!-- Caption share (type=photo) -->
+                <div class="upload-photo-wrap upload-card" id="upload-photo-wrap">
+                    <h2 style="font-size:1.25rem;font-weight:700;color:#fff;margin:0 0 16px;">Caption share</h2>
+                    <form id="upload-photo-form">
+                        <div class="upload-field" style="margin-top:16px;">
+                            <label>Caption</label>
+                            <textarea id="photo-caption" placeholder="Add a caption..." style="width:100%;min-height:80px;padding:10px 14px;border:1px solid rgba(139,92,246,0.3);border-radius:8px;background:rgba(0,0,0,0.3);color:#fff;font-size:0.95rem;resize:vertical;"></textarea>
+                        </div>
+                        <div class="upload-photo-drop" id="upload-photo-drop">
+                            <h3 style="font-size:1.1rem;color:#fff;margin:0 0 8px;">Drop photo here or click to choose</h3>
+                            <p style="font-size:0.9rem;color:rgba(255,255,255,0.5);margin:0;">PNG, JPG up to 10MB</p>
+                        </div>
+                        <input type="file" id="upload-photo-input" accept="image/*" style="display:none">
+                        <div class="upload-photo-preview" id="upload-photo-preview">
+                            <img id="upload-photo-preview-img" alt="Preview" style="width:100%;height:auto;">
+                        </div>
+                        <button type="submit" class="upload-publish" style="margin-top:20px;">Share caption</button>
+                    </form>
+                </div>
+                <!-- Video upload (default) -->
+                <div class="upload-video-wrap" id="upload-video-wrap">
+                <div class="upload-card">
+                    <div class="upload-drop-zone" id="upload-drop-zone">
+                        <h2>Drag & Drop Video</h2>
+                        <p>or</p>
+                        <button type="button" class="upload-select-btn" id="upload-select-btn">Select File</button>
+                        <p class="upload-drop-hint">Drag and drop or click to select your video. Videos under 60 seconds will automatically be published as Shorts.</p>
+                    </div>
+                    <div class="upload-progress" id="upload-progress">
+                        <div class="upload-progress-bar"><div class="upload-progress-fill" id="upload-progress-fill"></div></div>
+                        <div class="upload-progress-text"><span id="upload-progress-pct">0% Uploading...</span><span id="upload-progress-time">2 min remaining</span></div>
+                        <div class="upload-resolutions">
+                            <div class="upload-res-item">480p <span class="pct">38%</span><div class="bar"><div class="bar-fill" style="width:38%"></div></div></div>
+                            <div class="upload-res-item">720p <span class="pct">14%</span><div class="bar"><div class="bar-fill" style="width:14%"></div></div></div>
+                            <div class="upload-res-item">1080p <span class="pct">Queued ✓</span><div class="bar"><div class="bar-fill" style="width:0%"></div></div></div>
+                        </div>
+                        <div class="upload-encoding">
+                            <div class="upload-enc-item"><div class="upload-enc-bar"><div class="upload-enc-fill" style="width:38%"></div></div><span class="upload-enc-pct">38%</span></div>
+                            <div class="upload-enc-item"><div class="upload-enc-bar"><div class="upload-enc-fill" style="width:10%"></div></div><span class="upload-enc-pct">10%</span></div>
+                            <div class="upload-enc-item"><div class="upload-enc-bar"><div class="upload-enc-fill" style="width:42%"></div></div><span class="upload-enc-pct">42%</span></div>
+                            <span class="upload-enc-queued">Queued ✓</span>
+                        </div>
+                        <p class="upload-processing-time">Approx. Processing time: 2 min remaining</p>
+                    </div>
+                </div>
+
+                <div class="upload-card upload-preview" id="upload-preview">
+                    <video id="upload-preview-video" class="upload-preview__video" playsinline controlsList="nodownload"></video>
+                    <div class="upload-preview__progress-wrap" id="upload-preview-progress">
+                        <div class="upload-preview__progress-bar"><div class="upload-preview__progress-fill" id="upload-preview-progress-fill"></div></div>
+                    </div>
+                    <div class="upload-preview__controls">
+                        <button aria-label="Play"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+                        <button aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 19 2 12 11 5 11 19"/></svg></button>
+                        <button aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 19 22 12 13 5 13 19"/></svg></button>
+                        <button aria-label="Volume"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg></button>
+                        <span class="upload-preview__time">0:00 / 0:00</span>
+                        <select class="upload-preview__quality"><option>1080p</option><option>720p</option><option>480p</option></select>
+                        <button aria-label="Picture in picture"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 2v20M17 2v20"/></svg></button>
+                        <button aria-label="Fullscreen"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                        <div class="upload-thumbnav">
+                            <button type="button" class="upload-thumbnav__arrow" aria-label="Previous frame">‹</button>
+                            <button type="button" class="upload-thumbnav__btn">Set from video</button>
+                            <button type="button" class="upload-thumbnav__arrow" aria-label="Next frame">›</button>
+                        </div>
+                    </div>
+                    <div class="upload-preview__thumbnails">
+                        <select class="upload-thumb__dropdown"><option>Auto-Generated</option></select>
+                        <div class="upload-thumb upload-thumb--selected" data-thumb="0">
+                            <div class="upload-thumb__img"></div>
+                            <div class="upload-thumb__label">Auto 1</div>
+                            <button type="button" class="upload-select-btn upload-thumb__set-btn">Set as Thumbnail</button>
+                        </div>
+                        <div class="upload-thumb" data-thumb="1">
+                            <div class="upload-thumb__img"></div>
+                            <div class="upload-thumb__label">Auto 2</div>
+                        </div>
+                        <div class="upload-thumb" data-thumb="2">
+                            <div class="upload-thumb__img"></div>
+                            <div class="upload-thumb__label">Auto 3</div>
+                        </div>
+                        <div class="upload-thumb upload-thumb--custom" id="upload-thumb-custom-1" data-thumb="custom1" style="display:none">
+                            <img class="upload-thumb__img-custom" alt="Custom 1" style="width:100%;height:100%;object-fit:cover">
+                            <div class="upload-thumb__label">Custom 1</div>
+                            <button type="button" class="upload-select-btn upload-thumb__set-btn">Set as Thumbnail</button>
+                        </div>
+                        <div class="upload-thumb upload-thumb--custom" id="upload-thumb-custom-2" data-thumb="custom2" style="display:none">
+                            <img class="upload-thumb__img-custom" alt="Custom 2" style="width:100%;height:100%;object-fit:cover">
+                            <div class="upload-thumb__label">Custom 2</div>
+                            <button type="button" class="upload-select-btn upload-thumb__set-btn">Set as Thumbnail</button>
+                        </div>
+                        <div class="upload-thumb upload-thumb--custom" id="upload-thumb-custom-3" data-thumb="custom3" style="display:none">
+                            <img class="upload-thumb__img-custom" alt="Custom 3" style="width:100%;height:100%;object-fit:cover">
+                            <div class="upload-thumb__label">Custom 3</div>
+                            <button type="button" class="upload-select-btn upload-thumb__set-btn">Set as Thumbnail</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="upload-card upload-uploads" id="upload-your-uploads">
+                    <div class="upload-uploads__head">
+                        <h3 class="upload-uploads__title">Your Uploads</h3>
+                        <select class="upload-sort-select" id="upload-sort">
+                            <option value="newest">Newest first</option>
+                            <option value="oldest">Oldest first</option>
+                            <option value="views">Most views</option>
+                            <option value="title">Title A-Z</option>
+                        </select>
+                    </div>
+                    <div class="upload-uploads__list" id="upload-your-list"></div>
+                </div>
+                </div>
+            </div>
+
+            <aside class="upload-main__right">
+                <div class="upload-card upload-sidebar">
+                    <form id="upload-form">
+                        <div class="upload-field">
+                            <label>Title <span class="upload-field__counter" id="title-counter">0/100</span></label>
+                            <input type="text" id="video-title" placeholder="" maxlength="100">
+                        </div>
+                        <div class="upload-field">
+                            <label></label>
+                            <textarea id="video-desc" placeholder="Add a description..."></textarea>
+                        </div>
+                        <div class="upload-field">
+                            <label>Thumbnail</label>
+                            <div class="upload-thumbnails-row" id="upload-thumbnails-row">
+                                <label class="upload-thumb-mini-wrap"><input type="radio" name="thumbnail" value="0" checked><div class="upload-thumb-mini upload-thumb-mini--sel" data-sel="0"><div class="upload-thumb-mini__img"></div></div><span class="upload-thumb-radio-label">Auto 1</span></label>
+                                <label class="upload-thumb-mini-wrap"><input type="radio" name="thumbnail" value="1"><div class="upload-thumb-mini" data-sel="1"><div class="upload-thumb-mini__img"></div></div><span class="upload-thumb-radio-label">Auto 2</span></label>
+                                <label class="upload-thumb-mini-wrap"><input type="radio" name="thumbnail" value="2"><div class="upload-thumb-mini" data-sel="2"><div class="upload-thumb-mini__img"></div></div><span class="upload-thumb-radio-label">Auto 3</span></label>
+                                <div class="upload-thumb-custom-slot">
+                                    <label class="upload-thumb-mini-wrap" id="upload-thumb-custom-label-1">
+                                        <input type="radio" name="thumbnail" value="custom1">
+                                        <div class="upload-thumb-mini" data-sel="custom1">
+                                            <div class="upload-thumb-mini__placeholder" id="upload-thumb-placeholder-1">+</div>
+                                            <img class="upload-thumb-mini__img-custom" id="upload-thumb-custom-img-1" alt="Custom 1" style="display:none">
+                                        </div>
+                                        <span class="upload-thumb-radio-label">Custom 1</span>
+                                    </label>
+                                    <button type="button" class="upload-thumb-upload-btn upload-thumb-upload-btn--mini" id="upload-thumbnail-btn-1">Upload</button>
+                                </div>
+                                <div class="upload-thumb-custom-slot">
+                                    <label class="upload-thumb-mini-wrap" id="upload-thumb-custom-label-2">
+                                        <input type="radio" name="thumbnail" value="custom2">
+                                        <div class="upload-thumb-mini" data-sel="custom2">
+                                            <div class="upload-thumb-mini__placeholder" id="upload-thumb-placeholder-2">+</div>
+                                            <img class="upload-thumb-mini__img-custom" id="upload-thumb-custom-img-2" alt="Custom 2" style="display:none">
+                                        </div>
+                                        <span class="upload-thumb-radio-label">Custom 2</span>
+                                    </label>
+                                    <button type="button" class="upload-thumb-upload-btn upload-thumb-upload-btn--mini" id="upload-thumbnail-btn-2">Upload</button>
+                                </div>
+                                <div class="upload-thumb-custom-slot">
+                                    <label class="upload-thumb-mini-wrap" id="upload-thumb-custom-label-3">
+                                        <input type="radio" name="thumbnail" value="custom3">
+                                        <div class="upload-thumb-mini" data-sel="custom3">
+                                            <div class="upload-thumb-mini__placeholder" id="upload-thumb-placeholder-3">+</div>
+                                            <img class="upload-thumb-mini__img-custom" id="upload-thumb-custom-img-3" alt="Custom 3" style="display:none">
+                                        </div>
+                                        <span class="upload-thumb-radio-label">Custom 3</span>
+                                    </label>
+                                    <button type="button" class="upload-thumb-upload-btn upload-thumb-upload-btn--mini" id="upload-thumbnail-btn-3">Upload</button>
+                                </div>
+                            </div>
+                            <input type="file" id="upload-thumbnail-input-1" accept="image/*" style="display:none">
+                            <input type="file" id="upload-thumbnail-input-2" accept="image/*" style="display:none">
+                            <input type="file" id="upload-thumbnail-input-3" accept="image/*" style="display:none">
+                        </div>
+                        <div class="upload-field">
+                            <label>Tags</label>
+                            <input type="text" id="video-tags" placeholder="Tags separated by commas">
+                        </div>
+                        <div class="upload-field">
+                            <label>Category</label>
+                            <div class="upload-category-wrap">
+                                <select id="video-category">
+                                <option>Travel & Events</option>
+                                <option>Music</option>
+                                <option>Gaming</option>
+                                <option>Education</option>
+                                <option>Science & Technology</option>
+                                <option>Entertainment</option>
+                                <option>Sports</option>
+                                <option>News</option>
+                                <option>Howto & Style</option>
+                            </select>
+                                <button type="button" class="upload-category-plus" aria-label="Add category" title="Add custom category">+</button>
+                            </div>
+                        </div>
+                        <div class="upload-field">
+                            <label>Playlist</label>
+                            <select id="video-playlist">
+                                <option>Optional None</option>
+                            </select>
+                        </div>
+                        <div class="upload-field">
+                            <label>Video Type</label>
+                            <div class="upload-radios">
+                                <label class="upload-radio"><input type="radio" name="video-type" value="auto" checked> Auto (by duration)</label>
+                                <label class="upload-radio"><input type="radio" name="video-type" value="long"> Long Video (60+ sec)</label>
+                                <label class="upload-radio"><input type="radio" name="video-type" value="shorts"> Shorts (&lt;60 sec)</label>
+                            </div>
+                            <div class="upload-shorts-note" id="upload-shorts-note">This video is under 60 seconds and will be published as a Short.</div>
+                        </div>
+                        <div class="upload-field">
+                            <label>Visibility</label>
+                            <div class="upload-radios">
+                                <label class="upload-radio"><input type="radio" name="visibility" value="public" checked> Public</label>
+                                <label class="upload-radio"><input type="radio" name="visibility" value="unlisted"> Unlisted</label>
+                                <label class="upload-radio"><input type="radio" name="visibility" value="private"> Private</label>
+                                <label class="upload-radio"><input type="radio" name="visibility" value="schedule"> Schedule</label>
+                            </div>
+                            <div class="upload-schedule" id="upload-schedule">
+                                <input type="date" value="2024-04-23">
+                                <input type="time" value="12:00">
+                            </div>
+                        </div>
+                        <div class="upload-field">
+                            <label>Age restriction</label>
+                            <select id="video-age">
+                                <option>Optional</option>
+                                <option>18+</option>
+                            </select>
+                        </div>
+                        <div class="upload-field upload-toggle">
+                            <span class="upload-toggle__label">Monetize</span>
+                            <div class="upload-toggle__wrap">
+                                <span class="upload-toggle__state" id="monetize-state">OFF</span>
+                                <div class="upload-toggle__switch" id="monetize-toggle"></div>
+                            </div>
+                        </div>
+                        <button type="submit" class="upload-publish" id="upload-publish-btn">Publish</button>
+                    </form>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div class="upload-success" id="upload-success">
+        <div class="upload-success__card">
+            <div class="upload-success__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <h3 class="upload-success__title">Video Uploaded!</h3>
+            <p class="upload-success__text">Your video is now live on NOK Super</p>
+        </div>
+    </div>
+
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+        <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+        <a href="upload.html" class="home-bottom-nav__item home-bottom-nav__item--active"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+        <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+        <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+    </nav>
+
+    <div class="chat-overlay" id="chat-overlay" aria-hidden="true">
+        <div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div>
+        <div class="chat-overlay__card">
+            <div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div>
+            <header class="nok-chat__header">
+                <a href="home.html" class="nok-chat__brand"><span class="nok-chat__logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="nok-chat__logo-text">NOK Chat</span></a>
+                <div class="nok-chat__actions">
+                    <button type="button" class="nok-chat__action" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+                    <button type="button" class="nok-chat__action nok-chat__action--badge" aria-label="Notifications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                    <button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><svg class="chat-resize-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                    <div class="nok-chat__menu-wrap">
+                        <button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+                        <div class="nok-chat__menu" id="chat-menu">
+                            <button type="button" class="nok-chat__menu-item">New chat</button>
+                            <button type="button" class="nok-chat__menu-item">New group</button>
+                            <a href="settings.html" class="nok-chat__menu-item">Settings</a>
+                            <button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="chat-login" id="chat-login">
+                <div class="chat-login__inner chat-login__step-login" id="chat-step-login">
+                    <h3 class="chat-login__title">Log in to Chat</h3>
+                    <p class="chat-login__sub">Sign in to start chatting with your subscriptions</p>
+                    <a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a>
+                    <p class="chat-login__legal">Don't have an account? <a href="signup.html" class="chat-login__link">Sign Up</a></p>
+                </div>
+                <div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none">
+                    <h3 class="chat-login__title">Verify Mobile Number</h3>
+                    <p class="chat-login__sub">Verify your mobile number to use Chat</p>
+                    <form class="chat-login__form" id="chat-verify-form">
+                        <div class="chat-login__phone-row">
+                            <select id="chat-verify-country" class="chat-login__select"><option value="880">+880 BD</option><option value="91">+91 IN</option><option value="1">+1 US</option><option value="44">+44 UK</option></select>
+                            <input type="tel" id="chat-verify-phone" class="chat-login__input chat-login__input--phone" placeholder="Mobile number" required>
+                        </div>
+                        <button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button>
+                    </form>
+                    <div id="chat-otp-step" style="display:none">
+                        <p class="chat-login__sub" style="margin-bottom:12px">Enter 6-digit code sent to your number</p>
+                        <div class="chat-login__otp-inputs">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
+                        <button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-content" id="chat-content">
+                <nav class="nok-chat__tabs">
+                    <button type="button" class="nok-chat__tab">Status</button>
+                    <button type="button" class="nok-chat__tab">Groups</button>
+                    <button type="button" class="nok-chat__tab nok-chat__tab--active">Updates</button>
+                    <button type="button" class="nok-chat__tab">Contacts</button>
+                </nav>
+                <div class="nok-chat__list">
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AR</span><div class="nok-chat__info"><span class="nok-chat__name">Amella Roy</span><span class="nok-chat__preview">Typing...</span></div></a>
+                </div>
+            </div>
+            <nav class="nok-chat__bottom">
+                <a href="home.html" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+                <a href="#" class="nok-chat__bottom-item nok-chat__bottom-item--active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Chat</span></a>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+            if (!isLoggedIn) {
+                window.location.replace('login.html?next=' + encodeURIComponent(window.location.pathname.split('/').pop() || 'upload.html'));
+                return;
+            }
+            var profileWrap = document.getElementById('upload-profile-wrap');
+            var authBtns = document.getElementById('upload-auth-btns');
+            if (profileWrap) profileWrap.style.display = 'flex';
+            if (authBtns) authBtns.style.display = 'none';
+
+            var savedChannel = localStorage.getItem('nokUserChannel');
+            var userVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
+            if (!savedChannel && (!userVideos.length || !userVideos[0].channel)) {
+                window.location.replace('channel-create.html?next=upload.html');
+                return;
+            }
+            var ch = savedChannel || (userVideos[0] && userVideos[0].channel) || '';
+            var userEmail = sessionStorage.getItem('nokUserEmail');
+            var name = ch || userEmail || 'U';
+            var initial = (name + '').trim().charAt(0).toUpperCase() || '?';
+            var av = document.getElementById('upload-avatar');
+            if (av) {
+                var photoUrl = localStorage.getItem('nokUserPhotoUrl') || '';
+                if (photoUrl) {
+                    av.innerHTML = '<img src="' + photoUrl.replace(/"/g, '&quot;') + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
+                } else {
+                    av.textContent = initial;
+                }
+            }
+
+            var main = document.getElementById('upload-main');
+            var videoWrap = document.getElementById('upload-video-wrap');
+            var ratingWrap = document.getElementById('upload-rating-wrap');
+            var photoWrap = document.getElementById('upload-photo-wrap');
+            var type = (new URLSearchParams(window.location.search)).get('type');
+
+            if (type === 'rating') {
+                if (main) main.classList.add('upload-post-mode');
+                if (videoWrap) videoWrap.classList.add('upload-video-wrap--hide');
+                if (ratingWrap) ratingWrap.classList.add('upload-rating-wrap--show');
+                var ratingStars = document.querySelectorAll('.upload-rating-star');
+                var ratingVal = 0;
+                ratingStars.forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        ratingVal = parseInt(btn.getAttribute('data-rating'), 10);
+                        ratingStars.forEach(function(b) { b.classList.remove('upload-rating-star--on'); });
+                        for (var i = 0; i < ratingVal; i++) if (ratingStars[i]) ratingStars[i].classList.add('upload-rating-star--on');
+                    });
+                });
+                var ratingForm = document.getElementById('upload-rating-form');
+                if (ratingForm) ratingForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var title = (document.getElementById('rating-title') || {}).value || '';
+                    var desc = (document.getElementById('rating-desc') || {}).value || '';
+                    if (!title.trim()) return;
+                    var successEl = document.getElementById('upload-success');
+                    if (successEl) {
+                        var card = successEl.querySelector('.upload-success__title');
+                        if (card) card.textContent = 'Rating posted!';
+                        successEl.classList.add('upload-success--show');
+                        setTimeout(function() { successEl.classList.remove('upload-success--show'); }, 2500);
+                    }
+                });
+            } else if (type === 'photo') {
+                if (main) main.classList.add('upload-post-mode');
+                if (videoWrap) videoWrap.classList.add('upload-video-wrap--hide');
+                if (photoWrap) photoWrap.classList.add('upload-photo-wrap--show');
+                var photoDrop = document.getElementById('upload-photo-drop');
+                var photoInput = document.getElementById('upload-photo-input');
+                var photoPreview = document.getElementById('upload-photo-preview');
+                var photoPreviewImg = document.getElementById('upload-photo-preview-img');
+                function showPhotoPreview(file) {
+                    if (!file || !file.type.startsWith('image/')) return;
+                    var r = new FileReader();
+                    r.onload = function() {
+                        if (photoPreviewImg) photoPreviewImg.src = r.result;
+                        if (photoPreview) photoPreview.classList.add('upload-photo-preview--show');
+                    };
+                    r.readAsDataURL(file);
+                }
+                var quickDraft = '';
+                try { quickDraft = sessionStorage.getItem('nokQuickPhotoDraft') || ''; } catch (e) { quickDraft = ''; }
+                if (quickDraft) {
+                    if (photoPreviewImg) photoPreviewImg.src = quickDraft;
+                    if (photoPreview) photoPreview.classList.add('upload-photo-preview--show');
+                    try { sessionStorage.removeItem('nokQuickPhotoDraft'); } catch (e) {}
+                }
+                if (photoDrop) {
+                    photoDrop.addEventListener('click', function() { photoInput && photoInput.click(); });
+                    photoDrop.addEventListener('dragover', function(e) { e.preventDefault(); photoDrop.classList.add('upload-photo-drop--active'); });
+                    photoDrop.addEventListener('dragleave', function() { photoDrop.classList.remove('upload-photo-drop--active'); });
+                    photoDrop.addEventListener('drop', function(e) { e.preventDefault(); photoDrop.classList.remove('upload-photo-drop--active'); if (e.dataTransfer.files.length) showPhotoPreview(e.dataTransfer.files[0]); });
+                }
+                if (photoInput) photoInput.addEventListener('change', function() { if (photoInput.files.length) showPhotoPreview(photoInput.files[0]); });
+                var photoForm = document.getElementById('upload-photo-form');
+                if (photoForm) photoForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var caption = (document.getElementById('photo-caption') || {}).value || '';
+                    var photoPreviewImg = document.getElementById('upload-photo-preview-img');
+                    var photoData = (photoPreviewImg && photoPreviewImg.src && photoPreviewImg.src.indexOf('data:') === 0) ? photoPreviewImg.src : null;
+                    var author = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You';
+                    var postId = 'cap_' + Date.now();
+                    var post = { id: postId, caption: caption, author: author, createdAt: Date.now(), photoData: photoData, likes: 0, comments: [], shares: 0 };
+                    var posts = [];
+                    try { posts = JSON.parse(localStorage.getItem('nokCaptionPosts') || '[]'); } catch (err) {}
+                    posts.unshift(post);
+                    try { localStorage.setItem('nokCaptionPosts', JSON.stringify(posts)); } catch (err) {}
+                    var successEl = document.getElementById('upload-success');
+                    if (successEl) {
+                        var card = successEl.querySelector('.upload-success__title');
+                        if (card) card.textContent = 'Caption shared!';
+                        successEl.classList.add('upload-success--show');
+                        setTimeout(function() {
+                            successEl.classList.remove('upload-success--show');
+                            window.location.href = 'home.html#captions';
+                        }, 1500);
+                    } else {
+                        window.location.href = 'home.html#captions';
+                    }
+                });
+            }
+
+            var dropZone = document.getElementById('upload-drop-zone');
+            var selectBtn = document.getElementById('upload-select-btn');
+            var progress = document.getElementById('upload-progress');
+            var progressFill = document.getElementById('upload-progress-fill');
+            var preview = document.getElementById('upload-preview');
+            var fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'video/*';
+            fileInput.style.display = 'none';
+            document.body.appendChild(fileInput);
+            function triggerSelect() { fileInput.click(); }
+            selectBtn && selectBtn.addEventListener('click', function(e) { e.stopPropagation(); triggerSelect(); });
+            dropZone && dropZone.addEventListener('click', function(e) { if (e.target !== selectBtn) triggerSelect(); });
+            dropZone && dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('upload-drop-zone--active'); });
+            dropZone && dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('upload-drop-zone--active'); });
+            dropZone && dropZone.addEventListener('drop', function(e) { e.preventDefault(); dropZone.classList.remove('upload-drop-zone--active'); if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
+            fileInput.addEventListener('change', function() { if (fileInput.files.length) handleFile(fileInput.files[0]); });
+            var uploadDuration = 0;
+            var uploadVideoFile = null;
+            function handleFile(file) {
+                if (!file.type.startsWith('video/')) return;
+                uploadVideoFile = file;
+                uploadDuration = 0;
+                var videoEl = document.createElement('video');
+                videoEl.preload = 'metadata';
+                videoEl.onloadedmetadata = function() {
+                    uploadDuration = videoEl.duration;
+                    var shortsNote = document.getElementById('upload-shorts-note');
+                    if (shortsNote) shortsNote.classList.toggle('upload-shorts-note--show', videoEl.duration > 0 && videoEl.duration < 60);
+                    videoEl.src = '';
+                    videoEl.load();
+                };
+                videoEl.onerror = function() { videoEl.src = ''; };
+                videoEl.src = URL.createObjectURL(file);
+                dropZone.style.display = 'none';
+                progress.classList.add('upload-progress--show');
+                var pct = 0;
+                var iv = setInterval(function() {
+                    pct += Math.random() * 15 + 5;
+                    if (pct >= 100) {
+                        pct = 100;
+                        clearInterval(iv);
+                        setTimeout(function() {
+                            progress.classList.remove('upload-progress--show');
+                            preview.classList.add('upload-preview--show');
+                            var prevVideo = document.getElementById('upload-preview-video');
+                            if (prevVideo && uploadVideoFile) {
+                                prevVideo.src = URL.createObjectURL(uploadVideoFile);
+                                prevVideo.load();
+                            }
+                            initPreviewPlayer();
+                            if (prevVideo) {
+                                prevVideo.addEventListener('loadeddata', function onReady() {
+                                    prevVideo.removeEventListener('loadeddata', onReady);
+                                    generateAutoThumbnails(prevVideo);
+                                }, { once: true });
+                            }
+                        }, 500);
+                    }
+                    if (progressFill) progressFill.style.width = pct + '%';
+                    var pt = document.getElementById('upload-progress-pct');
+                    if (pt) pt.textContent = Math.round(pct) + '% Uploading...';
+                }, 300);
+            }
+
+            function formatTime(s) {
+                if (!s || isNaN(s)) return '0:00';
+                var m = Math.floor(s / 60);
+                var sec = Math.floor(s % 60);
+                return m + ':' + (sec < 10 ? '0' : '') + sec;
+            }
+
+            var autoThumbData = { 0: '', 1: '', 2: '' };
+            function generateAutoThumbnails(video) {
+                if (!video || !video.duration || video.duration < 0.5) return;
+                var dur = video.duration;
+                var times = [Math.min(0.5, dur * 0.05), dur * 0.5, Math.max(dur - 0.5, dur * 0.95)];
+                var canvas = document.createElement('canvas');
+                canvas.width = 320;
+                canvas.height = 180;
+                var ctx = canvas.getContext('2d');
+                var idx = 0;
+                var wasPaused = video.paused;
+                video.pause();
+                function captureNext() {
+                    if (idx >= 3) { if (!wasPaused) video.play().catch(function(){}); return; }
+                    var t = times[idx];
+                    video.currentTime = t;
+                    var done = false;
+                    function doCapture() {
+                        if (done) return;
+                        done = true;
+                        try {
+                            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                            autoThumbData[idx] = dataUrl;
+                            var thumbLeft = document.querySelector('.upload-thumb[data-thumb="' + idx + '"] .upload-thumb__img');
+                            var thumbSide = document.querySelector('.upload-thumb-mini[data-sel="' + idx + '"] .upload-thumb-mini__img');
+                            if (thumbLeft) { thumbLeft.style.backgroundImage = 'url(' + dataUrl + ')'; thumbLeft.style.backgroundSize = 'cover'; }
+                            if (thumbSide) { thumbSide.style.backgroundImage = 'url(' + dataUrl + ')'; thumbSide.style.backgroundSize = 'cover'; thumbSide.style.backgroundPosition = 'center'; }
+                        } catch (e) {}
+                        idx++;
+                        captureNext();
+                    }
+                    video.onseeked = doCapture;
+                    setTimeout(doCapture, 300);
+                }
+                captureNext();
+            }
+
+            function initPreviewPlayer() {
+                var prevVideo = document.getElementById('upload-preview-video');
+                var timeEl = preview.querySelector('.upload-preview__time');
+                var progressWrap = document.getElementById('upload-preview-progress');
+                var progressFill = document.getElementById('upload-preview-progress-fill');
+                var playBtn = preview.querySelector('.upload-preview__controls button[aria-label="Play"]');
+                if (!prevVideo) return;
+                prevVideo.addEventListener('timeupdate', function() {
+                    if (timeEl) timeEl.textContent = formatTime(prevVideo.currentTime) + ' / ' + formatTime(prevVideo.duration);
+                    if (progressFill && prevVideo.duration && !isNaN(prevVideo.duration)) progressFill.style.width = (prevVideo.currentTime / prevVideo.duration * 100) + '%';
+                });
+                prevVideo.addEventListener('loadedmetadata', function() {
+                    if (timeEl) timeEl.textContent = '0:00 / ' + formatTime(prevVideo.duration);
+                    if (progressFill) progressFill.style.width = '0%';
+                });
+                if (progressWrap && prevVideo) {
+                    progressWrap.addEventListener('click', function(e) {
+                        var bar = progressWrap.querySelector('.upload-preview__progress-bar');
+                        if (!bar || !prevVideo.duration) return;
+                        var rect = bar.getBoundingClientRect();
+                        var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                        prevVideo.currentTime = pct * prevVideo.duration;
+                        if (progressFill) progressFill.style.width = (pct * 100) + '%';
+                    });
+                }
+                function updatePlayBtn() {
+                    if (!playBtn) return;
+                    if (prevVideo.paused) {
+                        playBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+                        playBtn.setAttribute('aria-label', 'Play');
+                    } else {
+                        playBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+                        playBtn.setAttribute('aria-label', 'Pause');
+                    }
+                }
+                if (playBtn) {
+                    playBtn.addEventListener('click', function() {
+                        if (prevVideo.paused) prevVideo.play();
+                        else prevVideo.pause();
+                    });
+                    prevVideo.addEventListener('play', updatePlayBtn);
+                    prevVideo.addEventListener('pause', updatePlayBtn);
+                }
+                prevVideo.addEventListener('click', function(e) {
+                    if (e.target === prevVideo) {
+                        if (prevVideo.paused) prevVideo.play();
+                        else prevVideo.pause();
+                    }
+                });
+                var volBtn = preview.querySelector('.upload-preview__controls button[aria-label="Volume"]');
+                if (volBtn) volBtn.addEventListener('click', function() {
+                    prevVideo.muted = !prevVideo.muted;
+                    prevVideo.volume = prevVideo.muted ? 0 : 1;
+                });
+                var prevBtn = preview.querySelector('.upload-preview__controls button[aria-label="Previous"]');
+                if (prevBtn) prevBtn.addEventListener('click', function() { prevVideo.currentTime = Math.max(0, prevVideo.currentTime - 10); });
+                var nextBtn = preview.querySelector('.upload-preview__controls button[aria-label="Next"]');
+                if (nextBtn) nextBtn.addEventListener('click', function() { prevVideo.currentTime = Math.min(prevVideo.duration, prevVideo.currentTime + 10); });
+                var fsBtn = preview.querySelector('.upload-preview__controls button[aria-label="Fullscreen"]');
+                if (fsBtn) fsBtn.addEventListener('click', function() {
+                    if (!document.fullscreenElement) preview.requestFullscreen().catch(function(){});
+                    else document.exitFullscreen();
+                });
+                var thumbnavPrev = preview.querySelector('.upload-thumbnav__arrow[aria-label="Previous frame"]');
+                var thumbnavNext = preview.querySelector('.upload-thumbnav__arrow[aria-label="Next frame"]');
+                var thumbnavSet = preview.querySelector('.upload-thumbnav__btn');
+                if (thumbnavPrev) thumbnavPrev.addEventListener('click', function() {
+                    prevVideo.currentTime = Math.max(0, prevVideo.currentTime - 2);
+                });
+                if (thumbnavNext) thumbnavNext.addEventListener('click', function() {
+                    prevVideo.currentTime = Math.min(prevVideo.duration, prevVideo.currentTime + 2);
+                });
+                if (thumbnavSet && prevVideo) thumbnavSet.addEventListener('click', function() {
+                    try {
+                        var canvas = document.createElement('canvas');
+                        canvas.width = 320;
+                        canvas.height = 180;
+                        var ctx = canvas.getContext('2d');
+                        ctx.drawImage(prevVideo, 0, 0, canvas.width, canvas.height);
+                        var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                        var sel = document.querySelector('input[name="thumbnail"]:checked');
+                        var val = sel ? sel.value : '0';
+                        var thumbLeft = document.querySelector('.upload-thumb[data-thumb="' + val + '"]');
+                        var thumbSide = document.querySelector('.upload-thumb-mini[data-sel="' + val + '"]');
+                        if (val === 'custom1' || val === 'custom2' || val === 'custom3') {
+                            var slot = val.replace('custom', '');
+                            customThumbs[slot] = dataUrl;
+                            var imgEl = document.getElementById('upload-thumb-custom-img-' + slot);
+                            var customMain = document.getElementById('upload-thumb-custom-' + slot);
+                            if (imgEl) { imgEl.src = dataUrl; imgEl.style.display = 'block'; }
+                            var placeholder = document.getElementById('upload-thumb-placeholder-' + slot);
+                            if (placeholder) placeholder.style.display = 'none';
+                            var mini = thumbSide ? thumbSide.closest('.upload-thumb-mini') : null;
+                            if (mini) mini.classList.add('upload-thumb-mini--has-img');
+                            if (customMain) {
+                                customMain.style.display = 'block';
+                                var prevImg = customMain.querySelector('.upload-thumb__img-custom, img');
+                                if (prevImg) { prevImg.src = dataUrl; }
+                            }
+                        } else {
+                            var leftImg = thumbLeft ? thumbLeft.querySelector('.upload-thumb__img') : null;
+                            var sideImg = thumbSide ? thumbSide.querySelector('.upload-thumb-mini__img') : null;
+                            if (leftImg) { leftImg.style.backgroundImage = 'url(' + dataUrl + ')'; leftImg.style.backgroundSize = 'cover'; }
+                            if (sideImg) { sideImg.style.backgroundImage = 'url(' + dataUrl + ')'; sideImg.style.backgroundSize = 'cover'; }
+                        }
+                    } catch (e) {}
+                });
+                document.querySelectorAll('.upload-thumb__set-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var card = this.closest('.upload-thumb');
+                        if (!card || !prevVideo) return;
+                        var val = card.dataset.thumb;
+                        var radio = document.querySelector('input[name="thumbnail"][value="' + val + '"]');
+                        if (radio) { radio.checked = true; document.querySelectorAll('.upload-thumb-mini').forEach(function(m) { m.classList.remove('upload-thumb-mini--sel'); }); var m = document.querySelector('.upload-thumb-mini[data-sel="' + val + '"]'); if (m) m.classList.add('upload-thumb-mini--sel'); document.querySelectorAll('.upload-thumb').forEach(function(x) { x.classList.remove('upload-thumb--selected'); }); card.classList.add('upload-thumb--selected'); }
+                        try {
+                            var canvas = document.createElement('canvas');
+                            canvas.width = 320;
+                            canvas.height = 180;
+                            var ctx = canvas.getContext('2d');
+                            ctx.drawImage(prevVideo, 0, 0, canvas.width, canvas.height);
+                            var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                            var thumbLeft = document.querySelector('.upload-thumb[data-thumb="' + val + '"]');
+                            var thumbSide = document.querySelector('.upload-thumb-mini[data-sel="' + val + '"]');
+                            if (val === 'custom1' || val === 'custom2' || val === 'custom3') {
+                                var slot = val.replace('custom', '');
+                                customThumbs[slot] = dataUrl;
+                                var imgEl = document.getElementById('upload-thumb-custom-img-' + slot);
+                                var customMain = document.getElementById('upload-thumb-custom-' + slot);
+                                if (imgEl) { imgEl.src = dataUrl; imgEl.style.display = 'block'; }
+                                var placeholder = document.getElementById('upload-thumb-placeholder-' + slot);
+                                if (placeholder) placeholder.style.display = 'none';
+                                if (thumbSide) thumbSide.classList.add('upload-thumb-mini--has-img');
+                                if (customMain) { customMain.style.display = 'block'; var prevImg = customMain.querySelector('.upload-thumb__img-custom, img'); if (prevImg) prevImg.src = dataUrl; }
+                            } else {
+                                var leftImg = thumbLeft ? thumbLeft.querySelector('.upload-thumb__img') : null;
+                                var sideImg = thumbSide ? thumbSide.querySelector('.upload-thumb-mini__img') : null;
+                                if (leftImg) { leftImg.style.backgroundImage = 'url(' + dataUrl + ')'; leftImg.style.backgroundSize = 'cover'; }
+                                if (sideImg) { sideImg.style.backgroundImage = 'url(' + dataUrl + ')'; sideImg.style.backgroundSize = 'cover'; }
+                            }
+                        } catch (err) {}
+                    });
+                });
+            }
+
+            var customThumbs = { 1: '', 2: '', 3: '' };
+            document.querySelectorAll('.upload-thumb').forEach(function(t) {
+                t.addEventListener('click', function(e) { if (e.target.closest('.upload-select-btn')) return;
+                    document.querySelectorAll('.upload-thumb').forEach(function(x) { x.classList.remove('upload-thumb--selected'); });
+                    this.classList.add('upload-thumb--selected');
+                    document.querySelectorAll('.upload-thumb-mini').forEach(function(m) { m.classList.remove('upload-thumb-mini--sel'); });
+                    document.querySelectorAll('.upload-thumb-mini-wrap input').forEach(function(r) { r.checked = false; });
+                    var sel = document.querySelector('.upload-thumb-mini[data-sel="' + this.dataset.thumb + '"]');
+                    if (sel) { sel.classList.add('upload-thumb-mini--sel'); var wrap = sel.closest('.upload-thumb-mini-wrap'); if (wrap) { var r = wrap.querySelector('input'); if (r) r.checked = true; } }
+                });
+            });
+            document.querySelectorAll('.upload-thumb-mini-wrap').forEach(function(wrap) {
+                wrap.addEventListener('click', function() {
+                    var r = this.querySelector('input');
+                    if (!r) return;
+                    r.checked = true;
+                    document.querySelectorAll('.upload-thumb-mini').forEach(function(m) { m.classList.remove('upload-thumb-mini--sel'); });
+                    var mini = this.querySelector('.upload-thumb-mini');
+                    if (mini) mini.classList.add('upload-thumb-mini--sel');
+                    document.querySelectorAll('.upload-thumb').forEach(function(t) { t.classList.remove('upload-thumb--selected'); });
+                    var t = document.querySelector('.upload-thumb[data-thumb="' + r.value + '"]');
+                    if (t) {
+                        t.classList.add('upload-thumb--selected');
+                        if ((r.value === 'custom1' && customThumbs[1]) || (r.value === 'custom2' && customThumbs[2]) || (r.value === 'custom3' && customThumbs[3])) t.style.display = 'block';
+                    }
+                });
+            });
+
+            function setupCustomThumbUpload(slot) {
+                var inp = document.getElementById('upload-thumbnail-input-' + slot);
+                var btn = document.getElementById('upload-thumbnail-btn-' + slot);
+                var img = document.getElementById('upload-thumb-custom-img-' + slot);
+                var label = document.getElementById('upload-thumb-custom-label-' + slot);
+                var placeholder = document.getElementById('upload-thumb-placeholder-' + slot);
+                if (!inp || !btn) return;
+                btn.addEventListener('click', function() { inp.click(); });
+                inp.addEventListener('change', function() {
+                    var f = this.files[0];
+                    if (!f || !f.type.startsWith('image/')) return;
+                    var r = new FileReader();
+                    r.onload = function() {
+                        var data = r.result;
+                        customThumbs[slot] = data;
+                        if (img) { img.src = data; img.style.display = 'block'; }
+                        if (placeholder) placeholder.style.display = 'none';
+                        var mini = label ? label.querySelector('.upload-thumb-mini') : null;
+                        if (mini) mini.classList.add('upload-thumb-mini--has-img');
+                        if (label) {
+                            var radio = label.querySelector('input');
+                            if (radio) { radio.checked = true; document.querySelectorAll('.upload-thumb-mini').forEach(function(m) { m.classList.remove('upload-thumb-mini--sel'); }); var m = label.querySelector('.upload-thumb-mini'); if (m) m.classList.add('upload-thumb-mini--sel'); }
+                        }
+                        var customMain = document.getElementById('upload-thumb-custom-' + slot);
+                        if (customMain) {
+                            customMain.style.display = 'block';
+                            var prevImg = customMain.querySelector('.upload-thumb__img-custom, img');
+                            if (prevImg) { prevImg.src = data; prevImg.style.backgroundImage = ''; }
+                            document.querySelectorAll('.upload-thumb').forEach(function(t) { t.classList.remove('upload-thumb--selected'); });
+                            customMain.classList.add('upload-thumb--selected');
+                        }
+                    };
+                    r.readAsDataURL(f);
+                    this.value = '';
+                });
+            }
+            setupCustomThumbUpload(1);
+            setupCustomThumbUpload(2);
+            setupCustomThumbUpload(3);
+            document.querySelectorAll('input[name="visibility"]').forEach(function(r) {
+                r.addEventListener('change', function() {
+                    var s = document.getElementById('upload-schedule');
+                    if (s) s.classList.toggle('upload-schedule--show', this.value === 'schedule');
+                });
+            });
+            document.getElementById('monetize-toggle').addEventListener('click', function() {
+                this.classList.toggle('upload-toggle__switch--on');
+                var state = document.getElementById('monetize-state');
+                if (state) state.textContent = this.classList.contains('upload-toggle__switch--on') ? 'ON' : 'OFF';
+            });
+            document.getElementById('video-title').addEventListener('input', function() {
+                var c = document.getElementById('title-counter');
+                if (c) c.textContent = this.value.length + '/100';
+            });
+            document.getElementById('title-counter').textContent = '0/100';
+
+            document.querySelectorAll('input[name="video-type"]').forEach(function(r) {
+                r.addEventListener('change', function() {
+                    var shortsNote = document.getElementById('upload-shorts-note');
+                    if (shortsNote) shortsNote.classList.toggle('upload-shorts-note--show', this.value === 'shorts' || (this.value === 'auto' && uploadDuration > 0 && uploadDuration < 60));
+                });
+            });
+            function getVideoType() {
+                var radio = document.querySelector('input[name="video-type"]:checked');
+                var val = radio ? radio.value : 'auto';
+                if (val === 'shorts') return 'shorts';
+                if (val === 'long') return 'long';
+                if (val === 'auto' && uploadDuration > 0 && uploadDuration < 60) return 'shorts';
+                return 'long';
+            }
+
+            function handleUploadAction(v, action, cardEl) {
+                var allVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
+                var allShorts = JSON.parse(localStorage.getItem('nokShortsVideos') || '[]');
+                var isShorts = (v.isShorts === true) || allShorts.some(function(s) { return s.id === v.id; });
+                if (isShorts) {
+                    if (action === 'edit') {
+                        var newTitle = prompt('Edit Short title:', v.title || 'Shorts');
+                        if (newTitle !== null && newTitle.trim()) {
+                            var idx = allShorts.findIndex(function(x) { return x.id === v.id; });
+                            if (idx >= 0) { allShorts[idx].title = newTitle.trim(); localStorage.setItem('nokShortsVideos', JSON.stringify(allShorts)); }
+                            renderUploads();
+                        }
+                    } else if (action === 'delete') {
+                        if (confirm('Delete this Short?')) {
+                            allShorts = allShorts.filter(function(x) { return x.id !== v.id; });
+                            localStorage.setItem('nokShortsVideos', JSON.stringify(allShorts));
+                            if (window.nokVideoDB) nokVideoDB.delete(v.id).catch(function(){});
+                            renderUploads();
+                        }
+                    } else if (action === 'private' || action === 'unlisted' || action === 'public') {
+                        var idx = allShorts.findIndex(function(x) { return x.id === v.id; });
+                        if (idx >= 0) { allShorts[idx].visibility = action; localStorage.setItem('nokShortsVideos', JSON.stringify(allShorts)); }
+                        renderUploads();
+                    }
+                    return;
+                }
+                if (action === 'edit') {
+                    var newTitle = prompt('Edit video title:', v.title || 'Video');
+                    if (newTitle !== null && newTitle.trim()) {
+                        var idx = allVideos.findIndex(function(x) { return x.id === v.id; });
+                        if (idx >= 0) { allVideos[idx].title = newTitle.trim(); localStorage.setItem('nokUserVideos', JSON.stringify(allVideos)); }
+                        userVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
+                        renderUploads();
+                    }
+                } else if (action === 'delete') {
+                    if (confirm('Delete this video?')) {
+                        allVideos = allVideos.filter(function(x) { return x.id !== v.id; });
+                        localStorage.setItem('nokUserVideos', JSON.stringify(allVideos));
+                        if (window.nokVideoDB) nokVideoDB.delete(v.id).catch(function(){});
+                        userVideos = allVideos;
+                        renderUploads();
+                    }
+                } else if (action === 'private' || action === 'unlisted' || action === 'public') {
+                    var idx = allVideos.findIndex(function(x) { return x.id === v.id; });
+                    if (idx >= 0) { allVideos[idx].visibility = action; localStorage.setItem('nokUserVideos', JSON.stringify(allVideos)); }
+                    userVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
+                    renderUploads();
+                }
+            }
+            function renderUploads() {
+                var list = document.getElementById('upload-your-list');
+                var sortVal = (document.getElementById('upload-sort') || {}).value || 'newest';
+                if (!list) return;
+                var videos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
+                var shortsIds = {};
+                var shortsList = JSON.parse(localStorage.getItem('nokShortsVideos') || '[]');
+                shortsList.forEach(function(s) { shortsIds[s.id] = s; });
+                function parseViews(v) {
+                    if (!v) return 0;
+                    var m = (v + '').match(/([\d.]+)\s*K?/i);
+                    if (!m) return 0;
+                    var n = parseFloat(m[1]);
+                    return (v + '').toLowerCase().indexOf('k') >= 0 ? n * 1000 : n;
+                }
+                var combined = videos.filter(function(v) { return !shortsIds[v.id]; }).map(function(v) { return { v: v, isShorts: false }; });
+                shortsList.forEach(function(s) { combined.push({ v: s, isShorts: true }); });
+                var sorted = combined.slice();
+                if (sortVal === 'oldest') sorted.sort(function(a, b) { return (a.v.createdAt || 0) - (b.v.createdAt || 0); });
+                else if (sortVal === 'newest') sorted.sort(function(a, b) { return (b.v.createdAt || b.v.id || 0) - (a.v.createdAt || a.v.id || 0); });
+                else if (sortVal === 'views') sorted.sort(function(a, b) { return parseViews(b.v.views || b.v.likes) - parseViews(a.v.views || a.v.likes); });
+                else if (sortVal === 'title') sorted.sort(function(a, b) { return (a.v.title || '').localeCompare(b.v.title || ''); });
+                list.innerHTML = '';
+                if (!sorted.length) { list.innerHTML = '<p style="font-size:0.9rem;color:rgba(255,255,255,0.5)">No uploads yet</p>'; return; }
+                sorted.slice(0, 20).forEach(function(item) {
+                    var v = item.v;
+                    var isShorts = item.isShorts;
+                    var href = isShorts ? ('shorts.html?id=' + encodeURIComponent(v.id)) : ('video.html?id=' + encodeURIComponent(v.id));
+                    var card = document.createElement('a');
+                    card.href = href;
+                    card.className = 'upload-uploads__card';
+                    var thumbClass = v.thumbData ? '' : ' upload-uploads__thumb--' + (v.thumb || 'mountains');
+                    var thumbStyle = v.thumbData ? 'background-image:url(' + v.thumbData.replace(/"/g, '&quot;') + ');background-size:cover;background-position:center;background-repeat:no-repeat' : '';
+                    var badge = isShorts ? '<span class="upload-uploads__badge upload-uploads__badge--shorts">Shorts</span>' : '<span class="upload-uploads__badge upload-uploads__badge--long">Long</span>';
+                    var vis = v.visibility || 'public';
+                    var menuSvg = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="6" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="18" r="1.5"/></svg>';
+                    var check = ' <span style="color:#22c55e">✓</span>';
+                    var meta = isShorts ? ((v.channel || '') + ' • ' + (v.likes || '0') + ' likes' + (vis !== 'public' ? ' • ' + vis : '')) : ((v.channel || '') + ' • ' + (v.views || '0 views') + (vis !== 'public' ? ' • ' + vis : ''));
+                    card.innerHTML = '<div class="upload-uploads__thumb-wrap"><div class="upload-uploads__thumb' + thumbClass + '" style="' + thumbStyle + '"></div><div class="upload-uploads__play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div><div class="upload-uploads__info"><div class="upload-uploads__title-row"><span class="upload-uploads__card-title">' + (v.title || (isShorts ? 'Shorts' : 'Video')) + '</span><button type="button" class="upload-uploads__menu-btn" aria-label="Options">' + menuSvg + '</button><div class="upload-uploads__dropdown"><button type="button" class="upload-uploads__dropdown-item" data-action="edit">Edit title</button><button type="button" class="upload-uploads__dropdown-item" data-action="public">Public' + (vis === 'public' ? check : '') + '</button><button type="button" class="upload-uploads__dropdown-item" data-action="unlisted">Unlisted' + (vis === 'unlisted' ? check : '') + '</button><button type="button" class="upload-uploads__dropdown-item" data-action="private">Private' + (vis === 'private' ? check : '') + '</button><button type="button" class="upload-uploads__dropdown-item upload-uploads__dropdown-item--danger" data-action="delete">Delete</button></div></div><div class="upload-uploads__card-meta">' + meta + '</div>' + badge + '</div>';
+                    list.appendChild(card);
+                    var menuBtn = card.querySelector('.upload-uploads__menu-btn');
+                    var dropdown = card.querySelector('.upload-uploads__dropdown');
+                    menuBtn.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); dropdown.classList.toggle('upload-uploads__dropdown--open'); });
+                    card.querySelectorAll('.upload-uploads__dropdown-item').forEach(function(btn) {
+                        btn.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); dropdown.classList.remove('upload-uploads__dropdown--open'); handleUploadAction(v, btn.dataset.action, card); });
+                    });
+                    if (window.nokVideoDB) {
+                        nokVideoDB.get(v.id).then(function(blob) {
+                            if (blob) {
+                                var wrap = card.querySelector('.upload-uploads__thumb-wrap');
+                                var vid = document.createElement('video');
+                                vid.src = URL.createObjectURL(blob);
+                                vid.muted = true;
+                                vid.loop = true;
+                                vid.playsInline = true;
+                                vid.style.pointerEvents = 'none';
+                                wrap.insertBefore(vid, wrap.firstChild);
+                                wrap.addEventListener('mouseenter', function() { vid.play().catch(function(){}); });
+                                wrap.addEventListener('mouseleave', function() { vid.pause(); vid.currentTime = 0; });
+                            }
+                        }).catch(function(){});
+                    }
+                });
+            }
+            renderUploads();
+            var sortSelect = document.getElementById('upload-sort');
+            if (sortSelect) sortSelect.addEventListener('change', renderUploads);
+            document.addEventListener('click', function() {
+                document.querySelectorAll('.upload-uploads__dropdown--open').forEach(function(d) { d.classList.remove('upload-uploads__dropdown--open'); });
+            });
+
+            var form = document.getElementById('upload-form');
+            var publishBtn = document.getElementById('upload-publish-btn');
+            var successOverlay = document.getElementById('upload-success');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var title = document.getElementById('video-title').value.trim();
+                if (!title) { document.getElementById('video-title').focus(); return; }
+                publishBtn.disabled = true;
+                publishBtn.innerHTML = '<span class="upload-spinner"></span> Publishing...';
+                var channel = savedChannel || (userVideos[0] && userVideos[0].channel) || 'User';
+                var id = 'user_' + Date.now();
+                var thumbs = ['mountains','waterfall','city','wild','portrait','night','hike','beach'];
+                var allVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
+                var thumb = thumbs[allVideos.length % thumbs.length];
+                var thumbSel = document.querySelector('input[name="thumbnail"]:checked');
+                var thumbVal = thumbSel ? thumbSel.value : '';
+                var thumbData = (thumbVal === 'custom1' && customThumbs[1]) ? customThumbs[1] : (thumbVal === 'custom2' && customThumbs[2]) ? customThumbs[2] : (thumbVal === 'custom3' && customThumbs[3]) ? customThumbs[3] : (thumbVal === '0' && autoThumbData[0]) ? autoThumbData[0] : (thumbVal === '1' && autoThumbData[1]) ? autoThumbData[1] : (thumbVal === '2' && autoThumbData[2]) ? autoThumbData[2] : '';
+                var vfile = uploadVideoFile;
+                var asShorts = getVideoType() === 'shorts';
+                setTimeout(function() {
+                    if (asShorts) {
+                        /* Short video lokano: metadata localStorage e */
+                        var allShorts = JSON.parse(localStorage.getItem('nokShortsVideos') || '[]');
+                        allShorts.unshift({ id: id, title: title, channel: channel, likes: '0', thumb: thumb, thumbData: thumbData, createdAt: Date.now() });
+                        localStorage.setItem('nokShortsVideos', JSON.stringify(allShorts));
+                    } else {
+                        allVideos.unshift({ id: id, title: title, channel: channel, views: '0 views • Just now', thumb: thumb, thumbData: thumbData, isShorts: false });
+                        localStorage.setItem('nokUserVideos', JSON.stringify(allVideos));
+                    }
+                    localStorage.setItem('nokUserChannel', channel);
+                    successOverlay.classList.add('upload-success--show');
+                    document.querySelector('.upload-success__text').textContent = asShorts ? 'Your Short is now live on NOK Super' : 'Your video is now live on NOK Super';
+                    var redirectUrl = asShorts ? ('shorts.html?id=' + encodeURIComponent(id)) : ('video.html?id=' + encodeURIComponent(id));
+                    var doRedirect = function() { setTimeout(function() { window.location.href = redirectUrl; }, 1500); };
+                    /* Short video file lokano: blob IndexedDB te (nok-video-db.js) */
+                    if (vfile && window.nokVideoDB) nokVideoDB.save(id, vfile).then(doRedirect).catch(doRedirect);
+                    else doRedirect();
+                }, 1200);
+            });
+
+            // Chat overlay: handled by nok-chat-overlay.js (same card on all pages)
+            function updateChatView() { var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn'); var mobileVerified = localStorage.getItem('nokMobileVerified') === 'yes'; var chatLogin = document.getElementById('chat-login'); var chatContent = document.getElementById('chat-content'); var chatStepLogin = document.getElementById('chat-step-login'); var chatStepVerify = document.getElementById('chat-step-verify'); if (chatLogin) chatLogin.style.display = (!isLoggedIn || !mobileVerified) ? 'flex' : 'none'; if (chatContent) chatContent.style.display = (isLoggedIn && mobileVerified) ? 'flex' : 'none'; if (chatStepLogin) chatStepLogin.style.display = !isLoggedIn ? 'block' : 'none'; if (chatStepVerify) { chatStepVerify.style.display = (isLoggedIn && !mobileVerified) ? 'block' : 'none'; if (isLoggedIn && !mobileVerified) { document.getElementById('chat-verify-form').style.display = ''; document.getElementById('chat-otp-step').style.display = 'none'; } } }
+            updateChatView();
+            document.getElementById('chat-verify-form').addEventListener('submit', function(e) { e.preventDefault(); this.style.display = 'none'; document.getElementById('chat-otp-step').style.display = 'block'; });
+            document.getElementById('chat-verify-otp').addEventListener('click', function() { var d = document.querySelectorAll('.chat-login__otp-digit'); var code = Array.from(d).map(function(x) { return x.value; }).join(''); if (code.length === 6) { localStorage.setItem('nokMobileVerified', 'yes'); updateChatView(); } });
+            var od = document.querySelectorAll('.chat-login__otp-digit'); od.forEach(function(inp, i) { inp.addEventListener('input', function() { if (this.value.length === 1 && i < od.length - 1) od[i + 1].focus(); }); inp.addEventListener('keydown', function(e) { if (e.key === 'Backspace' && !this.value && i > 0) od[i - 1].focus(); }); });
+            document.querySelectorAll('.chat-overlay__card a[href="#"]').forEach(function(a) { a.addEventListener('click', function(e) { e.preventDefault(); }); });
+        })();
+    </script>
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

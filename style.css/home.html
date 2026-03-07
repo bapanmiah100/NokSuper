@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOK Super - Home Page</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <script src="nok-video-db.js"></script>
+    <style>
+        .home-body .home-sidebar--right { min-height: 0; overflow: hidden; max-height: none; display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+        .home-captions-sidebar { margin-top: 0; width: 100%; flex: 1; display: flex; flex-direction: column; min-height: 120px; overflow: hidden; }
+        .home-captions-sidebar__title { font-size: 1.05rem; font-weight: 700; color: rgba(255,255,255,0.9); margin: 0 0 8px 0; padding: 0; flex-shrink: 0; }
+        .home-captions-mini-list { display: flex; flex-direction: column; gap: 14px; flex: 1; min-height: 0; max-height: calc(100vh - 220px); overflow-y: auto; overflow-x: hidden; width: 100%; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; }
+        .home-captions-mini-list::-webkit-scrollbar { width: 6px; }
+        .home-captions-mini-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.06); border-radius: 3px; }
+        .home-captions-mini-list::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.5); border-radius: 3px; }
+        .home-captions-mini-list::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.7); }
+        .home-captions-mini-list { scrollbar-width: thin; scrollbar-color: rgba(139,92,246,0.5) rgba(255,255,255,0.06); }
+        .home-caption-mini-card { display: block; width: 100%; box-sizing: border-box; background: rgba(28,28,45,0.7); border: 1px solid rgba(139,92,246,0.2); border-radius: 16px; padding: 16px 18px; text-decoration: none; color: inherit; transition: border-color 0.2s, background 0.2s; }
+        .home-caption-mini-card:hover { border-color: rgba(139,92,246,0.45); background: rgba(28,28,45,0.9); }
+        .home-caption-mini-card__row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .home-caption-mini-card__avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; font-weight: 700; flex-shrink: 0; overflow: hidden; }
+        .home-caption-mini-card__avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .home-caption-mini-card__author { font-size: 0.95rem; font-weight: 600; color: #fff; }
+        .home-caption-mini-card__text { font-size: 0.9rem; color: rgba(255,255,255,0.85); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 10px; }
+        .home-caption-mini-card__thumb { width: 100%; min-height: 140px; max-height: 280px; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.3); margin-bottom: 12px; display: flex; align-items: center; justify-content: center; }
+        .home-caption-mini-card__thumb img { width: 100%; height: auto; max-height: 280px; object-fit: contain; display: block; vertical-align: middle; }
+        .home-caption-mini-card__actions { display: flex; align-items: center; gap: 16px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 8px; }
+        .home-caption-mini-card__actions span { font-size: 0.85rem; color: rgba(255,255,255,0.7); display: inline-flex; align-items: center; gap: 5px; }
+        .home-caption-mini-card__actions .cap-like { color: #f43f5e; }
+        .home-caption-mini-card__actions .cap-comment { color: #a78bfa; }
+        .home-caption-mini-card__actions .cap-share { color: #eab308; }
+        .home-caption-mini-card__meta { font-size: 0.82rem; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 14px; }
+        .home-caption-mini-card__meta span { display: inline-flex; align-items: center; gap: 5px; }
+    </style>
+</head>
+<body class="home-body has-bottom-nav">
+    <div class="home-layout">
+        <div class="bg"></div>
+
+        <!-- Top header -->
+        <header class="long-video__header">
+            <div class="long-video__header-left">
+                <button type="button" class="long-video__menu" id="header-menu-btn" aria-label="Menu" title="Menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <a href="home.html" class="long-video__logo">
+                    <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+                </a>
+            </div>
+            <div class="long-video__search">
+                <div class="home-search">
+                    <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" class="home-search__input" placeholder="Search">
+                    <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+                </div>
+            </div>
+            <div class="long-video__header-right">
+                <button type="button" class="long-video__header-icon" id="home-notification-btn" aria-label="Notifications" title="Notifications (click to turn off/on)">
+                    <span class="long-video__icon-bell-wrap"><svg class="long-video__icon-bell" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+                    <span class="long-video__icon-bell-off-wrap" style="display:none"><svg class="long-video__icon-bell-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="1" y1="1" x2="23" y2="23"/></svg></span>
+                </button>
+                <a href="channel.html" class="long-video__profile-wrap" id="home-profile-wrap" style="display:none;text-decoration:none;color:inherit;" title="Channel">
+                    <div class="long-video__avatar" id="home-avatar">AZ</div>
+                </a>
+            </div>
+        </header>
+
+        <!-- Menu drawer -->
+        <div class="header-drawer-backdrop" id="header-drawer-backdrop" aria-hidden="true"></div>
+        <aside class="header-drawer" id="header-drawer" aria-label="Main menu" aria-hidden="true">
+            <div class="header-drawer__head">
+                <span class="header-drawer__title">Menu</span>
+                <button type="button" class="header-drawer__close" id="header-drawer-close" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+            <nav class="header-drawer__nav">
+                <a href="home.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+                <a href="shorts.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+                <a href="studio.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span><span>Studio</span></a>
+                <a href="library.html#watch-later" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Watch later</span></a>
+                <a href="library.html#saved" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span><span>Saved videos</span></a>
+                <a href="library.html#library-files" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span><span>Your files</span></a>
+                <a href="upload.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+                <div class="header-drawer__divider"></div>
+                <a href="settings.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+            </nav>
+        </aside>
+
+        <div class="home-below">
+            <div class="home-center">
+                <div class="home-main">
+                    <!-- Main feed -->
+                    <main class="home-feed">
+                        <div class="home-trending-btns">
+                            <button type="button" class="home-trending-btn home-trending-btn--active">Trending</button>
+                            <button type="button" class="home-trending-btn">Music</button>
+                            <button type="button" class="home-trending-btn">Gaming</button>
+                            <button type="button" class="home-trending-btn">Tech</button>
+                            <button type="button" class="home-trending-btn">Live</button>
+                        </div>
+                        <div class="home-feed-blocks" id="home-feed-blocks"></div>
+                    </main>
+
+                    <!-- Right Sidebar: What's on your mind? + Caption small cards -->
+                    <aside class="home-sidebar home-sidebar--right">
+                        <div class="home-right__quick-post">
+                            <span class="home-right__quick-post-avatar">Y</span>
+                            <a href="upload.html?type=photo" class="home-right__quick-post-input" title="Caption share">What's on your mind?</a>
+                            <button type="button" class="home-right__quick-post-photo" id="home-quick-photo-btn" title="Photo">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                                <span>Photo</span>
+                            </button>
+                            <input type="file" id="home-quick-photo-input" accept="image/*" style="display:none">
+                        </div>
+                        <div class="home-captions-sidebar" id="home-captions-sidebar">
+                            <div class="home-captions-sidebar__title">Captions</div>
+                            <div class="home-captions-mini-list" id="home-captions-list"></div>
+                        </div>
+                    </aside>
+                </div>
+
+                <!-- Bottom nav -->
+                <header class="home-bottom-header home-bottom-header--fixed">
+                    <a href="home.html" class="home-bottom-header__item home-bottom-header__item--active">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        <span>Home</span>
+                    </a>
+                    <a href="shorts.html" class="home-bottom-header__item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        <span>Shorts</span>
+                    </a>
+                    <a href="upload.html" class="home-bottom-header__item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        <span>Upload</span>
+                    </a>
+                    <a href="#" class="home-bottom-header__item chat-trigger">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <span>Chats</span>
+                    </a>
+                    <a href="settings.html" class="home-bottom-header__item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <span>Settings</span>
+                    </a>
+                </header>
+                <nav class="home-bottom-nav">
+                    <a href="home.html" class="home-bottom-nav__item home-bottom-nav__item--active">
+                        <span class="home-bottom-nav__icon home-bottom-nav__icon--purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+                        <span>Home</span>
+                    </a>
+                    <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+                    <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+                    <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+                    <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Chat overlay -->
+        <div class="chat-overlay" id="chat-overlay" aria-hidden="true">
+            <div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div>
+            <div class="chat-overlay__card">
+                <div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div>
+                <header class="nok-chat__header">
+                    <a href="home.html" class="nok-chat__brand">
+                        <span class="nok-chat__logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                        <span class="nok-chat__logo-text">NOK Chat</span>
+                    </a>
+                    <div class="nok-chat__actions">
+                        <button type="button" class="nok-chat__action" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+                        <button type="button" class="nok-chat__action nok-chat__action--badge" aria-label="Notifications" data-badge="1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                        <button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize" title="Full screen"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><svg class="chat-resize-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                        <div class="nok-chat__menu-wrap">
+                            <button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+                            <div class="nok-chat__menu" id="chat-menu">
+                                <button type="button" class="nok-chat__menu-item">New chat</button>
+                                <button type="button" class="nok-chat__menu-item">New group</button>
+                                <a href="settings.html" class="nok-chat__menu-item">Settings</a>
+                                <button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="chat-login" id="chat-login">
+                    <div class="chat-login__inner chat-login__step-login" id="chat-step-login">
+                        <h3 class="chat-login__title">Log in to Chat</h3>
+                        <p class="chat-login__sub">Sign in to start chatting with your subscriptions</p>
+                        <a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a>
+                        <p class="chat-login__legal">Don't have an account? <a href="signup.html" class="chat-login__link">Sign Up</a></p>
+                    </div>
+                    <div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none">
+                        <h3 class="chat-login__title">Verify Mobile Number</h3>
+                        <p class="chat-login__sub">Verify your mobile number to use Chat</p>
+                        <form class="chat-login__form" id="chat-verify-form">
+                            <div class="chat-login__phone-row">
+                                <select id="chat-verify-country" class="chat-login__select"><option value="880">+880 BD</option><option value="91">+91 IN</option><option value="1">+1 US</option><option value="44">+44 UK</option></select>
+                                <input type="tel" id="chat-verify-phone" class="chat-login__input chat-login__input--phone" placeholder="Mobile number" required>
+                            </div>
+                            <button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button>
+                        </form>
+                        <div id="chat-otp-step" style="display:none">
+                            <p class="chat-login__sub" style="margin-bottom:12px">Enter 6-digit code sent to your number</p>
+                            <div class="chat-login__otp-inputs">
+                                <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                                <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                                <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                                <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                                <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                                <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            </div>
+                            <button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-content" id="chat-content">
+                    <nav class="nok-chat__tabs">
+                        <button type="button" class="nok-chat__tab">Status</button>
+                        <button type="button" class="nok-chat__tab">Groups</button>
+                        <button type="button" class="nok-chat__tab nok-chat__tab--active">Updates</button>
+                        <button type="button" class="nok-chat__tab">Contacts</button>
+                    </nav>
+                    <a href="#" class="nok-chat__archived">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+                        <span>Archived Chats</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                    <div class="nok-chat__list">
+                        <a href="#" class="nok-chat__item"><span class="nok-chat__avatar nok-chat__avatar--verified">AR</span><div class="nok-chat__info"><span class="nok-chat__name">Amella Roy</span><span class="nok-chat__preview">Typing...</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--blue"></span>1h ago</span></a>
+                        <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AN</span><div class="nok-chat__info"><span class="nok-chat__name">Ayesha Noor</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">11:36 AM</span></a>
+                        <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">SD</span><div class="nok-chat__info"><span class="nok-chat__name">Sandeep Das</span><span class="nok-chat__preview">Catch you later!</span></div><span class="nok-chat__meta">20 min ago</span></a>
+                        <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">TG</span><div class="nok-chat__info"><span class="nok-chat__name">Tanisha Gupta</span><span class="nok-chat__preview">Missed voice call</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--yellow"></span>1 hour ago</span></a>
+                        <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">RK</span><div class="nok-chat__info"><span class="nok-chat__name">Rohit Kumar</span><span class="nok-chat__preview">Hey what's up?</span></div><span class="nok-chat__meta">11 hours ago</span></a>
+                        <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">LA</span><div class="nok-chat__info"><span class="nok-chat__name">Lucas Ahmed</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">Yesterday</span></a>
+                        <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">PD</span><div class="nok-chat__info"><span class="nok-chat__name">Priya Das</span><span class="nok-chat__preview">Okay, thanks!</span></div><span class="nok-chat__meta">Yesterday</span></a>
+                        <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">J</span><div class="nok-chat__info"><span class="nok-chat__name">Jonathen</span><span class="nok-chat__preview">Sure, see you</span></div><span class="nok-chat__meta">Yesterday</span></a>
+                    </div>
+                </div>
+                <div class="chat-overlay__resize-handle" id="chat-resize-handle" aria-label="Resize"></div>
+                <nav class="nok-chat__bottom">
+                    <a href="home.html" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+                    <a href="#" class="nok-chat__bottom-item nok-chat__bottom-item--active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Chat</span></a>
+                    <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Call</span></a>
+                    <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="3"/><path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855"/></svg><span>You</span></a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            function runHomeInit() {
+                var profileWrap = document.getElementById('home-profile-wrap');
+                var authBtns = document.getElementById('home-auth-btns');
+                var chatLogin = document.getElementById('chat-login');
+                var chatContent = document.getElementById('chat-content');
+                var chatStepLogin = document.getElementById('chat-step-login');
+                var chatStepVerify = document.getElementById('chat-step-verify');
+                var channelLabel = document.getElementById('home-channel-label');
+                function updateAuthView() {
+                    var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+                    var mobileVerified = localStorage.getItem('nokMobileVerified') === 'yes';
+                    if (profileWrap) profileWrap.style.display = isLoggedIn ? 'flex' : 'none';
+                    if (authBtns) authBtns.style.display = isLoggedIn ? 'none' : 'flex';
+                    if (chatLogin) chatLogin.style.display = (!isLoggedIn || !mobileVerified) ? 'flex' : 'none';
+                    if (chatContent) chatContent.style.display = (isLoggedIn && mobileVerified) ? 'flex' : 'none';
+                    if (chatStepLogin) chatStepLogin.style.display = !isLoggedIn ? 'block' : 'none';
+                    if (chatStepVerify) {
+                        chatStepVerify.style.display = (isLoggedIn && !mobileVerified) ? 'block' : 'none';
+                        if (isLoggedIn && !mobileVerified) {
+                            var cf = document.getElementById('chat-verify-form');
+                            if (cf) cf.style.display = '';
+                            var otpStep = document.getElementById('chat-otp-step');
+                            if (otpStep) otpStep.style.display = 'none';
+                            document.querySelectorAll('.chat-login__otp-digit').forEach(function(d) { d.value = ''; });
+                        }
+                    }
+                    if (channelLabel) {
+                        if (isLoggedIn) { var chan = localStorage.getItem('nokUserChannel'); channelLabel.textContent = chan || 'Upload'; }
+                        else channelLabel.textContent = 'Upload';
+                    }
+                    var homeAvatar = document.getElementById('home-avatar');
+                    if (homeAvatar && isLoggedIn) {
+                        var name = (localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You').toString().trim();
+                        var initial = name ? name.charAt(0).toUpperCase() : '?';
+                        var photoUrl = localStorage.getItem('nokUserPhotoUrl') || '';
+                        if (photoUrl) homeAvatar.innerHTML = '<img src="' + photoUrl.replace(/"/g, '&quot;') + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
+                        else homeAvatar.textContent = initial;
+                    }
+                }
+                updateAuthView();
+                window.addEventListener('pageshow', function() { updateAuthView(); });
+                var chatVerifyForm = document.getElementById('chat-verify-form');
+                if (chatVerifyForm) chatVerifyForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var phone = document.getElementById('chat-verify-phone').value.trim();
+                    if (phone) { chatVerifyForm.style.display = 'none'; var os = document.getElementById('chat-otp-step'); if (os) os.style.display = 'block'; }
+                });
+                var chatVerifyOtp = document.getElementById('chat-verify-otp');
+                if (chatVerifyOtp) chatVerifyOtp.addEventListener('click', function() {
+                    var digits = document.querySelectorAll('.chat-login__otp-digit');
+                    var code = Array.from(digits).map(function(d) { return d.value; }).join('');
+                    if (code.length === 6) { localStorage.setItem('nokMobileVerified', 'yes'); updateAuthView(); }
+                });
+                var otpDigits = document.querySelectorAll('.chat-login__otp-digit');
+                otpDigits.forEach(function(input, i) {
+                    input.addEventListener('input', function() { if (this.value.length === 1 && i < otpDigits.length - 1) otpDigits[i + 1].focus(); });
+                    input.addEventListener('keydown', function(e) { if (e.key === 'Backspace' && !this.value && i > 0) otpDigits[i - 1].focus(); });
+                });
+
+                var userVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
+                var shortsIdsHome = {};
+                (JSON.parse(localStorage.getItem('nokShortsVideos') || '[]')).forEach(function(s) { shortsIdsHome[s.id] = true; });
+                var userShorts = JSON.parse(localStorage.getItem('nokShortsVideos') || '[]');
+                var sampleLong = [
+                    { id: 'mountains', thumb: 'mountains', title: 'Dreamy Expedition', channel: 'A22n', meta: '146K views. 4 hours ago' },
+                    { id: 'waterfall', thumb: 'waterfall', title: 'Hidden Waterfalls', channel: 'Sneha', meta: '82K views. 1 day ago' },
+                    { id: 'city', thumb: 'city', title: 'Post-Apocalyptic', channel: 'A22n', meta: '12K views. 8 hours ago' },
+                    { id: 'wild', thumb: 'wild', title: 'Into the Wilderness', channel: 'A22n', meta: '3.2K views. 12 hours ago' },
+                    { id: 'portrait', thumb: 'portrait', title: '872IK', channel: 'A22n', meta: '892 views. 1 day ago' }
+                ];
+                var sampleShorts = [
+                    { id: 'night', thumb: 'night', title: 'Night Out Vibes', likes: '149K' },
+                    { id: 'hike', thumb: 'hike', title: 'Epic Mountain Hike', likes: '148K' },
+                    { id: 'beach', thumb: 'beach', title: 'Beach Sunrise Yoga', likes: '1755K' },
+                    { id: 'citywalk', thumb: 'citywalk', title: 'Night City Walk', likes: '92K' },
+                    { id: 'dance', thumb: 'dance', title: 'Street Dance Moves', likes: '256K' },
+                    { id: 'lights', thumb: 'lights', title: 'Gazing at the Lights', likes: '89K' },
+                    { id: 'portrait', thumb: 'short-portrait', title: '892KK', likes: '822K' }
+                ];
+                var LONG_PER_BLOCK = 160;
+                var thumbToMoreClass = { mountains: 'mountains', waterfall: 'ocean', city: 'city', wild: 'forest', portrait: 'desert', channel1: 'city', channel2: 'city', channel3: 'city', channel4: 'desert' };
+                function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+                function getThumbStyle(v) { if (v.thumbData) return ' style="background-image:url(' + escapeHtml(v.thumbData) + ');background-size:cover;background-position:center"'; return ''; }
+                function getThumbClass(v) { if (v.thumbData) return 'long-video__more-thumb'; return 'long-video__more-thumb long-video__more-thumb--' + (thumbToMoreClass[v.thumb] || 'mountains'); }
+                function getViewsText(v) { var x = v.views || v.meta || '0 views'; if (typeof x === 'number' || (typeof x === 'string' && /^\d+$/.test(x))) return x + ' views'; return x; }
+                var blocksEl = document.getElementById('home-feed-blocks');
+                if (blocksEl) {
+                    var longVideos = userVideos.filter(function(v) { return !v.isShorts && !shortsIdsHome[v.id]; }).slice(0, 10);
+                    for (var i = 0; i < LONG_PER_BLOCK * 2; i++) longVideos.push(sampleLong[i % sampleLong.length]);
+                    for (var b = 0; b < 2; b++) {
+                        var sec = document.createElement('section');
+                        sec.className = 'long-video__card long-video__more home-video-section';
+                        var titleEl = document.createElement('h2');
+                        titleEl.className = 'long-video__section-title';
+                        titleEl.textContent = b === 0 ? 'Trending' : 'More like this';
+                        sec.appendChild(titleEl);
+                        var grid = document.createElement('div');
+                        grid.className = 'long-video__creator-grid';
+                        grid.id = b === 0 ? 'home-video-row' : 'home-video-row-' + (b + 1);
+                        var start = b * LONG_PER_BLOCK;
+                        var end = Math.min(start + LONG_PER_BLOCK, longVideos.length);
+                        for (var j = start; j < end; j++) {
+                            var v = longVideos[j];
+                            var card = document.createElement('a');
+                            card.href = 'video.html?id=' + encodeURIComponent(v.id) + '&autoplay=1';
+                            card.className = 'long-video__creator-item';
+                            var thumbClass = getThumbClass(v);
+                            var thumbStyle = getThumbStyle(v);
+                            var title = escapeHtml(v.title || 'Video');
+                            var views = escapeHtml(getViewsText(v));
+                            card.innerHTML = '<div class="' + thumbClass + '"' + thumbStyle + '></div><span class="long-video__more-title">' + title + '</span><span class="long-video__more-views">' + views + '</span>';
+                            grid.appendChild(card);
+                        }
+                        sec.appendChild(grid);
+                        blocksEl.appendChild(sec);
+                        var shortsSec = document.createElement('section');
+                        shortsSec.className = 'home-shorts-section';
+                        shortsSec.innerHTML = '<div class="home-shorts__header"><h3 class="home-shorts__title">Shorts</h3></div><div class="home-shorts-row">' + sampleShorts.map(function(s) { return '<a href="shorts.html?id=' + encodeURIComponent(s.id) + '" class="home-short-card"><div class="home-short-card__thumb home-short-card__thumb--' + s.thumb + '"></div><div class="home-short-card__content"><p class="home-short-card__likes"><span class="home-short-card__heart">❤</span> ' + s.likes + '</p><h4 class="home-short-card__title">' + s.title + '</h4></div></a>'; }).join('') + '</div>';
+                        blocksEl.appendChild(shortsSec);
+                    }
+                }
+                var shortsRow = document.querySelector('.home-shorts-row');
+                if (shortsRow && userShorts.length) {
+                    var frag = document.createDocumentFragment();
+                    var thumbMap = { mountains: 'hike', waterfall: 'beach', city: 'citywalk', wild: 'hike', portrait: 'short-portrait', night: 'night', hike: 'hike', beach: 'beach', citywalk: 'citywalk', dance: 'dance', lights: 'lights' };
+                    userShorts.slice(0, 12).forEach(function(s) {
+                        var card = document.createElement('a');
+                        card.href = 'shorts.html?id=' + encodeURIComponent(s.id);
+                        card.className = 'home-short-card';
+                        var thumbClass = s.thumbData ? '' : ' home-short-card__thumb--' + (thumbMap[s.thumb] || 'night');
+                        var thumbStyle = s.thumbData ? 'background-image:url(' + (s.thumbData || '').replace(/"/g, '&quot;') + ');background-size:cover;background-position:center;background-repeat:no-repeat' : '';
+                        card.innerHTML = '<div class="home-short-card__thumb' + thumbClass + '"' + (thumbStyle ? ' style="' + thumbStyle + '"' : '') + '></div><div class="home-short-card__content"><p class="home-short-card__likes"><span class="home-short-card__heart">❤</span> ' + (s.likes || '0') + '</p><h4 class="home-short-card__title">' + (s.title || 'Shorts') + '</h4></div>';
+                        frag.appendChild(card);
+                    });
+                    shortsRow.insertBefore(frag, shortsRow.firstChild);
+                }
+                document.querySelectorAll('.home-trending-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        document.querySelectorAll('.home-trending-btn').forEach(function(b) { b.classList.remove('home-trending-btn--active'); });
+                        this.classList.add('home-trending-btn--active');
+                    });
+                });
+                var notifBtn = document.getElementById('home-notification-btn');
+                if (notifBtn) {
+                    var notifOnWrap = notifBtn.querySelector('.long-video__icon-bell-wrap');
+                    var notifOffWrap = notifBtn.querySelector('.long-video__icon-bell-off-wrap');
+                    function updateNotificationIcon() {
+                        var on = localStorage.getItem('nokNotificationOn') !== '0';
+                        notifBtn.setAttribute('aria-label', on ? 'Notifications on (click to turn off)' : 'Notifications off (click to turn on)');
+                        notifBtn.setAttribute('title', on ? 'Notifications on' : 'Notifications off');
+                        notifBtn.setAttribute('aria-pressed', on ? 'false' : 'true');
+                        if (notifOnWrap) notifOnWrap.style.display = on ? '' : 'none';
+                        if (notifOffWrap) notifOffWrap.style.display = on ? 'none' : '';
+                    }
+                    updateNotificationIcon();
+                    notifBtn.addEventListener('click', function() {
+                        var on = localStorage.getItem('nokNotificationOn') !== '0';
+                        localStorage.setItem('nokNotificationOn', on ? '0' : '1');
+                        updateNotificationIcon();
+                    });
+                }
+
+                // Right quick photo: open gallery/file picker
+                var quickPhotoBtn = document.getElementById('home-quick-photo-btn');
+                var quickPhotoInput = document.getElementById('home-quick-photo-input');
+                if (quickPhotoBtn && quickPhotoInput) {
+                    quickPhotoBtn.addEventListener('click', function() {
+                        quickPhotoInput.click();
+                    });
+                    quickPhotoInput.addEventListener('change', function() {
+                        var f = quickPhotoInput.files && quickPhotoInput.files[0];
+                        if (!f || !f.type || f.type.indexOf('image/') !== 0) return;
+                        var reader = new FileReader();
+                        reader.onload = function() {
+                            try { sessionStorage.setItem('nokQuickPhotoDraft', reader.result || ''); } catch (e) {}
+                            window.location.href = 'upload.html?type=photo';
+                        };
+                        reader.readAsDataURL(f);
+                    });
+                }
+
+                // Captions section (caption bare) – show nokCaptionPosts on home
+                var homeCaptionsList = document.getElementById('home-captions-list');
+                var homeCaptionsSection = document.getElementById('home-captions-sidebar');
+                if (homeCaptionsList && homeCaptionsSection) {
+                    function getCaptionPosts() { try { return JSON.parse(localStorage.getItem('nokCaptionPosts') || '[]'); } catch (e) { return []; } }
+                    function timeAgoCaption(ts) { var d = Date.now() - ts; if (d < 60000) return 'Just now'; if (d < 3600000) return Math.floor(d / 60000) + 'm ago'; if (d < 86400000) return Math.floor(d / 3600000) + 'h ago'; if (d < 604800000) return Math.floor(d / 86400000) + 'd ago'; return new Date(ts).toLocaleDateString(); }
+                    function capInitial(str) { return (str || '?').toString().trim().charAt(0).toUpperCase(); }
+                    function escapeCap(str) { if (!str) return ''; return String(str).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+                    function renderHomeCaptionMini(post) {
+                        var card = document.createElement('a');
+                        card.className = 'home-caption-mini-card';
+                        card.href = 'studio.html#content';
+                        card.dataset.postId = post.id;
+                        var author = post.author || 'You';
+                        var text = (post.caption || '').trim();
+                        var textEsc = escapeCap(text).substring(0, 120);
+                        if (text.length > 120) textEsc += '…';
+                        var thumbHtml = post.photoData ? '<div class="home-caption-mini-card__thumb"><img src="' + escapeCap(post.photoData) + '" alt=""></div>' : '';
+                        var likes = post.likes || 0;
+                        var commentsCount = (post.comments && post.comments.length) || 0;
+                        var sharesCount = post.shares || 0;
+                        var actionsHtml = '<div class="home-caption-mini-card__actions"><span class="cap-like">❤ Like ' + likes + '</span><span class="cap-comment">💬 Comment ' + commentsCount + '</span><span class="cap-share">🔗 Share ' + sharesCount + '</span></div>';
+                        card.innerHTML = '<div class="home-caption-mini-card__row"><div class="home-caption-mini-card__avatar">' + capInitial(author) + '</div><span class="home-caption-mini-card__author">' + escapeCap(author) + '</span></div>' + (textEsc ? '<div class="home-caption-mini-card__text">' + textEsc + '</div>' : '') + thumbHtml + '<div class="home-caption-mini-card__meta"><span>' + timeAgoCaption(post.createdAt) + '</span></div>' + actionsHtml;
+                        homeCaptionsList.appendChild(card);
+                    }
+                    var captionPosts = getCaptionPosts();
+                    homeCaptionsList.innerHTML = '';
+                    if (captionPosts.length === 0) {
+                        homeCaptionsSection.style.display = 'none';
+                    } else {
+                        homeCaptionsSection.style.display = 'block';
+                        captionPosts.forEach(renderHomeCaptionMini);
+                    }
+                    if ((window.location.hash || '').replace(/^#/, '') === 'captions') {
+                        homeCaptionsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', runHomeInit);
+            else runHomeInit();
+        })();
+    </script>
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

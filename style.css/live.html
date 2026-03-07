@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Live - NOK Super</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <script src="nok-video-db.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .live-layout { min-height: 100vh; font-family: 'Outfit', -apple-system, sans-serif; position: relative; z-index: 1; background: radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.12) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(99,102,241,0.08) 0%, transparent 40%); }
+        .live-layout::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 24px 24px; pointer-events: none; z-index: 0; }
+        .live-main { position: relative; z-index: 1; flex: 1; padding: 24px; padding-top: calc(24px + 56px); overflow: auto; max-width: 900px; margin: 0 auto; width: 100%; }
+        .live-left { width: 100%; max-width: 220px; padding: 12px 0; }
+        .live-left__section { margin-bottom: 20px; }
+        .live-left__title { font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 10px 12px; }
+        .live-left__links { display: flex; flex-direction: column; gap: 2px; }
+        .live-left__link { display: block; padding: 10px 14px; border-radius: 8px; color: rgba(255,255,255,0.9); font-size: 0.95rem; font-weight: 500; text-decoration: none; transition: background 0.2s; }
+        .live-left__link:hover { background: rgba(255,255,255,0.08); color: #fff; }
+        .live-left__link--active { background: rgba(139,92,246,0.25); color: #fff; }
+        .live-card { background: rgba(30,27,60,0.6); border: 1px solid rgba(139,92,246,0.25); border-radius: 16px; padding: 32px; box-shadow: 0 0 40px rgba(139,92,246,0.08); }
+        .live-card h1 { font-size: 1.75rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .live-card p { font-size: 0.95rem; color: rgba(255,255,255,0.65); margin-bottom: 24px; }
+        .live-preview { aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; background: linear-gradient(135deg, #1e1b3c 0%, #2d2a4e 50%, #1e1b3c 100%); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; border: 2px dashed rgba(139,92,246,0.4); position: relative; }
+        .live-preview__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #000; display: none; transition: filter 0.25s ease; }
+        .live-preview__video.live-preview__video--active { display: block; }
+        .live-filter-none { filter: none; }
+        .live-filter-soft { filter: blur(0.4px) brightness(1.08) contrast(0.97) saturate(0.92); }
+        .live-filter-vintage { filter: sepia(0.35) contrast(1.08) saturate(0.75); }
+        .live-filter-cool { filter: hue-rotate(-12deg) saturate(1.15) brightness(1.02); }
+        .live-filter-warm { filter: sepia(0.2) saturate(1.25) brightness(1.03); }
+        .live-filter-cinematic { filter: contrast(1.18) saturate(0.82); }
+        .live-filter-bw { filter: grayscale(1) contrast(1.12); }
+        .live-filter-vivid { filter: saturate(1.45) contrast(1.06); }
+        .live-filter-dramatic { filter: contrast(1.35) saturate(0.9) brightness(0.95); }
+        .live-filters { margin-bottom: 20px; }
+        .live-filters__label { font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.9); margin-bottom: 10px; display: block; }
+        .live-filters__list { display: flex; gap: 10px; overflow-x: auto; padding: 6px 0; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .live-filters__list::-webkit-scrollbar { display: none; }
+        .live-filter-chip { flex-shrink: 0; padding: 10px 16px; border-radius: 24px; border: 2px solid rgba(139,92,246,0.4); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.9rem; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.2s; white-space: nowrap; }
+        .live-filter-chip:hover { background: rgba(139,92,246,0.2); border-color: rgba(139,92,246,0.6); }
+        .live-filter-chip.live-filter-chip--active { background: linear-gradient(135deg, #8b5cf6, #6366f1); border-color: #8b5cf6; color: #fff; }
+        .live-preview__placeholder { text-align: center; color: rgba(255,255,255,0.5); }
+        .live-preview__placeholder.live-preview__placeholder--hidden { display: none; }
+        .live-preview__placeholder svg { width: 64px; height: 64px; margin-bottom: 12px; opacity: 0.6; }
+        .live-field { margin-bottom: 20px; }
+        .live-field label { display: block; font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.9); margin-bottom: 8px; }
+        .live-field input[type="text"], .live-field textarea, .live-field select { width: 100%; padding: 12px 14px; border: 1px solid rgba(139,92,246,0.3); border-radius: 8px; background: rgba(0,0,0,0.3); color: #fff; font-size: 0.95rem; font-family: inherit; }
+        .live-field input::placeholder, .live-field textarea::placeholder { color: rgba(255,255,255,0.4); }
+        .live-field input:focus, .live-field textarea:focus, .live-field select:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 2px rgba(139,92,246,0.2); }
+        .live-field textarea { min-height: 80px; resize: vertical; }
+        .live-field select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23fff' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+        .live-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+        .live-btn { padding: 12px 24px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; border: none; display: inline-flex; align-items: center; gap: 8px; }
+        .live-btn--primary { background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; }
+        .live-btn--primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(139,92,246,0.4); }
+        .live-btn--secondary { background: rgba(255,255,255,0.1); color: #fff; border: 2px solid rgba(255,255,255,0.3); }
+        .live-btn--secondary:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.5); }
+        .live-btn svg { width: 20px; height: 20px; }
+        .live-active-view { display: none; flex-direction: column; align-items: center; justify-content: flex-start; padding: 20px; padding-top: calc(20px + 56px); max-width: 900px; margin: 0 auto; width: 100%; }
+        .live-active-view.live-active-view--show { display: flex; }
+        .live-card.live-card--hidden { display: none; }
+        .live-active-view__video-wrap { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 16px; overflow: hidden; background: #000; box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(139,92,246,0.2); }
+        .live-active-view__video { width: 100%; height: 100%; object-fit: cover; }
+        .live-active-view__overlay { position: absolute; bottom: 0; left: 0; right: 0; height: 45%; background: linear-gradient(transparent, rgba(0,0,0,0.85)); pointer-events: none; }
+        .live-active-view__badge { position: absolute; top: 14px; left: 14px; padding: 8px 14px; border-radius: 8px; background: #ef4444; color: #fff; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px; z-index: 2; box-shadow: 0 2px 12px rgba(239,68,68,0.5); }
+        .live-active-view__badge-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: live-pulse 1.2s ease-in-out infinite; }
+        @keyframes live-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .live-active-view__stats { position: absolute; top: 14px; right: 14px; display: flex; align-items: center; gap: 14px; color: #fff; font-size: 0.9rem; z-index: 2; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+        .live-active-view__viewers { display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.5); padding: 6px 12px; border-radius: 20px; }
+        .live-active-view__duration { display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.5); padding: 6px 12px; border-radius: 20px; }
+        .live-active-view__title { position: absolute; bottom: 14px; left: 14px; right: 14px; font-size: 1.15rem; font-weight: 600; color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,0.9); z-index: 2; line-height: 1.3; }
+        .live-active-view__channel { position: absolute; bottom: 44px; left: 14px; font-size: 0.9rem; color: rgba(255,255,255,0.9); z-index: 2; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+        .live-active-view__end-wrap { margin-top: 28px; width: 100%; max-width: 400px; }
+        .live-active-view__end-btn { width: 100%; padding: 16px 28px; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: inherit; border: none; background: linear-gradient(135deg, #dc2626, #b91c1c); color: #fff; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; box-shadow: 0 4px 16px rgba(220,38,38,0.4); }
+        .live-active-view__end-btn:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(220,38,38,0.5); }
+        .live-active-view__end-btn svg { width: 22px; height: 22px; }
+        /* Allow page scroll (override video-body overflow:hidden) */
+        html:has(body.live-body) { overflow-y: auto !important; overflow-x: hidden; height: auto; }
+        body.live-body { overflow-y: auto !important; overflow-x: hidden; min-height: 100vh; height: auto; }
+        .live-main { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    </style>
+</head>
+<body class="video-body live-body home-body has-bottom-nav">
+    <div class="home-layout">
+        <div class="bg"></div>
+
+        <!-- Header: same as home page -->
+        <header class="long-video__header">
+            <div class="long-video__header-left">
+                <button type="button" class="long-video__back" id="header-back-btn" aria-label="Back" title="Back to previous page">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </button>
+                <button type="button" class="long-video__menu" id="header-menu-btn" aria-label="Menu" title="Menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <a href="home.html" class="long-video__logo">
+                    <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+                </a>
+            </div>
+            <div class="long-video__search">
+                <div class="home-search">
+                    <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" class="home-search__input" placeholder="Search">
+                    <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+                </div>
+            </div>
+            <div class="long-video__header-right">
+                <button type="button" class="long-video__header-icon" id="live-notification-btn" aria-label="Notifications" title="Notifications">
+                    <span class="long-video__icon-bell-wrap"><svg class="long-video__icon-bell" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+                    <span class="long-video__icon-bell-off-wrap" style="display:none"><svg class="long-video__icon-bell-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="1" y1="1" x2="23" y2="23"/></svg></span>
+                </button>
+                <a href="channel.html" class="long-video__profile-wrap" id="live-profile-wrap" style="display:none;text-decoration:none;color:inherit;" title="Channel">
+                    <div class="long-video__avatar" id="live-avatar">UP</div>
+                </a>
+                <div class="long-video__auth-btns" id="live-auth-btns">
+                    <a href="login.html?next=live.html" class="home-header__btn home-header__btn--ghost">Log In</a>
+                    <a href="signup.html?next=live.html" class="home-header__btn home-header__btn--primary">Sign Up</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Header menu drawer (same as home) -->
+        <div class="header-drawer-backdrop" id="header-drawer-backdrop" aria-hidden="true"></div>
+        <aside class="header-drawer" id="header-drawer" aria-label="Main menu" aria-hidden="true">
+            <div class="header-drawer__head">
+                <span class="header-drawer__title">Menu</span>
+                <button type="button" class="header-drawer__close" id="header-drawer-close" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+            <nav class="header-drawer__nav">
+                <a href="home.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+                <a href="shorts.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+                <a href="studio.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span><span>Studio</span></a>
+                <a href="library.html#watch-later" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Watch later</span></a>
+                <a href="library.html#saved" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span><span>Saved videos</span></a>
+                <a href="library.html#library-files" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span><span>Your files</span></a>
+                <a href="upload.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+                <a href="live.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span><span>Go Live</span></a>
+                <div class="header-drawer__divider"></div>
+                <a href="settings.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+            </nav>
+        </aside>
+
+        <div class="home-below">
+            <!-- Left sidebar: Watch, Streaming, Events (like home left structure) -->
+            <aside class="long-video__left-nav live-left">
+                <div class="live-left__section">
+                    <h3 class="live-left__title">Watch</h3>
+                    <nav class="live-left__links">
+                        <a href="home.html" class="live-left__link">Home</a>
+                        <a href="trending.html" class="live-left__link">Trending</a>
+                        <a href="shorts.html" class="live-left__link">Shorts</a>
+                    </nav>
+                </div>
+                <div class="live-left__section">
+                    <h3 class="live-left__title">Streaming</h3>
+                    <nav class="live-left__links">
+                        <a href="live.html" class="live-left__link live-left__link--active">Go Live</a>
+                        <a href="live-stream.html" class="live-left__link">Live stream</a>
+                    </nav>
+                </div>
+                <div class="live-left__section">
+                    <h3 class="live-left__title">Events</h3>
+                    <nav class="live-left__links">
+                        <a href="#" class="live-left__link">Upcoming</a>
+                        <a href="#" class="live-left__link">Past events</a>
+                    </nav>
+                </div>
+            </aside>
+            <div class="home-center">
+        <main class="live-main">
+            <div class="live-card">
+                <h1>Go Live</h1>
+                <p>Start a live stream and connect with your audience in real time.</p>
+                <div class="live-preview" id="live-preview">
+                    <video id="live-preview-video" class="live-preview__video" autoplay playsinline muted></video>
+                    <div class="live-preview__placeholder" id="live-preview-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        <p id="live-preview-placeholder-text">Opening camera...</p>
+                    </div>
+                </div>
+                <div class="live-field">
+                    <label for="live-title">Stream title</label>
+                    <input type="text" id="live-title" placeholder="Give your stream a title" maxlength="100">
+                </div>
+                <div class="live-field">
+                    <label for="live-desc">Description (optional)</label>
+                    <textarea id="live-desc" placeholder="Tell viewers what your stream is about"></textarea>
+                </div>
+                <div class="live-field">
+                    <label for="live-resolution">Video resolution</label>
+                    <select id="live-resolution">
+                        <option value="480">480p (854×480)</option>
+                        <option value="720" selected>720p (1280×720)</option>
+                        <option value="1080">1080p (1920×1080)</option>
+                    </select>
+                </div>
+                <div class="live-filters">
+                    <span class="live-filters__label">Effects &amp; Filters</span>
+                    <div class="live-filters__list" id="live-filters-list">
+                        <button type="button" class="live-filter-chip live-filter-chip--active" data-filter="none">None</button>
+                        <button type="button" class="live-filter-chip" data-filter="soft">Soft</button>
+                        <button type="button" class="live-filter-chip" data-filter="vintage">Vintage</button>
+                        <button type="button" class="live-filter-chip" data-filter="cool">Cool</button>
+                        <button type="button" class="live-filter-chip" data-filter="warm">Warm</button>
+                        <button type="button" class="live-filter-chip" data-filter="cinematic">Cinematic</button>
+                        <button type="button" class="live-filter-chip" data-filter="bw">B&amp;W</button>
+                        <button type="button" class="live-filter-chip" data-filter="vivid">Vivid</button>
+                        <button type="button" class="live-filter-chip" data-filter="dramatic">Dramatic</button>
+                    </div>
+                </div>
+                <div class="live-actions">
+                    <button type="button" class="live-btn live-btn--primary" id="live-start-btn">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/></svg>
+                        Start stream
+                    </button>
+                    <a href="upload.html" class="live-btn live-btn--secondary">Back to Upload</a>
+                </div>
+            </div>
+
+            <!-- Live streaming page (shown when stream is running) -->
+            <div class="live-active-view" id="live-active-view">
+                <div class="live-active-view__video-wrap">
+                    <video id="live-active-video" class="live-active-view__video" autoplay playsinline muted></video>
+                    <div class="live-active-view__overlay"></div>
+                    <div class="live-active-view__badge"><span class="live-active-view__badge-dot"></span>LIVE</div>
+                    <div class="live-active-view__stats">
+                        <span class="live-active-view__duration"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span id="live-duration">0:00</span></span>
+                        <span class="live-active-view__viewers"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> <span id="live-viewer-count">0</span> watching</span>
+                    </div>
+                    <p class="live-active-view__channel" id="live-active-channel"></p>
+                    <h2 class="live-active-view__title" id="live-active-title"></h2>
+                </div>
+                <div class="live-active-view__end-wrap">
+                    <button type="button" class="live-active-view__end-btn" id="live-end-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+                        End stream
+                    </button>
+                </div>
+            </div>
+        </main>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            var liveNextUrl = 'live.html';
+            var livePreviewStream = null;
+            var LIVE_RESOLUTIONS = { '480': { width: 854, height: 480 }, '720': { width: 1280, height: 720 }, '1080': { width: 1920, height: 1080 } };
+            function getLiveResolution() {
+                var sel = document.getElementById('live-resolution');
+                var val = (sel && sel.value) ? sel.value : '720';
+                return LIVE_RESOLUTIONS[val] || LIVE_RESOLUTIONS['720'];
+            }
+            function isLoggedIn() {
+                return (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn') || !!(localStorage.getItem('nokUserEmail') || sessionStorage.getItem('nokUserEmail'));
+            }
+            function stopLivePreview() {
+                if (livePreviewStream) {
+                    livePreviewStream.getTracks().forEach(function(t) { t.stop(); });
+                    livePreviewStream = null;
+                }
+                var v = document.getElementById('live-preview-video');
+                if (v && v.srcObject) { v.srcObject = null; v.classList.remove('live-preview__video--active'); }
+                var ph = document.getElementById('live-preview-placeholder');
+                if (ph) ph.classList.remove('live-preview__placeholder--hidden');
+            }
+            function startLiveCamera() {
+                var videoEl = document.getElementById('live-preview-video');
+                var placeholder = document.getElementById('live-preview-placeholder');
+                var placeholderText = document.getElementById('live-preview-placeholder-text');
+                if (!videoEl || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    if (placeholderText) placeholderText.textContent = 'Camera not supported';
+                    return;
+                }
+                stopLivePreview();
+                var res = getLiveResolution();
+                var constraints = {
+                    video: { width: { ideal: res.width }, height: { ideal: res.height }, facingMode: 'user' },
+                    audio: true
+                };
+                if (placeholderText) placeholderText.textContent = 'Opening camera...';
+                if (placeholder) placeholder.classList.remove('live-preview__placeholder--hidden');
+                navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+                    livePreviewStream = stream;
+                    videoEl.srcObject = stream;
+                    videoEl.classList.add('live-preview__video--active');
+                    if (placeholder) placeholder.classList.add('live-preview__placeholder--hidden');
+                }).catch(function(err) {
+                    if (placeholderText) placeholderText.textContent = err.name === 'NotAllowedError' ? 'Camera access denied' : 'Camera unavailable';
+                });
+                if (!window._livePreviewListenersAdded) {
+                    window._livePreviewListenersAdded = true;
+                    window.addEventListener('pagehide', stopLivePreview);
+                    window.addEventListener('beforeunload', stopLivePreview);
+                    var resSel = document.getElementById('live-resolution');
+                    if (resSel) resSel.addEventListener('change', startLiveCamera);
+                }
+            }
+            function applyLiveFilter(filterId) {
+                var videoEl = document.getElementById('live-preview-video');
+                if (!videoEl) return;
+                var chips = document.querySelectorAll('.live-filter-chip');
+                chips.forEach(function(chip) {
+                    chip.classList.toggle('live-filter-chip--active', chip.getAttribute('data-filter') === filterId);
+                });
+                videoEl.classList.remove('live-filter-none', 'live-filter-soft', 'live-filter-vintage', 'live-filter-cool', 'live-filter-warm', 'live-filter-cinematic', 'live-filter-bw', 'live-filter-vivid', 'live-filter-dramatic');
+                videoEl.classList.add('live-filter-' + (filterId || 'none'));
+            }
+            document.getElementById('live-filters-list').addEventListener('click', function(e) {
+                var chip = e.target.closest('.live-filter-chip');
+                if (chip) applyLiveFilter(chip.getAttribute('data-filter') || 'none');
+            });
+            startLiveCamera();
+            function updateLiveAuthView() {
+                var loggedIn = isLoggedIn();
+                var profileWrap = document.getElementById('live-profile-wrap');
+                var authBtns = document.getElementById('live-auth-btns');
+                var avatarEl = document.getElementById('live-avatar');
+                if (profileWrap && authBtns) {
+                    if (loggedIn) {
+                        profileWrap.style.display = '';
+                        authBtns.style.display = 'none';
+                        var name = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You';
+                        var initial = (name && name.charAt(0)) ? name.charAt(0).toUpperCase() : '?';
+                        var photoUrl = localStorage.getItem('nokUserPhotoUrl');
+                        if (avatarEl) {
+                            if (photoUrl) {
+                                avatarEl.innerHTML = '<img src="' + photoUrl + '" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+                            } else {
+                                avatarEl.textContent = initial;
+                            }
+                        }
+                    } else {
+                        profileWrap.style.display = 'none';
+                        authBtns.style.display = '';
+                        if (avatarEl) { avatarEl.textContent = '?'; avatarEl.innerHTML = '?'; }
+                    }
+                }
+                var loginLink = document.querySelector('#live-auth-btns a[href*="login"]');
+                var signupLink = document.querySelector('#live-auth-btns a[href*="signup"]');
+                if (loginLink) loginLink.setAttribute('href', 'login.html?next=' + encodeURIComponent(liveNextUrl));
+                if (signupLink) signupLink.setAttribute('href', 'signup.html?next=' + encodeURIComponent(liveNextUrl));
+            }
+            updateLiveAuthView();
+            window.addEventListener('pageshow', updateLiveAuthView);
+            var activeView = document.getElementById('live-active-view');
+            var liveCard = document.querySelector('.live-card');
+            var liveActiveVideo = document.getElementById('live-active-video');
+            var liveActiveTitle = document.getElementById('live-active-title');
+            var liveActiveChannel = document.getElementById('live-active-channel');
+            var liveViewerCount = document.getElementById('live-viewer-count');
+            var liveDurationEl = document.getElementById('live-duration');
+            var viewerCount = 0;
+            var viewerInterval = null;
+            var durationInterval = null;
+            var liveStartTime = 0;
+            function formatDuration(sec) {
+                var m = Math.floor(sec / 60);
+                var s = sec % 60;
+                return m + ':' + (s < 10 ? '0' : '') + s;
+            }
+
+            document.getElementById('live-start-btn').addEventListener('click', function() {
+                if (!isLoggedIn()) {
+                    window.location.href = 'login.html?next=' + encodeURIComponent(liveNextUrl);
+                    return;
+                }
+                var title = document.getElementById('live-title').value.trim();
+                if (!title) {
+                    alert('Please enter a stream title.');
+                    return;
+                }
+                liveActiveTitle.textContent = title;
+                var channelName = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You';
+                if (liveActiveChannel) liveActiveChannel.textContent = channelName;
+                if (liveActiveVideo && livePreviewStream) {
+                    liveActiveVideo.srcObject = livePreviewStream;
+                    liveActiveVideo.classList.add('live-preview__video--active');
+                    var filterClass = document.getElementById('live-preview-video').className.match(/live-filter-\w+/);
+                    if (filterClass) liveActiveVideo.classList.add(filterClass[0]);
+                } else if (liveActiveVideo) {
+                    liveActiveVideo.srcObject = null;
+                }
+                viewerCount = 0;
+                if (liveViewerCount) liveViewerCount.textContent = '0';
+                viewerInterval = setInterval(function() {
+                    viewerCount += Math.floor(Math.random() * 3) + 1;
+                    if (liveViewerCount) liveViewerCount.textContent = viewerCount;
+                }, 4000);
+                liveStartTime = Date.now();
+                if (liveDurationEl) liveDurationEl.textContent = '0:00';
+                durationInterval = setInterval(function() {
+                    if (liveDurationEl) liveDurationEl.textContent = formatDuration(Math.floor((Date.now() - liveStartTime) / 1000));
+                }, 1000);
+                if (liveCard) liveCard.classList.add('live-card--hidden');
+                if (activeView) activeView.classList.add('live-active-view--show');
+            });
+
+            document.getElementById('live-end-btn').addEventListener('click', function() {
+                if (viewerInterval) { clearInterval(viewerInterval); viewerInterval = null; }
+                if (durationInterval) { clearInterval(durationInterval); durationInterval = null; }
+                if (liveActiveVideo && liveActiveVideo.srcObject) liveActiveVideo.srcObject = null;
+                if (activeView) activeView.classList.remove('live-active-view--show');
+                if (liveCard) liveCard.classList.remove('live-card--hidden');
+                alert('Stream ended. You had ' + (viewerCount || 0) + ' viewers.');
+            });
+        })();
+    </script>
+    <button type="button" class="chat-trigger chat-trigger--float" aria-label="Chat"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+    <div class="chat-overlay" id="chat-overlay" aria-hidden="true"><div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div><div class="chat-overlay__card"><div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div><header class="nok-chat__header"><a href="home.html" class="nok-chat__brand"><span class="nok-chat__logo-text">NOK Chat</span></a><div class="nok-chat__actions"><button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button><div class="nok-chat__menu-wrap"><button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu">&#8942;</button><div class="nok-chat__menu" id="chat-menu"><button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button></div></div></div></header><div class="chat-login" id="chat-login"><div class="chat-login__inner chat-login__step-login" id="chat-step-login"><h3 class="chat-login__title">Log in to Chat</h3><a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a></div><div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none"><h3 class="chat-login__title">Verify Mobile</h3><form class="chat-login__form" id="chat-verify-form"><input type="tel" id="chat-verify-phone" class="chat-login__input" placeholder="Mobile number"><button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button></form><div id="chat-otp-step" style="display:none"><input type="text" class="chat-login__otp-digit" maxlength="1"><input type="text" class="chat-login__otp-digit" maxlength="1"><input type="text" class="chat-login__otp-digit" maxlength="1"><input type="text" class="chat-login__otp-digit" maxlength="1"><input type="text" class="chat-login__otp-digit" maxlength="1"><input type="text" class="chat-login__otp-digit" maxlength="1"><button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button></div></div></div><div class="chat-content" id="chat-content"><div class="nok-chat__list"><a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AR</span><span class="nok-chat__name">Amella Roy</span></a></div></div><div class="chat-overlay__resize-handle" id="chat-resize-handle" aria-label="Resize"></div></div></div>
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

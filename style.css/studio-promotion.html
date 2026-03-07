@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promotion - Studio - NOK Super</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <style>
+        body.studio-body { background: #0f0f1a; min-height: 100vh; }
+        .studio-layout { display: flex; min-height: 100vh; }
+        .studio-sidebar { width: 240px; background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%); flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .studio-sidebar__logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+        .studio-sidebar__logo-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .studio-sidebar__logo-icon svg { width: 20px; height: 20px; color: #fff; }
+        .studio-sidebar__logo-text { font-size: 1.25rem; font-weight: 700; color: #fff; }
+        .studio-sidebar__nav { display: flex; flex-direction: column; gap: 4px; }
+        .studio-sidebar__item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: background 0.2s, color 0.2s; }
+        .studio-sidebar__item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .studio-sidebar__item svg { width: 22px; height: 22px; flex-shrink: 0; }
+        .studio-main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 24px 32px 100px; }
+        .studio-topbar__back { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; background: rgba(139,92,246,0.25); color: #e9d5ff; font-size: 0.9rem; font-weight: 600; text-decoration: none; margin-bottom: 24px; width: fit-content; transition: all 0.2s; }
+        .studio-topbar__back:hover { background: rgba(139,92,246,0.4); color: #fff; }
+        .studio-topbar__title { font-size: 1.75rem; font-weight: 700; color: #fff; margin: 0 0 24px 0; }
+        .studio-section { margin-bottom: 28px; }
+        .studio-section__title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 16px; }
+        .studio-table-wrap { background: rgba(30,30,50,0.6); border: 1px solid rgba(139,92,246,0.15); border-radius: 16px; overflow: hidden; }
+        .studio-table { width: 100%; border-collapse: collapse; }
+        .studio-table th { text-align: left; padding: 14px 20px; font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .studio-table td { padding: 14px 20px; font-size: 0.9rem; color: rgba(255,255,255,0.9); border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .studio-table tr:last-child td { border-bottom: none; }
+        .studio-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+        .studio-table__empty { padding: 40px 20px; text-align: center; color: rgba(255,255,255,0.4); font-size: 0.9rem; }
+        .studio-table .studio-table__link { color: #a78bfa; text-decoration: none; font-weight: 600; }
+        .studio-table .studio-table__link:hover { text-decoration: underline; }
+        .studio-table__video-cell { display: flex; align-items: center; gap: 12px; }
+        .studio-table__thumb { width: 120px; min-width: 120px; height: 68px; border-radius: 8px; background: rgba(139,92,246,0.2); object-fit: cover; }
+        .studio-table__thumb-placeholder { width: 120px; min-width: 120px; height: 68px; border-radius: 8px; background: linear-gradient(135deg, rgba(249,115,22,0.3) 0%, rgba(251,146,60,0.3) 100%); display: flex; align-items: center; justify-content: center; }
+        .studio-table__thumb-placeholder svg { width: 28px; height: 28px; color: rgba(255,255,255,0.5); }
+        .studio-table__video-title { font-weight: 600; }
+        .studio-table__video-thumb-link { flex-shrink: 0; text-decoration: none; line-height: 0; }
+        .studio-table__play-link { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(249,115,22,0.3); color: #fff; text-decoration: none; transition: background 0.2s; }
+        .studio-table__play-link:hover { background: rgba(249,115,22,0.5); color: #fff; }
+        .studio-table__play-link svg { width: 18px; height: 18px; }
+        .studio-table th:nth-child(2), .studio-table th:nth-child(n+3) { text-align: center; min-width: 72px; }
+        .studio-table td:nth-child(2), .studio-table td:nth-child(n+3) { text-align: center; }
+        .studio-table__type-badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; }
+        .studio-table__type-badge--video { background: rgba(59,130,246,0.3); color: #93c5fd; }
+        .studio-table__type-badge--short { background: rgba(249,115,22,0.3); color: #fdba74; }
+        .studio-table__type-badge--caption { background: rgba(139,92,246,0.3); color: #c4b5fd; }
+        .studio-table__type-badge--shop { background: rgba(34,197,94,0.3); color: #86efac; }
+        .studio-table th:last-child { width: 56px; }
+        .studio-table__remove-promo { font-size: 0.8rem; color: rgba(255,255,255,0.5); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }
+        .studio-table__remove-promo:hover { color: #f87171; }
+        .studio-table__run-pause { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer; background: rgba(34,197,94,0.3); color: #86efac; transition: background 0.2s, color 0.2s; }
+        .studio-table__run-pause:hover { background: rgba(34,197,94,0.5); color: #fff; }
+        .studio-table__run-pause.paused { background: rgba(249,115,22,0.3); color: #fdba74; }
+        .studio-table__run-pause.paused:hover { background: rgba(249,115,22,0.5); color: #fff; }
+        .studio-table__run-pause svg { width: 18px; height: 18px; }
+        .studio-table__goal { font-weight: 600; color: #a78bfa; }
+    </style>
+</head>
+<body class="home-body has-bottom-nav studio-body">
+    <div class="studio-layout">
+        <aside class="studio-sidebar">
+            <div class="studio-sidebar__logo">
+                <div class="studio-sidebar__logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+                <span class="studio-sidebar__logo-text">Studio</span>
+            </div>
+            <nav class="studio-sidebar__nav">
+                <a href="studio.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+                <a href="upload.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Upload</span></a>
+                <a href="studio.html#earning" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M15 9.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/></svg><span>Earning</span></a>
+                <a href="studio.html#analytics" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Analytics</span></a>
+                <a href="studio.html#content-detection" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Content Detection</span></a>
+                <a href="studio.html#customization" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Customization</span></a>
+                <a href="studio.html#content" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg><span>Content</span></a>
+                <a href="channel.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span>Channel</span></a>
+                <a href="settings.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a>
+            </nav>
+        </aside>
+        <main class="studio-main">
+            <a href="studio.html" class="studio-topbar__back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                Back to Dashboard
+            </a>
+            <h1 class="studio-topbar__title">Promotion</h1>
+            <div class="studio-section">
+                <h2 class="studio-section__title">Your promotions</h2>
+                <div class="studio-table-wrap">
+                    <table class="studio-table">
+                        <thead><tr><th>Content</th><th>Type</th><th>Goal</th><th>Views</th><th>Likes</th><th>Subscribers</th><th>Status</th><th></th><th></th></tr></thead>
+                        <tbody id="studio-promotion-body">
+                            <tr><td colspan="9" class="studio-table__empty">Loading…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+        <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+        <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+        <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+        <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+    </nav>
+
+    <script>
+    (function() {
+        function getPromotionVideos() { try { return JSON.parse(localStorage.getItem('nokPromotionVideos') || '[]'); } catch (e) { return []; } }
+        function getPromotionShorts() { try { return JSON.parse(localStorage.getItem('nokPromotionShorts') || '[]'); } catch (e) { return []; } }
+        function getPromotionCaptions() { try { return JSON.parse(localStorage.getItem('nokPromotionCaptions') || '[]'); } catch (e) { return []; } }
+        function getPromotionShop() { try { return JSON.parse(localStorage.getItem('nokPromotionShop') || '[]'); } catch (e) { return []; } }
+        function setPromotionVideos(arr) { localStorage.setItem('nokPromotionVideos', JSON.stringify(arr)); localStorage.setItem('nokPromotionVideoCount', String(arr.length)); }
+        function setPromotionShorts(arr) { localStorage.setItem('nokPromotionShorts', JSON.stringify(arr)); }
+        function setPromotionCaptions(arr) { localStorage.setItem('nokPromotionCaptions', JSON.stringify(arr)); }
+        function setPromotionShop(arr) { localStorage.setItem('nokPromotionShop', JSON.stringify(arr)); }
+        function fmtNum(n) { return n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(1)+'K' : n; }
+        var body = document.getElementById('studio-promotion-body');
+        if (body) {
+            var promoVideos = getPromotionVideos();
+            var promoShorts = getPromotionShorts();
+            var promoCaptions = getPromotionCaptions();
+            var promoShop = getPromotionShop();
+            var totalSubs = parseInt(localStorage.getItem('nokTotalSubscribers') || '0', 10) || 0;
+            var subsDisplay = fmtNum(totalSubs);
+            var rows = [];
+            promoVideos.forEach(function(v) { v._type = 'video'; rows.push(v); });
+            promoShorts.forEach(function(s) { s._type = 'short'; rows.push(s); });
+            promoCaptions.forEach(function(c) { c._type = 'caption'; rows.push(c); });
+            promoShop.forEach(function(s) { s._type = 'shop'; rows.push(s); });
+            localStorage.setItem('nokPromotionVideoCount', String(promoVideos.length + promoShorts.length + promoCaptions.length + promoShop.length));
+            function thumbHtml(item, type) {
+                var data = item.thumbData || (item.videoData && typeof item.videoData === 'string' && item.videoData.indexOf('data:') === 0 ? item.videoData : null) || (item.photoData && typeof item.photoData === 'string' && item.photoData.indexOf('data:') === 0 ? item.photoData : null);
+                if (data && typeof data === 'string' && data.indexOf('data:') === 0) {
+                    return '<img src="' + data.replace(/"/g, '&quot;') + '" alt="" class="studio-table__thumb">';
+                }
+                var icon = type === 'video' ? '<path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/><path d="M12 9v6M9 12h6"/>' : type === 'short' ? '<path d="M8 5v14l11-7z"/>' : type === 'caption' ? '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>' : '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>';
+                return '<div class="studio-table__thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + icon + '</svg></div>';
+            }
+            function typeBadge(type) {
+                var label = type === 'video' ? 'Video' : type === 'short' ? 'Short' : type === 'caption' ? 'Caption' : 'Shop';
+                var cls = 'studio-table__type-badge studio-table__type-badge--' + type;
+                return '<span class="' + cls + '">' + label + '</span>';
+            }
+            if (rows.length === 0) {
+                body.innerHTML = '<tr><td colspan="9" class="studio-table__empty">No promotions yet. Add content from <a href="studio-videos.html" class="studio-table__link">Video Analytics</a>, <a href="studio-shorts.html" class="studio-table__link">Short Analytics</a>, or Caption to promote.</td></tr>';
+            } else {
+                body.innerHTML = rows.map(function(item) {
+                    var type = item._type || 'video';
+                    var title = (item.title || item.caption || item.id || (type === 'video' ? 'Untitled' : type === 'short' ? 'Short' : type === 'caption' ? 'Caption' : 'Shop')).toString().replace(/</g, '&lt;').substring(0, 60);
+                    var views = fmtNum(parseInt(item.views || item.viewCount || 0, 10) || 0);
+                    var likes = fmtNum(parseInt(String(item.likes || '0').replace(/K/g, '000').replace(/M/g, '000000'), 10) || 0);
+                    var subs = (item.subscribers != null && item.subscribers !== '') ? fmtNum(parseInt(item.subscribers, 10)) : subsDisplay;
+                    var obj = (item.objective || 'more_views').toLowerCase();
+                    var goalLabel = obj === 'more_subscribers' ? 'Subscribers' : obj === 'more_likes' ? 'Likes' : 'Views';
+                    var watchUrl = type === 'video' ? 'video.html?id=' + encodeURIComponent(item.id || '') : type === 'short' ? 'shorts.html?id=' + encodeURIComponent(item.id || '') : 'home.html';
+                    var setupUrl = type === 'video' ? 'studio-promotion-setup.html?id=' + encodeURIComponent(item.id || '') : type === 'short' ? 'studio-promotion-setup.html?type=short&id=' + encodeURIComponent(item.id || '') : type === 'caption' ? 'studio-promotion-setup.html?type=caption&id=' + encodeURIComponent(item.id || '') : 'studio-promotion-setup.html?type=shop&id=' + encodeURIComponent(item.id || '');
+                    var safeId = (item.id || '').toString().replace(/"/g, '&quot;');
+                    var isPaused = (item.status || 'promoting') === 'paused';
+                    var runPauseTitle = isPaused ? 'Run promotion' : 'Pause promotion';
+                    var runPauseClass = 'studio-table__run-pause' + (isPaused ? ' paused' : '');
+                    var runPauseIcon = isPaused ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>' : '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+                    return '<tr data-type="' + type + '" data-id="' + safeId + '"><td><div class="studio-table__video-cell"><a href="' + watchUrl + '" class="studio-table__video-thumb-link">' + thumbHtml(item, type) + '</a><a href="' + watchUrl + '" class="studio-table__link studio-table__video-title">' + title + '</a></div></td><td>' + typeBadge(type) + '</td><td><span class="studio-table__goal">' + goalLabel + '</span></td><td>' + views + '</td><td>' + likes + '</td><td>' + subs + '</td><td><a href="' + setupUrl + '" class="studio-table__link">Edit</a></td><td><button type="button" class="studio-table__remove-promo" data-type="' + type + '" data-id="' + safeId + '" title="Remove from promotion">Remove</button></td><td><button type="button" class="' + runPauseClass + '" data-type="' + type + '" data-id="' + safeId + '" title="' + runPauseTitle + '" aria-label="' + runPauseTitle + '">' + runPauseIcon + '</button></td></tr>';
+                }).join('');
+                body.addEventListener('click', function(e) {
+                    var removeBtn = e.target.closest('.studio-table__remove-promo');
+                    if (removeBtn && removeBtn.dataset.id != null) {
+                        var t = removeBtn.dataset.type;
+                        var id = removeBtn.dataset.id;
+                        if (t === 'video') {
+                            var arr = getPromotionVideos().filter(function(p) { return String(p.id) !== String(id); });
+                            setPromotionVideos(arr);
+                        } else if (t === 'short') {
+                            var arr = getPromotionShorts().filter(function(p) { return String(p.id) !== String(id); });
+                            setPromotionShorts(arr);
+                        } else if (t === 'caption') {
+                            var arr = getPromotionCaptions().filter(function(p) { return String(p.id) !== String(id); });
+                            setPromotionCaptions(arr);
+                        } else if (t === 'shop') {
+                            var arr = getPromotionShop().filter(function(p) { return String(p.id) !== String(id); });
+                            setPromotionShop(arr);
+                        }
+                        location.reload();
+                        return;
+                    }
+                    var runPauseBtn = e.target.closest('.studio-table__run-pause');
+                    if (runPauseBtn && runPauseBtn.dataset.id != null) {
+                        var t = runPauseBtn.dataset.type;
+                        var id = runPauseBtn.dataset.id;
+                        var arr; var setter;
+                        if (t === 'video') { arr = getPromotionVideos(); setter = setPromotionVideos; }
+                        else if (t === 'short') { arr = getPromotionShorts(); setter = setPromotionShorts; }
+                        else if (t === 'caption') { arr = getPromotionCaptions(); setter = setPromotionCaptions; }
+                        else if (t === 'shop') { arr = getPromotionShop(); setter = setPromotionShop; }
+                        else return;
+                        for (var i = 0; i < arr.length; i++) {
+                            if (String(arr[i].id) === String(id)) {
+                                arr[i].status = (arr[i].status || 'promoting') === 'paused' ? 'promoting' : 'paused';
+                                setter(arr);
+                                location.reload();
+                                break;
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    })();
+    </script>
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

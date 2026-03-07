@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Channel - NOK Super</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .channel-view-body { min-height: 100vh; padding-bottom: 100px; background: linear-gradient(180deg, #0c0c18 0%, #0a0a14 50%, #080812 100%); color: #fff; }
+        .channel-view-body .bg { background: linear-gradient(135deg, rgba(30,27,75,0.4) 0%, rgba(15,15,35,0.9) 50%, rgba(20,15,50,0.3) 100%) !important; background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0L50 50L0 100M100 0L50 50L100 100M50 0L50 100M0 50L100 50' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='0.5'/%3E%3C/svg%3E"), linear-gradient(135deg, rgba(30,27,75,0.3) 0%, rgba(15,15,35,0.95) 50%, rgba(20,15,50,0.2) 100%) !important; }
+        .channel-view-body .long-video__header { background: rgba(10,10,22,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .channel-view-body .long-video__header svg { color: #fff; }
+        .channel-view-body .long-video__header .home-search__input { color: #fff; }
+        .channel-view-body .long-video__header .home-search__input::placeholder { color: rgba(255,255,255,0.75); }
+        .channel-view-body .long-video__header-right { display: flex; align-items: center; gap: 8px; }
+        .channel-view-body .long-video__header-icon.channel-view-gear { padding: 8px; }
+        .channel-view-upload { position: relative; }
+        .channel-view-upload-plus { position: absolute; top: 4px; right: 4px; width: 14px; height: 14px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; }
+        .channel-view-body .channel-banner-wrap { position: relative; width: 100%; }
+        .channel-view-body .channel-banner {
+            width: 100%; height: 200px; min-height: 160px; position: relative; overflow: hidden;
+            background: linear-gradient(135deg, rgba(99,102,241,0.3) 0%, rgba(139,92,246,0.35) 25%, rgba(236,72,153,0.25) 50%, rgba(59,130,246,0.3) 75%, rgba(139,92,246,0.2) 100%);
+        }
+        .channel-banner::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 0L120 60L60 120L0 60z' fill='none' stroke='rgba(236,72,153,0.12)' stroke-width='1.2'/%3E%3Cpath d='M0 0L120 120M120 0L0 120' fill='none' stroke='rgba(139,92,246,0.15)' stroke-width='0.8'/%3E%3Cpath d='M20 60 L60 20 L100 60 L60 100 Z' fill='none' stroke='rgba(99,102,241,0.1)' stroke-width='0.5'/%3E%3Cpath d='M40 40 L80 40 L80 80 L40 80 Z' fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='0.5'/%3E%3C/svg%3E");
+            opacity: 1;
+        }
+        .channel-banner::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.03) 20%, transparent 40%, rgba(255,255,255,0.04) 60%, transparent 80%), radial-gradient(ellipse 80% 50% at 30% 50%, rgba(139,92,246,0.25) 0%, transparent 50%), radial-gradient(ellipse 60% 80% at 70% 80%, rgba(236,72,153,0.15) 0%, transparent 45%), radial-gradient(circle at 80% 20%, rgba(99,102,241,0.2) 0%, transparent 40%);
+            pointer-events: none;
+        }
+        .channel-banner-dots { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; pointer-events: none; }
+        .channel-banner-lines { position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.06) 50%, transparent 60%); background-size: 200% 100%; animation: channelBannerShine 8s ease-in-out infinite; pointer-events: none; }
+        @keyframes channelBannerShine { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        .channel-profile-section {
+            max-width: 1200px; margin: 0 auto; padding: 0 20px;
+            position: relative; margin-top: -72px; z-index: 2; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; padding-bottom: 20px;
+        }
+        .channel-profile-left { display: flex; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+        .channel-view-avatar {
+            width: 128px; height: 128px; border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff;
+            display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 2.5rem;
+            border: 4px solid rgba(10,10,18,0.95); box-shadow: 0 0 0 3px rgba(99,102,241,0.5), 0 0 30px rgba(139,92,246,0.4), 0 8px 32px rgba(0,0,0,0.5);
+            overflow: hidden; flex-shrink: 0;
+        }
+        .channel-view-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .channel-view-info { flex: 1; min-width: 200px; }
+        .channel-view-name { font-size: 1.85rem; font-weight: 700; color: #fff; margin: 0 0 8px 0; letter-spacing: -0.02em; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .channel-view-badge {
+            display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.5), rgba(139,92,246,0.5)); border: 1px solid rgba(139,92,246,0.6);
+            color: #fff; font-size: 0.85rem; font-weight: 600; margin-bottom: 14px;
+        }
+        .channel-view-badge svg { width: 14px; height: 14px; flex-shrink: 0; }
+        .channel-view-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .channel-view-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 22px; border-radius: 12px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer; font-family: inherit; border: none; transition: all 0.2s;
+        }
+        .channel-view-btn--subscribe { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff; box-shadow: 0 0 20px rgba(139,92,246,0.4), 0 0 15px rgba(236,72,153,0.2), 0 4px 16px rgba(139,92,246,0.3); }
+        .channel-view-btn--subscribe:hover { transform: translateY(-1px); box-shadow: 0 0 28px rgba(139,92,246,0.5), 0 0 20px rgba(236,72,153,0.3), 0 6px 20px rgba(139,92,246,0.4); }
+        .channel-view-btn--bell { width: 44px; height: 44px; padding: 0; border-radius: 50%; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(255,255,255,0.15); }
+        .channel-view-btn--bell:hover { background: rgba(255,255,255,0.15); }
+        .channel-view-btn--support { background: linear-gradient(135deg, rgba(99,102,241,0.6), rgba(139,92,246,0.6)); color: #fff; box-shadow: 0 0 18px rgba(139,92,246,0.35); }
+        .channel-view-btn--support:hover { box-shadow: 0 0 24px rgba(139,92,246,0.5); transform: translateY(-1px); }
+        .channel-view-btn--edit { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.25); text-decoration: none; }
+        .channel-view-btn--edit:hover { background: rgba(255,255,255,0.18); }
+        .channel-stats-bar {
+            max-width: 1200px; margin: 0 auto; padding: 14px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.25);
+        }
+        .channel-stat { display: inline-flex; align-items: center; gap: 8px; font-size: 0.98rem; font-weight: 600; padding: 10px 14px; border-radius: 10px; border: none; background: transparent; color: #fff; cursor: pointer; font-family: inherit; transition: color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s; }
+        .channel-stat:hover { color: #fff; background: rgba(255,255,255,0.08); }
+        .channel-stat:active { transform: scale(0.97); }
+        .channel-stat.channel-stat--prominent { color: #fff; text-shadow: 0 0 14px rgba(139,92,246,0.45); }
+        .channel-stat.channel-stat--prominent:hover { background: rgba(139,92,246,0.15); box-shadow: 0 0 0 1px rgba(139,92,246,0.35), 0 0 16px rgba(139,92,246,0.2); }
+        .channel-stat + .channel-stat { margin-left: 0; padding-left: 16px; border-left: 1px solid rgba(255,255,255,0.12); }
+        .channel-stats-bar > .channel-stats-sort { margin-left: auto; padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.1); }
+        .channel-stat svg { width: 18px; height: 18px; color: #fff; flex-shrink: 0; }
+        .channel-stat.channel-stat--prominent svg { color: #c4b5fd; }
+        .channel-stat:focus { outline: none; box-shadow: 0 0 0 2px rgba(139,92,246,0.5); }
+        .channel-stat:focus-visible { box-shadow: 0 0 0 2px rgba(139,92,246,0.6); }
+        .channel-stats-sort { margin-left: auto; }
+        .channel-stats-sort select { padding: 9px 16px; border-radius: 10px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 0.98rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+        .channel-stats-sort select:focus { outline: none; border-color: rgba(139,92,246,0.5); box-shadow: 0 0 0 2px rgba(139,92,246,0.2); }
+        .channel-tabs {
+            max-width: 1200px; margin: 0 auto; padding: 0 20px 0 12px; display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid rgba(255,255,255,0.08);
+            -webkit-overflow-scrolling: touch; scrollbar-width: none;
+        }
+        .channel-tabs::-webkit-scrollbar { display: none; }
+        .channel-tab { padding: 12px 18px; font-size: 1rem; font-weight: 600; color: #fff; background: transparent; border: none; cursor: pointer; white-space: nowrap; font-family: inherit; border-bottom: 3px solid transparent; margin-bottom: -1px; transition: color 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s; border-radius: 10px 10px 0 0; position: relative; }
+        .channel-tab:hover { color: #fff; background: rgba(255,255,255,0.1); }
+        .channel-tab:active { transform: scale(0.98); }
+        .channel-tab.channel-tab--active { color: #fff; background: rgba(34,211,238,0.15); border-bottom-color: #22d3ee; box-shadow: 0 0 0 1px rgba(34,211,238,0.35), 0 0 24px rgba(34,211,238,0.4), 0 2px 0 0 #22d3ee; text-shadow: 0 0 14px rgba(34,211,238,0.35); }
+        .channel-tab:focus { outline: none; }
+        .channel-tab:focus-visible { box-shadow: 0 0 0 2px rgba(34,211,238,0.6); }
+        .channel-content { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
+        .channel-section-title { font-size: 1.35rem; font-weight: 700; color: #fff; margin: 0 0 16px 0; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+        .channel-videos-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+        .channel-videos-header--grid { margin-top: 8px; margin-bottom: 16px; }
+        .channel-sub-tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+        .channel-sub-tab { padding: 10px 20px; border-radius: 10px; font-size: 0.98rem; font-weight: 600; color: #fff; background: rgba(255,255,255,0.1); border: 1px solid transparent; border-bottom: 2px solid transparent; cursor: pointer; font-family: inherit; transition: color 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s; }
+        .channel-sub-tab:hover { color: #fff; background: rgba(255,255,255,0.12); }
+        .channel-sub-tab:active { transform: scale(0.98); }
+        .channel-sub-tab.channel-sub-tab--active { color: #fff; background: rgba(34,211,238,0.2); border-bottom-color: #22d3ee; border-radius: 10px 10px 0 0; box-shadow: 0 0 0 1px rgba(34,211,238,0.3), 0 0 20px rgba(34,211,238,0.5); text-shadow: 0 0 12px rgba(34,211,238,0.35); }
+        .channel-sub-tab:focus { outline: none; }
+        .channel-sub-tab:focus-visible { box-shadow: 0 0 0 2px rgba(34,211,238,0.6); }
+        .channel-featured {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 24px; padding: 24px; border-radius: 18px;
+            background: rgba(18,18,28,0.9); border: 1px solid rgba(139,92,246,0.3); margin-bottom: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        .channel-featured-thumb { position: relative; width: 100%; max-width: 400px; aspect-ratio: 16/9; border-radius: 14px; overflow: hidden; background: rgba(0,0,0,0.5); flex-shrink: 0; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .channel-featured-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .channel-featured-progress { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px 10px; background: linear-gradient(transparent, rgba(0,0,0,0.85)); display: flex; align-items: center; gap: 10px; color: #fff; font-size: 0.8rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .channel-featured-progress-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; overflow: hidden; }
+        .channel-featured-progress-fill { height: 100%; width: 82%; background: linear-gradient(90deg, #6366f1, #ec4899); border-radius: 2px; }
+        .channel-featured-duration { position: absolute; bottom: 8px; right: 8px; padding: 3px 8px; border-radius: 4px; background: rgba(0,0,0,0.85); color: #fff; font-size: 0.75rem; font-weight: 600; display: none; }
+        .channel-featured-info { flex: 1; min-width: 220px; }
+        .channel-featured-title { font-size: 1.35rem; font-weight: 700; color: #fff; margin: 0 0 10px 0; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+        .channel-featured-meta { font-size: 0.95rem; font-weight: 500; color: #fff; margin-bottom: 14px; }
+        .channel-featured-watch { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 10px; background: linear-gradient(135deg, #3b82f6, #0ea5e9); color: #fff; font-weight: 600; text-decoration: none; font-size: 0.95rem; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 16px rgba(59,130,246,0.4); }
+        .channel-featured-watch:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(59,130,246,0.5); color: #fff; }
+        .channel-video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; }
+        .channel-video-card { text-decoration: none; color: inherit; display: block; border-radius: 14px; overflow: hidden; background: rgba(18,18,28,0.6); border: 1px solid rgba(255,255,255,0.06); transition: border-color 0.2s, background 0.2s, box-shadow 0.2s; }
+        .channel-video-card:hover { border-color: rgba(139,92,246,0.4); background: rgba(28,28,45,0.85); box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 20px rgba(139,92,246,0.15); }
+        .channel-video-card__thumb { position: relative; aspect-ratio: 16/9; background: rgba(0,0,0,0.4); overflow: hidden; border-radius: 14px 14px 0 0; }
+        .channel-video-card__thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .channel-video-card__duration { position: absolute; bottom: 8px; right: 8px; padding: 4px 8px; border-radius: 6px; background: rgba(0,0,0,0.88); color: #fff; font-size: 0.8rem; font-weight: 600; }
+        .channel-video-card__title { padding: 12px 12px 4px; font-size: 1.02rem; font-weight: 700; color: #fff; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .channel-video-card__channel { padding: 0 12px 4px; font-size: 0.92rem; font-weight: 600; color: #fff; }
+        .channel-video-card__meta { padding: 0 12px 12px; font-size: 0.9rem; font-weight: 500; color: #fff; }
+        .channel-panel { display: none; }
+        .channel-panel.channel-panel--active { display: block; }
+        .channel-view-body .long-video__logo-img { filter: brightness(1.05); }
+        .channel-stats-sort select { cursor: pointer; }
+        .channel-stat .channel-stat-followers-wrap { display: inline-flex; align-items: center; gap: 2px; }
+        .channel-panel-empty { color: #fff; font-size: 1.05rem; font-weight: 600; margin: 0 0 20px 0; padding: 20px; background: rgba(255,255,255,0.06); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2); }
+        .channel-about-wrap { padding: 20px; background: rgba(18,18,28,0.6); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); }
+        .channel-about-desc { color: #fff; font-size: 1.02rem; font-weight: 500; line-height: 1.65; margin: 0; white-space: pre-wrap; }
+    </style>
+</head>
+<body class="home-body has-bottom-nav channel-view-body">
+    <div class="home-layout">
+        <div class="bg"></div>
+        <header class="long-video__header">
+            <div class="long-video__header-left">
+                <button type="button" class="long-video__menu" id="header-menu-btn" aria-label="Menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <a href="home.html" class="long-video__logo">
+                    <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+                </a>
+            </div>
+            <div class="long-video__search">
+                <div class="home-search">
+                    <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" class="home-search__input" placeholder="Search">
+                    <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+                </div>
+            </div>
+            <div class="long-video__header-right">
+                <a href="upload.html" class="long-video__header-icon channel-view-upload" aria-label="Upload" title="Upload" style="padding:8px;display:flex;align-items:center;justify-content:center;color:inherit;text-decoration:none;position:relative;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span class="channel-view-upload-plus"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></a>
+                <button type="button" class="long-video__header-icon" id="channel-view-notification-btn" aria-label="Notifications">
+                    <span class="long-video__icon-bell-wrap"><svg class="long-video__icon-bell" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+                </button>
+                <a href="settings.html" class="long-video__header-icon channel-view-gear" aria-label="Settings" title="Settings" style="color:inherit;text-decoration:none;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></a>
+                <a href="channel.html" class="long-video__profile-wrap" id="channel-view-profile-wrap" style="display:none;text-decoration:none;color:inherit;" title="Channel">
+                    <div class="long-video__avatar" id="channel-view-avatar">AZ</div>
+                </a>
+                <div class="long-video__auth-btns" id="channel-view-auth-btns">
+                    <a href="login.html" class="home-header__btn home-header__btn--ghost">Log In</a>
+                    <a href="signup.html" class="home-header__btn home-header__btn--primary">Sign Up</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="header-drawer-backdrop" id="header-drawer-backdrop" aria-hidden="true"></div>
+        <aside class="header-drawer" id="header-drawer" aria-label="Main menu" aria-hidden="true">
+            <div class="header-drawer__head">
+                <span class="header-drawer__title">Menu</span>
+                <button type="button" class="header-drawer__close" id="header-drawer-close" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+            <nav class="header-drawer__nav">
+                <a href="home.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+                <a href="shorts.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+                <a href="studio.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span><span>Studio</span></a>
+                <a href="library.html#watch-later" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Watch later</span></a>
+                <a href="upload.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+                <a href="settings.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+            </nav>
+        </aside>
+
+        <main class="channel-view-main">
+            <div class="channel-banner-wrap">
+                <div class="channel-banner"><div class="channel-banner-dots"></div><div class="channel-banner-lines"></div></div>
+            </div>
+            <div class="channel-profile-section">
+                <div class="channel-profile-left">
+                    <div class="channel-view-avatar" id="channel-view-avatar-large">
+                        <span id="channel-view-avatar-initial">N</span>
+                    </div>
+                    <div class="channel-view-info">
+                        <h1 class="channel-view-name" id="channel-view-name">NOK SUPER Creator</h1>
+                        <div class="channel-view-badge">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15 8L22 9L17 14L18 21L12 18L6 21L7 14L2 9L9 8L12 2Z"/></svg>
+                            DIAMOND CREATOR
+                        </div>
+                        <div class="channel-view-actions">
+                            <button type="button" class="channel-view-btn channel-view-btn--subscribe" id="channel-subscribe-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> + Subscribe</button>
+                            <button type="button" class="channel-view-btn channel-view-btn--bell" aria-label="Notifications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                            <a href="channel-create.html" class="channel-view-btn channel-view-btn--edit" id="channel-edit-btn" style="display:none;">Edit channel</a>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="channel-view-btn channel-view-btn--support"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> Support Creator ❤</button>
+            </div>
+
+            <div class="channel-stats-bar">
+                <button type="button" class="channel-stat channel-stat--prominent" id="channel-stat-videos" aria-label="Videos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> <span id="channel-stat-videos-n">248</span> Videos</button>
+                <button type="button" class="channel-stat channel-stat--prominent" id="channel-stat-views" aria-label="Views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> <span id="channel-stat-views-n">97.4M</span> Views</button>
+                <button type="button" class="channel-stat" id="channel-stat-shorts" aria-label="Shorts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c4-4 8-8 8-12 0-3-2-6-5-6-2 0-3 1-3 2-1-1-2-2-4-2-3 0-5 3-5 6 0 4 4 8 8 12z"/></svg> <span id="channel-stat-shorts-n">92</span> Shorts</button>
+                <button type="button" class="channel-stat" aria-label="Subscribers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> <span id="channel-stat-subs-n">1.2M</span> Subscribers</button>
+                <button type="button" class="channel-stat" aria-label="Followers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:2px;vertical-align:middle"><path d="M18 9l-6 6-6-6"/></svg> <span id="channel-stat-followers-n">1.2M</span> Followers</button>
+                <div class="channel-stats-sort">
+                    <select id="channel-sort" aria-label="Sort by"><option value="latest">Sort By: Latest</option><option value="popular">Popular</option><option value="oldest">Oldest</option></select>
+                </div>
+            </div>
+
+            <div class="channel-tabs">
+                <button type="button" class="channel-tab channel-tab--active" data-panel="videos">Videos</button>
+                <button type="button" class="channel-tab" data-panel="shorts">Shorts</button>
+                <button type="button" class="channel-tab" data-panel="live">Live</button>
+                <button type="button" class="channel-tab" data-panel="playlists">Playlists</button>
+                <button type="button" class="channel-tab" data-panel="community">Community</button>
+                <button type="button" class="channel-tab" data-panel="about">About</button>
+            </div>
+
+            <div class="channel-content">
+                <div class="channel-panel channel-panel--active" id="channel-panel-videos">
+                    <h2 class="channel-section-title">Featured Video</h2>
+                    <div class="channel-videos-header">
+                        <div class="channel-sub-tabs">
+                            <button type="button" class="channel-sub-tab" data-filter="featured">Featured Video</button>
+                            <button type="button" class="channel-sub-tab channel-sub-tab--active" data-filter="latest">Latest</button>
+                            <button type="button" class="channel-sub-tab" data-filter="popular">Popular</button>
+                            <button type="button" class="channel-sub-tab" data-filter="trending">Trending</button>
+                        </div>
+                        <div class="channel-stats-sort"><select id="channel-video-sort" aria-label="Sort videos"><option value="latest">Sort By: Latest</option><option value="popular">Popular</option></select></div>
+                    </div>
+                    <div class="channel-featured" id="channel-featured">
+                        <div class="channel-featured-thumb" id="channel-featured-thumb">
+                            <div class="channel-featured-progress" id="channel-featured-progress">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                                <div class="channel-featured-progress-bar"><div class="channel-featured-progress-fill"></div></div>
+                                <span id="channel-featured-time">12:44</span>
+                                <span style="opacity:0.8">/</span>
+                                <span id="channel-featured-total">15:48</span>
+                            </div>
+                        </div>
+                        <div class="channel-featured-info">
+                            <h2 class="channel-featured-title" id="channel-featured-title">Check Out My New Video!</h2>
+                            <p class="channel-featured-meta" id="channel-featured-meta">786K views - 5 days ago</p>
+                            <a href="#" class="channel-featured-watch" id="channel-featured-link">Watch Now &gt;</a>
+                        </div>
+                    </div>
+                    <div class="channel-videos-header channel-videos-header--grid">
+                        <div class="channel-sub-tabs">
+                            <button type="button" class="channel-sub-tab channel-sub-tab--active" data-filter="grid-latest">Latest</button>
+                            <button type="button" class="channel-sub-tab" data-filter="grid-popular">Popular</button>
+                            <button type="button" class="channel-sub-tab" data-filter="grid-trending">Trending</button>
+                        </div>
+                        <div class="channel-stats-sort"><select id="channel-grid-sort" aria-label="Sort"><option value="latest">Sort By: Latest</option></select></div>
+                    </div>
+                    <div class="channel-video-grid" id="channel-video-grid"></div>
+                </div>
+                <div class="channel-panel" id="channel-panel-shorts">
+                    <p class="channel-panel-empty" id="channel-shorts-empty">Shorts from this channel will appear here.</p>
+                    <div class="channel-video-grid" id="channel-shorts-grid"></div>
+                </div>
+                <div class="channel-panel" id="channel-panel-live"><p class="channel-panel-empty">Live streams will appear here.</p></div>
+                <div class="channel-panel" id="channel-panel-playlists"><p class="channel-panel-empty">Playlists will appear here.</p></div>
+                <div class="channel-panel" id="channel-panel-community"><p class="channel-panel-empty">Community posts will appear here.</p></div>
+                <div class="channel-panel" id="channel-panel-about"><div class="channel-about-wrap"><p class="channel-about-desc" id="channel-about-desc">Channel description will appear here.</p></div></div>
+            </div>
+        </main>
+
+        <nav class="home-bottom-nav" aria-label="Bottom navigation">
+            <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+            <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+            <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+            <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+            <a href="channel.html" class="home-bottom-nav__item home-bottom-nav__item--active"><span class="home-bottom-nav__icon home-bottom-nav__icon--purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="8" r="4"/></svg></span><span>Channel</span></a>
+        </nav>
+    </div>
+
+    <script src="nok-header-drawer.js"></script>
+    <script>
+        (function() {
+            var profileWrap = document.getElementById('channel-view-profile-wrap');
+            var authBtns = document.getElementById('channel-view-auth-btns');
+            var avatarEl = document.getElementById('channel-view-avatar');
+            function updateAuthView() {
+                var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+                if (profileWrap) profileWrap.style.display = isLoggedIn ? 'flex' : 'none';
+                if (authBtns) authBtns.style.display = isLoggedIn ? 'none' : 'flex';
+                if (avatarEl && isLoggedIn) {
+                    var name = (localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You').toString().trim();
+                    var initial = name ? name.charAt(0).toUpperCase() : '?';
+                    var photoUrl = localStorage.getItem('nokUserPhotoUrl') || '';
+                    try { var chData = JSON.parse(localStorage.getItem('nokChannelData') || '{}'); if (chData.photoUrl) photoUrl = chData.photoUrl; } catch(_) {}
+                    if (photoUrl) avatarEl.innerHTML = '<img src="' + photoUrl.replace(/"/g, '&quot;') + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
+                    else avatarEl.textContent = initial;
+                }
+            }
+            updateAuthView();
+            window.addEventListener('pageshow', updateAuthView);
+
+            var channelName = localStorage.getItem('nokUserChannel') || 'NOK SUPER Creator';
+            var channelData = {};
+            try { channelData = JSON.parse(localStorage.getItem('nokChannelData') || '{}'); } catch(_) {}
+            var isOwnChannel = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+
+            document.getElementById('channel-view-name').textContent = channelName;
+            var avatarLarge = document.getElementById('channel-view-avatar-large');
+            var avatarInitial = document.getElementById('channel-view-avatar-initial');
+            if (channelData.photoUrl && avatarLarge) {
+                avatarInitial.style.display = 'none';
+                var img = document.createElement('img');
+                img.src = channelData.photoUrl;
+                img.alt = '';
+                img.setAttribute('style', 'width:100%;height:100%;object-fit:cover');
+                avatarLarge.appendChild(img);
+            } else if (avatarInitial) {
+                avatarInitial.textContent = channelName ? channelName.charAt(0).toUpperCase() : 'N';
+            }
+            if (channelData.desc) document.getElementById('channel-about-desc').textContent = channelData.desc;
+            var editBtn = document.getElementById('channel-edit-btn');
+            if (editBtn) editBtn.style.display = isOwnChannel ? 'inline-flex' : 'none';
+
+            var userVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
+            var userShorts = JSON.parse(localStorage.getItem('nokShortsVideos') || '[]');
+            var longVideos = userVideos.filter(function(v) { return !v.isShorts; });
+            function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+            function getViewsText(v) { var x = v.views || v.meta || 0; if (typeof x === 'number') return (x >= 1e6 ? (x/1e6).toFixed(1) + 'M' : x >= 1e3 ? (x/1e3).toFixed(1) + 'K' : x) + ' views'; return String(x); }
+            document.getElementById('channel-stat-videos-n').textContent = longVideos.length || '248';
+            document.getElementById('channel-stat-shorts-n').textContent = userShorts.length || '92';
+            document.getElementById('channel-stat-views-n').textContent = '97.4M';
+            document.getElementById('channel-stat-subs-n').textContent = '1.2M';
+            var followersEl = document.getElementById('channel-stat-followers-n');
+            if (followersEl) followersEl.textContent = '1.2M';
+
+            var featured = longVideos[0];
+            var featuredThumb = document.getElementById('channel-featured-thumb');
+            var featuredTitle = document.getElementById('channel-featured-title');
+            var featuredMeta = document.getElementById('channel-featured-meta');
+            var featuredLink = document.getElementById('channel-featured-link');
+            if (featured) {
+                if (featured.thumbData) { var ft = document.createElement('img'); ft.src = featured.thumbData; ft.alt = ''; featuredThumb.insertBefore(ft, featuredThumb.firstChild); } else featuredThumb.style.background = 'linear-gradient(135deg, #6366f1, #8b5cf6);';
+                var elapsed = featured.duration || '12:44';
+                var total = featured.totalDuration || '15:48';
+                var timeEl = document.getElementById('channel-featured-time');
+                var totalEl = document.getElementById('channel-featured-total');
+                if (timeEl) timeEl.textContent = elapsed;
+                if (totalEl) totalEl.textContent = total;
+                featuredTitle.textContent = featured.title || 'Check Out My New Video!';
+                featuredMeta.textContent = getViewsText(featured) + ' - 5 days ago';
+                featuredLink.href = 'video.html?id=' + encodeURIComponent(featured.id) + '&autoplay=1';
+            } else {
+                document.getElementById('channel-featured').style.display = 'none';
+            }
+
+            var grid = document.getElementById('channel-video-grid');
+            var list = longVideos.length ? longVideos : [{ id: 'fv1', title: 'Check Out My New Video!', views: 786000, thumbData: null, duration: '12:44' }, { id: 'v2', title: 'INSANE GAMEPLAY TIPS!', views: 929000, thumbData: null, duration: '12:26' }, { id: 'v3', title: 'EXPLOSIVE MATCH IN 4K!', views: 450000, thumbData: null, duration: '22:54' }, { id: 'v4', title: '5 EPIC STREAMING TIPS!', views: 320000, thumbData: null, duration: '19:06' }, { id: 'v5', title: 'TOP 10 LEGENDARY PLAYS!', views: 890000, thumbData: null, duration: '3:21' }, { id: 'v6', title: 'PRO TACTICS REVEALED!', views: 210000, thumbData: null, duration: '5:42' }];
+            var displayChannelName = channelName || 'NOK SUPER Creator';
+            list.forEach(function(v) {
+                var card = document.createElement('a');
+                card.href = 'video.html?id=' + encodeURIComponent(v.id) + '&autoplay=1';
+                card.className = 'channel-video-card';
+                var thumb = v.thumbData ? '<img src="' + escapeHtml(v.thumbData) + '" alt="">' : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#6366f1,#8b5cf6);"></div>';
+                card.innerHTML = '<div class="channel-video-card__thumb">' + thumb + '<span class="channel-video-card__duration">' + (v.duration || '12:44') + '</span></div><h3 class="channel-video-card__title">' + escapeHtml(v.title || 'Video') + '</h3><p class="channel-video-card__channel">' + escapeHtml(displayChannelName) + '</p><p class="channel-video-card__meta">' + escapeHtml(getViewsText(v)) + ' - 3 days ago</p>';
+                grid.appendChild(card);
+            });
+
+            var shortsGrid = document.getElementById('channel-shorts-grid');
+            var shortsEmpty = document.getElementById('channel-shorts-empty');
+            if (shortsGrid && userShorts.length) { if (shortsEmpty) shortsEmpty.style.display = 'none'; }
+            userShorts.slice(0, 12).forEach(function(s) {
+                var card = document.createElement('a');
+                card.href = 'shorts.html?id=' + encodeURIComponent(s.id);
+                card.className = 'channel-video-card';
+                var thumb = s.thumbData ? '<img src="' + escapeHtml(s.thumbData) + '" alt="">' : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#8b5cf6,#6366f1);"></div>';
+                card.innerHTML = '<div class="channel-video-card__thumb">' + thumb + '</div><h3 class="channel-video-card__title">' + escapeHtml(s.title || 'Short') + '</h3><p class="channel-video-card__meta">' + (s.likes || '0') + ' likes</p>';
+                shortsGrid.appendChild(card);
+            });
+
+            document.querySelectorAll('.channel-tab').forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.channel-tab').forEach(function(t) { t.classList.remove('channel-tab--active'); });
+                    document.querySelectorAll('.channel-panel').forEach(function(p) { p.classList.remove('channel-panel--active'); });
+                    this.classList.add('channel-tab--active');
+                    var panel = document.getElementById('channel-panel-' + this.getAttribute('data-panel'));
+                    if (panel) panel.classList.add('channel-panel--active');
+                });
+            });
+            document.querySelectorAll('.channel-sub-tab').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var parent = this.closest('.channel-videos-header');
+                    if (parent) parent.querySelectorAll('.channel-sub-tab').forEach(function(b) { b.classList.remove('channel-sub-tab--active'); });
+                    this.classList.add('channel-sub-tab--active');
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
