@@ -33,11 +33,13 @@
         .home-caption-mini-card__actions .cap-share { color: #eab308; }
         .home-caption-mini-card__meta { font-size: 0.82rem; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 14px; }
         .home-caption-mini-card__meta span { display: inline-flex; align-items: center; gap: 5px; }
-        .home-login-banner { display: none; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 14px 20px; margin-bottom: 16px; background: linear-gradient(135deg, rgba(139,92,246,0.25) 0%, rgba(99,102,241,0.2) 100%); border: 1px solid rgba(139,92,246,0.35); border-radius: 14px; }
+        .home-login-banner { display: none; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding: 18px 22px; margin-bottom: 20px; background: linear-gradient(135deg, rgba(139,92,246,0.28) 0%, rgba(99,102,241,0.22) 50%, rgba(79,70,229,0.18) 100%); border: 1px solid rgba(139,92,246,0.4); border-radius: 16px; box-shadow: 0 4px 20px rgba(139,92,246,0.15); transition: box-shadow 0.25s, border-color 0.25s; }
+        .home-login-banner:hover { border-color: rgba(139,92,246,0.5); box-shadow: 0 6px 24px rgba(139,92,246,0.2); }
         .home-login-banner.home-login-banner--visible { display: flex; }
-        .home-login-banner__text { font-size: 0.95rem; font-weight: 600; color: #fff; margin: 0; }
+        .home-login-banner__text { font-size: 1rem; font-weight: 600; color: rgba(255,255,255,0.98); margin: 0; letter-spacing: 0.01em; }
         .home-login-banner__btns { display: flex; gap: 10px; flex-shrink: 0; }
-        .home-login-banner__btns .home-header__btn { padding: 8px 16px; font-size: 0.9rem; text-decoration: none; }
+        .home-login-banner__btns .home-header__btn { padding: 10px 18px; font-size: 0.9rem; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; }
+        .home-login-banner__btns .home-header__btn:hover { transform: translateY(-1px); }
     </style>
 </head>
 <body class="home-body has-bottom-nav">
