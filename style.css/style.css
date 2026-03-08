@@ -333,7 +333,7 @@ body.main-page .bg { background-image: url("../mainbg.png"); }
 }
 
 .glass__legal {
-    font-size: 11px;
+    font-size: 15px;
     color: rgba(200, 210, 255, 0.7);
     text-align: center;
     line-height: 1.5;
@@ -3845,7 +3845,7 @@ html:has(.home-body.chat-overlay-open) {
     }
 
     .glass__legal {
-        font-size: 10px;
+        font-size: 14px;
     }
 
     .home-below {
