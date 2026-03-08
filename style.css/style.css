@@ -3346,17 +3346,40 @@ html:has(.home-body.chat-overlay-open) {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
-    color: var(--text-muted);
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    color: rgba(220,225,255,0.9);
 }
 
 .profile-photo__icon {
-    font-size: 1.8rem;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-photo__icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: rgba(220,225,255,0.9);
+    color: rgba(220,225,255,0.9);
 }
 
 .profile-photo__text {
-    font-size: 0.75rem;
-    line-height: 1;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.95);
+    line-height: 1.2;
+}
+
+.profile-photo__hint {
+    font-size: 0.65rem;
+    color: rgba(200,210,255,0.7);
+    font-weight: 500;
+    line-height: 1.2;
 }
 
 .profile-photo__preview {

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Channel - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body.channel-delete-body { min-height: 100vh; font-family: 'Outfit', -apple-system, sans-serif; }
+        .channel-delete-page { padding: 20px 16px 120px; max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+        .channel-delete-card { background: rgba(15,22,41,0.6); backdrop-filter: blur(24px); border: 1px solid rgba(100,130,255,0.15); border-radius: 24px; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+        .channel-delete-title { font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .channel-delete-sub { font-size: 0.95rem; color: rgba(200,210,255,0.7); margin-bottom: 24px; line-height: 1.5; }
+        .channel-delete-info { background: rgba(0,0,0,0.25); border-radius: 14px; padding: 18px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.08); }
+        .channel-delete-info p { margin: 0 0 10px 0; font-size: 0.9rem; color: rgba(220,225,255,0.9); line-height: 1.5; }
+        .channel-delete-info p:last-child { margin-bottom: 0; }
+        .channel-delete-info strong { color: #fff; }
+        .channel-delete-label { display: block; font-size: 0.95rem; font-weight: 600; color: #fff; margin-bottom: 10px; }
+        .channel-delete-reason { width: 100%; padding: 14px 16px; border: 1px solid rgba(100,130,255,0.2); border-radius: 12px; background: rgba(0,0,0,0.35); color: #fff; font-size: 0.95rem; font-family: inherit; min-height: 100px; resize: vertical; }
+        .channel-delete-reason:focus { outline: none; border-color: rgba(99,102,241,0.5); }
+        .channel-delete-reason::placeholder { color: rgba(200,210,255,0.4); }
+        .channel-delete-reason-hint { font-size: 0.85rem; color: rgba(200,210,255,0.65); margin-bottom: 12px; }
+        .channel-delete-options { display: flex; flex-direction: column; gap: 10px; }
+        .channel-delete-option { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 12px; border: 2px solid rgba(100,130,255,0.3); background: rgba(0,0,0,0.25); color: rgba(255,255,255,0.9); font-size: 0.9rem; font-family: inherit; cursor: pointer; transition: all 0.2s; width: 100%; }
+        .channel-delete-option:hover { border-color: rgba(100,130,255,0.5); background: rgba(30,40,80,0.3); }
+        .channel-delete-option.channel-delete-option--selected { border-color: rgba(139,92,246,0.8); background: rgba(99,102,241,0.25); color: #fff; }
+        .channel-delete-option input { position: absolute; opacity: 0; pointer-events: none; }
+        .channel-delete-option .channel-delete-option-check { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.5); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .channel-delete-option.channel-delete-option--selected .channel-delete-option-check { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); border-color: transparent; }
+        .channel-delete-option.channel-delete-option--selected .channel-delete-option-check::after { content: ''; width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-bottom: 3px; }
+        .channel-delete-comment-wrap { margin-top: 20px; }
+        .channel-delete-comment-wrap .channel-delete-label { margin-bottom: 8px; }
+        .channel-delete-reason { width: 100%; padding: 14px 16px; border: 1px solid rgba(100,130,255,0.2); border-radius: 12px; background: rgba(0,0,0,0.35); color: #fff; font-size: 0.95rem; font-family: inherit; min-height: 90px; resize: vertical; }
+        .channel-delete-reason:focus { outline: none; border-color: rgba(99,102,241,0.5); }
+        .channel-delete-reason::placeholder { color: rgba(200,210,255,0.4); }
+        .channel-delete-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+        .channel-delete-btn { padding: 14px 24px; border-radius: 14px; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; text-decoration: none; border: none; }
+        .channel-delete-btn--secondary { background: rgba(100,130,255,0.2); color: #fff; border: 1px solid rgba(100,130,255,0.35); }
+        .channel-delete-btn--secondary:hover { background: rgba(100,130,255,0.3); }
+        .channel-delete-btn--danger { background: rgba(220,80,80,0.25); color: rgba(255,180,180,1); border: 1px solid rgba(255,100,100,0.4); }
+        .channel-delete-btn--danger:hover { background: rgba(220,80,80,0.35); }
+        .channel-delete-btn--primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: #fff; }
+        .channel-delete-btn--primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(79,109,216,0.4); }
+        .channel-delete-date { font-size: 1.1rem; font-weight: 700; color: rgba(255,200,100,0.95); margin: 16px 0; }
+        .channel-recover-note { font-size: 0.9rem; color: rgba(180,255,180,0.9); margin-top: 16px; padding: 12px; background: rgba(0,80,0,0.2); border-radius: 10px; border: 1px solid rgba(100,255,100,0.2); }
+    </style>
+</head>
+<body class="home-body has-bottom-nav channel-delete-body">
+    <div class="home-layout">
+        <div class="bg"></div>
+        <header class="long-video__header">
+            <div class="long-video__header-left">
+                <a href="channel-create.html" class="long-video__menu" style="display:flex;align-items:center;justify-content:center;color:inherit;text-decoration:none;" aria-label="Back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </a>
+                <a href="home.html" class="long-video__logo">
+                    <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+                </a>
+            </div>
+            <div class="long-video__header-right">
+                <a href="channel.html" class="long-video__profile-wrap" id="channel-profile-wrap" style="display:none;text-decoration:none;color:inherit;"><div class="long-video__avatar" id="channel-avatar">?</div></a>
+                <div class="long-video__auth-btns" id="channel-auth-btns">
+                    <a href="login.html?next=channel-delete.html" class="home-header__btn home-header__btn--ghost">Log In</a>
+                    <a href="signup.html?next=channel-delete.html" class="home-header__btn home-header__btn--primary">Sign Up</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="channel-delete-page">
+            <div class="channel-delete-card">
+                <!-- State 1: Request deletion form -->
+                <div id="delete-form-view">
+                    <h1 class="channel-delete-title">Delete your channel</h1>
+                    <p class="channel-delete-sub">Your channel will be scheduled for deletion. You have 90 days to recover it.</p>
+                    <div class="channel-delete-info">
+                        <p><strong>What happens:</strong></p>
+                        <p>• Your channel will become <strong>private</strong> immediately. No one else can see it.</p>
+                        <p>• You have <strong>90 days</strong> to recover. Within this time you can cancel deletion and make your channel public again.</p>
+                        <p>• After 90 days, your channel and its data will be permanently deleted.</p>
+                    </div>
+                    <label class="channel-delete-label">Why do you want to delete your channel?</label>
+                    <p class="channel-delete-reason-hint">Select at least 1 and up to 3 reasons.</p>
+                    <div class="channel-delete-options" id="delete-reason-options" role="group" aria-label="Reasons">
+                        <label class="channel-delete-option" data-value="Taking a break from creating"><input type="checkbox" name="delete-reason" value="Taking a break from creating"><span class="channel-delete-option-check"></span><span>Taking a break from creating</span></label>
+                        <label class="channel-delete-option" data-value="Switching to another platform"><input type="checkbox" name="delete-reason" value="Switching to another platform"><span class="channel-delete-option-check"></span><span>Switching to another platform</span></label>
+                        <label class="channel-delete-option" data-value="Not getting enough views or growth"><input type="checkbox" name="delete-reason" value="Not getting enough views or growth"><span class="channel-delete-option-check"></span><span>Not getting enough views or growth</span></label>
+                        <label class="channel-delete-option" data-value="No longer interested in creating content"><input type="checkbox" name="delete-reason" value="No longer interested in creating content"><span class="channel-delete-option-check"></span><span>No longer interested in creating content</span></label>
+                        <label class="channel-delete-option" data-value="Privacy concerns"><input type="checkbox" name="delete-reason" value="Privacy concerns"><span class="channel-delete-option-check"></span><span>Privacy concerns</span></label>
+                        <label class="channel-delete-option" data-value="Too time-consuming"><input type="checkbox" name="delete-reason" value="Too time-consuming"><span class="channel-delete-option-check"></span><span>Too time-consuming</span></label>
+                        <label class="channel-delete-option" data-value="Negative comments or harassment"><input type="checkbox" name="delete-reason" value="Negative comments or harassment"><span class="channel-delete-option-check"></span><span>Negative comments or harassment</span></label>
+                        <label class="channel-delete-option" data-value="Starting a new channel with different content"><input type="checkbox" name="delete-reason" value="Starting a new channel with different content"><span class="channel-delete-option-check"></span><span>Starting a new channel with different content</span></label>
+                        <label class="channel-delete-option" data-value="Monetization or policy issues"><input type="checkbox" name="delete-reason" value="Monetization or policy issues"><span class="channel-delete-option-check"></span><span>Monetization or policy issues</span></label>
+                        <label class="channel-delete-option" data-value="Technical or account problems"><input type="checkbox" name="delete-reason" value="Technical or account problems"><span class="channel-delete-option-check"></span><span>Technical or account problems</span></label>
+                        <label class="channel-delete-option" data-value="Personal reasons"><input type="checkbox" name="delete-reason" value="Personal reasons"><span class="channel-delete-option-check"></span><span>Personal reasons</span></label>
+                        <label class="channel-delete-option" data-value="Career or job change"><input type="checkbox" name="delete-reason" value="Career or job change"><span class="channel-delete-option-check"></span><span>Career or job change</span></label>
+                        <label class="channel-delete-option" data-value="Health reasons"><input type="checkbox" name="delete-reason" value="Health reasons"><span class="channel-delete-option-check"></span><span>Health reasons</span></label>
+                        <label class="channel-delete-option" data-value="Duplicate or test channel"><input type="checkbox" name="delete-reason" value="Duplicate or test channel"><span class="channel-delete-option-check"></span><span>Duplicate or test channel</span></label>
+                        <label class="channel-delete-option" data-value="Other"><input type="checkbox" name="delete-reason" value="Other"><span class="channel-delete-option-check"></span><span>Other</span></label>
+                    </div>
+                    <p class="channel-delete-reason-hint" id="delete-reason-count" style="margin-top:10px;margin-bottom:0;"></p>
+                    <div class="channel-delete-comment-wrap">
+                        <label class="channel-delete-label" for="delete-comment">Additional comments</label>
+                        <textarea id="delete-comment" class="channel-delete-reason" placeholder="Write your comments here..." required></textarea>
+                    </div>
+                    <div class="channel-delete-actions">
+                        <a href="channel-create.html" class="channel-delete-btn channel-delete-btn--secondary">Cancel</a>
+                        <button type="button" class="channel-delete-btn channel-delete-btn--danger" id="delete-submit-btn">Schedule deletion</button>
+                    </div>
+                </div>
+
+                <!-- State 2: Pending deletion – recover option -->
+                <div id="delete-pending-view" style="display:none;">
+                    <h1 class="channel-delete-title">Channel scheduled for deletion</h1>
+                    <p class="channel-delete-sub">Your channel is now private and will be permanently deleted on:</p>
+                    <p class="channel-delete-date" id="delete-date-text">—</p>
+                    <div class="channel-delete-info">
+                        <p>Until then, only you can see your channel. You can <strong>recover</strong> at any time to cancel deletion and make your channel public again.</p>
+                    </div>
+                    <p class="channel-recover-note">Recovering will make your channel public again and cancel the deletion.</p>
+                    <div class="channel-delete-actions" style="margin-top:20px;">
+                        <a href="channel-create.html" class="channel-delete-btn channel-delete-btn--secondary">Back to edit channel</a>
+                        <button type="button" class="channel-delete-btn channel-delete-btn--primary" id="recover-channel-btn">Recover channel</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <nav class="home-bottom-nav">
+            <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+            <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+            <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+            <a href="channel.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="8" r="4"/></svg></span><span>Channel</span></a>
+            <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+        </nav>
+    </div>
+
+    <script>
+        (function() {
+            function isLoggedIn() { return (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn'); }
+            function updateAuthView() {
+                var profileWrap = document.getElementById('channel-profile-wrap');
+                var authBtns = document.getElementById('channel-auth-btns');
+                var avatar = document.getElementById('channel-avatar');
+                if (isLoggedIn()) {
+                    if (profileWrap) profileWrap.style.display = '';
+                    if (authBtns) authBtns.style.display = 'none';
+                    if (avatar) {
+                        var name = (localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You').toString().trim();
+                        var initial = name ? name.charAt(0).toUpperCase() : '?';
+                        var photoUrl = localStorage.getItem('nokUserPhotoUrl') || '';
+                        try { var ch = JSON.parse(localStorage.getItem('nokChannelData') || '{}'); if (ch.photoUrl) photoUrl = ch.photoUrl; } catch (_) {}
+                        if (photoUrl) avatar.innerHTML = '<img src="' + photoUrl.replace(/"/g, '&quot;') + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
+                        else avatar.textContent = initial;
+                    }
+                } else {
+                    if (profileWrap) profileWrap.style.display = 'none';
+                    if (authBtns) authBtns.style.display = '';
+                }
+            }
+            updateAuthView();
+            window.addEventListener('pageshow', updateAuthView);
+
+            var NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
+            var formView = document.getElementById('delete-form-view');
+            var pendingView = document.getElementById('delete-pending-view');
+            var deleteDateText = document.getElementById('delete-date-text');
+            var deleteSubmitBtn = document.getElementById('delete-submit-btn');
+            var recoverBtn = document.getElementById('recover-channel-btn');
+
+            function getDeletion() {
+                try {
+                    var s = localStorage.getItem('nokChannelDeletion');
+                    return s ? JSON.parse(s) : null;
+                } catch (_) { return null; }
+            }
+            function setDeletion(obj) { try { localStorage.setItem('nokChannelDeletion', JSON.stringify(obj)); } catch (_) {} }
+            function clearDeletion() { try { localStorage.removeItem('nokChannelDeletion'); } catch (_) {} }
+            function getChannelData() {
+                try {
+                    var s = localStorage.getItem('nokChannelData');
+                    return s ? JSON.parse(s) : {};
+                } catch (_) { return {}; }
+            }
+            function setChannelData(obj) { try { localStorage.setItem('nokChannelData', JSON.stringify(obj)); } catch (_) {} }
+
+            function applyView() {
+                var del = getDeletion();
+                var now = Date.now();
+                if (del && del.deleteAt) {
+                    if (del.deleteAt <= now) {
+                        clearDeletion();
+                        localStorage.removeItem('nokUserChannel');
+                        localStorage.removeItem('nokChannelData');
+                        if (formView) formView.style.display = 'block';
+                        if (pendingView) pendingView.style.display = 'none';
+                        return;
+                    }
+                    if (pendingView) {
+                        pendingView.style.display = 'block';
+                        if (formView) formView.style.display = 'none';
+                        if (deleteDateText) deleteDateText.textContent = new Date(del.deleteAt).toLocaleDateString(undefined, { dateStyle: 'long' });
+                    }
+                    return;
+                }
+                if (formView) formView.style.display = 'block';
+                if (pendingView) pendingView.style.display = 'none';
+            }
+            applyView();
+
+            var MAX_REASONS = 3;
+            var reasonOptions = document.getElementById('delete-reason-options');
+            var countHint = document.getElementById('delete-reason-count');
+            if (reasonOptions) {
+                var boxes = reasonOptions.querySelectorAll('input[name="delete-reason"]');
+                function updateReasonUI() {
+                    var checked = reasonOptions.querySelectorAll('input[name="delete-reason"]:checked');
+                    reasonOptions.querySelectorAll('.channel-delete-option').forEach(function(lab) {
+                        var cb = lab.querySelector('input');
+                        lab.classList.toggle('channel-delete-option--selected', cb && cb.checked);
+                    });
+                    if (countHint) countHint.textContent = checked.length + ' of ' + MAX_REASONS + ' selected';
+                }
+                boxes.forEach(function(cb) {
+                    cb.addEventListener('change', function() {
+                        var checked = reasonOptions.querySelectorAll('input[name="delete-reason"]:checked');
+                        if (checked.length > MAX_REASONS) this.checked = false;
+                        updateReasonUI();
+                    });
+                });
+                updateReasonUI();
+            }
+
+            if (deleteSubmitBtn) {
+                deleteSubmitBtn.addEventListener('click', function() {
+                    var selected = [];
+                    if (reasonOptions) {
+                        reasonOptions.querySelectorAll('input[name="delete-reason"]:checked').forEach(function(cb) { selected.push(cb.value); });
+                    }
+                    if (selected.length < 1) {
+                        alert('Please select at least 1 reason (you can select up to 3). The delete button will not work until you select.');
+                        return;
+                    }
+                    var commentEl = document.getElementById('delete-comment');
+                    var comment = commentEl ? String(commentEl.value || '').trim() : '';
+                    if (!comment) {
+                        alert('Please write your comments. The delete button will not work until you fill this.');
+                        if (commentEl) { commentEl.focus(); commentEl.setAttribute('aria-invalid', 'true'); }
+                        return;
+                    }
+                    if (commentEl) commentEl.removeAttribute('aria-invalid');
+                    var reason = selected.join('; ');
+                    var now = Date.now();
+                    setDeletion({
+                        reason: reason,
+                        reasons: selected,
+                        comment: comment,
+                        requestedAt: now,
+                        deleteAt: now + NINETY_DAYS_MS
+                    });
+                    var ch = getChannelData();
+                    ch.visibility = 'private';
+                    setChannelData(ch);
+                    applyView();
+                });
+            }
+            if (recoverBtn) {
+                recoverBtn.addEventListener('click', function() {
+                    clearDeletion();
+                    var ch = getChannelData();
+                    ch.visibility = 'public';
+                    setChannelData(ch);
+                    applyView();
+                    window.location.href = 'channel-create.html';
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

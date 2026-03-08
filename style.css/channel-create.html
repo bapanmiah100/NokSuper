@@ -33,11 +33,21 @@
         .channel-row input:focus, .channel-row select:focus, .channel-row textarea:focus { outline: none; border-color: rgba(99,102,241,0.5); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
         .channel-row input::placeholder, .channel-row textarea::placeholder { color: rgba(200,210,255,0.4); }
         .channel-row textarea { min-height: 90px; resize: vertical; }
-        .channel-upload { flex: 1; min-width: 180px; aspect-ratio: 1; max-width: 160px; border: 2px dashed rgba(100,130,255,0.35); border-radius: 14px; background: rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+        .channel-upload { flex: 1; min-width: 180px; aspect-ratio: 1; max-width: 160px; border: 2px dashed rgba(100,130,255,0.35); border-radius: 14px; background: rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; padding: 16px; }
         .channel-upload:hover { border-color: rgba(99,102,241,0.5); background: rgba(30,40,80,0.3); }
-        .channel-upload svg { width: 32px; height: 32px; color: rgba(200,210,255,0.6); }
-        .channel-upload span { font-size: 0.85rem; color: rgba(200,210,255,0.8); font-weight: 500; }
-        .channel-upload small { font-size: 0.75rem; color: rgba(200,210,255,0.5); }
+        .channel-upload #channel-upload-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
+        .channel-upload #channel-upload-placeholder svg { width: 40px; height: 40px; flex-shrink: 0; stroke: rgba(220,225,255,0.9); color: rgba(220,225,255,0.9); }
+        .channel-upload #channel-upload-placeholder > span { font-size: 0.9rem; font-weight: 600; color: rgba(255,255,255,0.95); display: block; line-height: 1.3; }
+        .channel-upload #channel-upload-placeholder small { font-size: 0.72rem; color: rgba(200,210,255,0.7); display: block; line-height: 1.3; font-weight: 500; }
+        .channel-upload-banner { width: 100%; aspect-ratio: 2560/424; max-height: 200px; border: 2px dashed rgba(100,130,255,0.35); border-radius: 14px; background: rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; padding: 20px; }
+        .channel-upload-banner:hover { border-color: rgba(99,102,241,0.5); background: rgba(30,40,80,0.3); }
+        .channel-upload-banner #channel-banner-placeholder { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 16px; text-align: center; flex-wrap: wrap; }
+        .channel-upload-banner #channel-banner-placeholder .channel-banner-placeholder-text { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .channel-upload-banner #channel-banner-placeholder svg { width: 44px; height: 44px; flex-shrink: 0; stroke: rgba(220,225,255,0.9); color: rgba(220,225,255,0.9); order: 2; }
+        .channel-upload-banner #channel-banner-placeholder .channel-banner-placeholder-text { order: 1; }
+        .channel-upload-banner #channel-banner-placeholder .channel-banner-placeholder-text > span { font-size: 0.9rem; font-weight: 600; color: rgba(255,255,255,0.95); }
+        .channel-upload-banner #channel-banner-placeholder small { font-size: 0.72rem; color: rgba(200,210,255,0.7); }
+        .channel-upload-banner img.channel-banner-preview-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
         .channel-toggle-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .channel-toggle-wrap { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 200px; }
         .channel-checkbox { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
@@ -46,10 +56,16 @@
         .channel-toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
         .channel-toggle.channel-toggle--on::after { transform: translateX(22px); }
         .channel-toggle-hint { font-size: 0.8rem; color: rgba(200,210,255,0.5); }
+        .channel-visibility-wrap { display: flex; align-items: center; gap: 0; border-radius: 12px; overflow: hidden; border: 1px solid rgba(100,130,255,0.3); background: rgba(0,0,0,0.25); max-width: 280px; }
+        .channel-visibility-btn { flex: 1; padding: 12px 20px; font-size: 0.95rem; font-weight: 600; font-family: inherit; border: none; cursor: pointer; background: transparent; color: rgba(255,255,255,0.7); transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .channel-visibility-btn:hover { color: rgba(255,255,255,0.95); background: rgba(100,130,255,0.15); }
+        .channel-visibility-btn.channel-visibility-btn--active { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: #fff; }
+        .channel-visibility-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
         .channel-price-wrap { display: flex; align-items: center; gap: 8px; }
         .channel-price-wrap input { max-width: 120px; }
         .channel-price-prefix { font-size: 1rem; color: rgba(200,210,255,0.8); }
         .channel-helper { font-size: 0.8rem; color: rgba(200,210,255,0.5); margin-top: 6px; }
+        .channel-field-error { margin: 0; }
         .channel-disclaimer { font-size: 0.85rem; color: rgba(200,210,255,0.6); margin-bottom: 24px; }
         .channel-disclaimer a { color: var(--accent-light); text-decoration: none; }
         .channel-disclaimer a:hover { text-decoration: underline; }
@@ -60,6 +76,10 @@
         .channel-btn--primary { border: none; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: #fff; box-shadow: 0 8px 24px rgba(79,109,216,0.35); }
         .channel-btn--primary:hover { transform: translateY(-1px); box-shadow: 0 12px 32px rgba(79,109,216,0.45); }
         .channel-btn--primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none; }
+        .channel-delete-wrap { margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; }
+        .channel-delete-btn { background: none; border: none; color: rgba(255,120,120,0.95); font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: inherit; text-decoration: underline; padding: 8px 12px; border-radius: 8px; transition: color 0.2s, background 0.2s; }
+        .channel-delete-btn:hover { color: rgba(255,140,140,1); background: rgba(255,80,80,0.12); }
+        .channel-delete-wrap .channel-delete-btn { text-decoration: none; display: inline-block; }
     </style>
 </head>
 <body class="home-body has-bottom-nav channel-create-body">
@@ -67,7 +87,7 @@
         <div class="bg"></div>
         <header class="long-video__header">
             <div class="long-video__header-left">
-                <button type="button" class="long-video__menu" aria-label="Menu">
+                <button type="button" class="long-video__menu" id="header-menu-btn" aria-label="Menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
                 <a href="home.html" class="long-video__logo">
@@ -75,26 +95,43 @@
                 </a>
             </div>
             <div class="long-video__search">
-                <div class="home-search">
+                <form class="home-search" action="home.html" method="get" role="search">
                     <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                    <input type="text" class="home-search__input" placeholder="Search">
+                    <input type="text" class="home-search__input" name="q" placeholder="Search" aria-label="Search">
                     <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
-                </div>
+                </form>
             </div>
             <div class="long-video__header-right">
                 <button type="button" class="long-video__header-icon" id="channel-notification-btn" aria-label="Notifications" title="Notifications">
                     <span class="long-video__icon-bell-wrap"><svg class="long-video__icon-bell" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
                     <span class="long-video__icon-bell-off-wrap" style="display:none"><svg class="long-video__icon-bell-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="1" y1="1" x2="23" y2="23"/></svg></span>
                 </button>
-                <div class="long-video__profile-wrap" id="channel-profile-wrap" style="display:none">
+                <a href="channel.html" class="long-video__profile-wrap" id="channel-profile-wrap" style="display:none;text-decoration:none;color:inherit;" title="Channel">
                     <div class="long-video__avatar" id="channel-avatar">AZ</div>
-                </div>
+                </a>
                 <div class="long-video__auth-btns" id="channel-auth-btns">
                     <a href="login.html" class="home-header__btn home-header__btn--ghost">Log In</a>
                     <a href="signup.html" class="home-header__btn home-header__btn--primary">Sign Up</a>
                 </div>
             </div>
         </header>
+
+        <div class="header-drawer-backdrop" id="header-drawer-backdrop" aria-hidden="true"></div>
+        <aside class="header-drawer" id="header-drawer" aria-label="Main menu" aria-hidden="true">
+            <div class="header-drawer__head">
+                <span class="header-drawer__title">Menu</span>
+                <button type="button" class="header-drawer__close" id="header-drawer-close" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+            <nav class="header-drawer__nav">
+                <a href="home.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+                <a href="shorts.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+                <a href="studio.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span><span>Studio</span></a>
+                <a href="library.html#watch-later" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Watch later</span></a>
+                <a href="upload.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+                <a href="channel.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="8" r="4"/></svg></span><span>Channel</span></a>
+                <a href="settings.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+            </nav>
+        </aside>
     <div class="channel-page" style="position:relative;z-index:1;">
         <div class="channel-hero">
             <h1 id="channel-hero-title">Create Your Channel</h1>
@@ -107,7 +144,8 @@
                     <div class="channel-row">
                         <label>Channel Name</label>
                         <div class="channel-row__input">
-                            <input type="text" id="channel-name" placeholder="Enter your channel name" required>
+                            <input type="text" id="channel-name" placeholder="Enter your channel name" required aria-describedby="channel-name-error">
+                            <p class="channel-field-error" id="channel-name-error" role="alert" style="display:none;margin-top:6px;font-size:0.85rem;color:rgba(255,120,120,0.95);"></p>
                         </div>
                     </div>
                     <div class="channel-row">
@@ -121,12 +159,28 @@
                         <label class="channel-upload" for="channel-photo" id="channel-upload-label">
                             <img id="channel-photo-preview" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:12px;position:absolute;inset:0;">
                             <span id="channel-upload-placeholder">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                                 <span>Upload Image</span>
-                                <small>Recommended size: 400 x 400px</small>
+                                <small>Recommended size: 400 × 400px</small>
                             </span>
                             <input type="file" id="channel-photo" accept="image/*" hidden>
                         </label>
+                    </div>
+                    <div class="channel-row">
+                        <label>Banner / Background Image</label>
+                        <div class="channel-row__input">
+                            <label class="channel-upload-banner" for="channel-banner" id="channel-banner-label">
+                                <img id="channel-banner-preview" class="channel-banner-preview-img" src="" alt="">
+                                <span id="channel-banner-placeholder">
+                                    <span class="channel-banner-placeholder-text">
+                                        <span>Upload Banner</span>
+                                        <small>Recommended: 2560 × 424px (channel header)</small>
+                                    </span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                                </span>
+                                <input type="file" id="channel-banner" accept="image/*" hidden>
+                            </label>
+                        </div>
                     </div>
                     <div class="channel-row">
                         <label>Select Category</label>
@@ -236,12 +290,32 @@
 
                 <p class="channel-disclaimer">By creating a channel, you agree to our <a href="#" class="channel-link">Terms of Service</a> and <a href="#" class="channel-link">Monetization Policy</a></p>
 
+                <div class="channel-row" style="margin-bottom:24px;">
+                    <label>Channel visibility</label>
+                    <div class="channel-row__input">
+                        <div class="channel-visibility-wrap" role="group" aria-label="Channel visibility">
+                            <button type="button" class="channel-visibility-btn channel-visibility-btn--active" id="channel-visibility-public" data-value="public" aria-pressed="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                Public
+                            </button>
+                            <button type="button" class="channel-visibility-btn" id="channel-visibility-private" data-value="private" aria-pressed="false">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                Private
+                            </button>
+                        </div>
+                        <p class="channel-helper" style="margin-top:8px;">Public: anyone can find your channel. Private: only you can see it.</p>
+                    </div>
+                </div>
+
                 <div class="channel-actions">
-                    <a href="home.html" class="channel-btn channel-btn--cancel">Cancel</a>
+                    <a href="#" class="channel-btn channel-btn--cancel" id="channel-cancel-btn">Cancel</a>
                     <button type="submit" class="channel-btn channel-btn--primary" id="create-channel-btn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                         <span id="channel-submit-text">Create Channel</span>
                     </button>
+                </div>
+                <div class="channel-delete-wrap" id="channel-delete-wrap" style="display:none;">
+                    <a href="channel-delete.html" class="channel-delete-btn" id="channel-delete-btn">Delete my channel</a>
                 </div>
             </form>
         </div>
@@ -345,6 +419,7 @@
         </div>
     </div>
 
+    <script src="nok-header-drawer.js"></script>
     <script>
         (function() {
             var profileWrap = document.getElementById('channel-profile-wrap');
@@ -358,6 +433,7 @@
                     var name = (localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You').toString().trim();
                     var initial = name ? name.charAt(0).toUpperCase() : '?';
                     var photoUrl = localStorage.getItem('nokUserPhotoUrl') || '';
+                    try { var chData = JSON.parse(localStorage.getItem('nokChannelData') || '{}'); if (chData.photoUrl) photoUrl = chData.photoUrl; } catch (_) {}
                     if (photoUrl) channelAvatar.innerHTML = '<img src="' + photoUrl.replace(/"/g, '&quot;') + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
                     else channelAvatar.textContent = initial;
                 }
@@ -376,6 +452,16 @@
             bindToggle(document.getElementById('channel-live-toggle'), document.getElementById('channel-live'));
             bindToggle(document.getElementById('channel-comments-toggle'), document.getElementById('channel-comments'));
             bindToggle(document.getElementById('channel-paid-toggle'), document.getElementById('channel-paid'));
+
+            var visibilityPublic = document.getElementById('channel-visibility-public');
+            var visibilityPrivate = document.getElementById('channel-visibility-private');
+            function setVisibility(value) {
+                var isPublic = (value !== 'private');
+                if (visibilityPublic) { visibilityPublic.classList.toggle('channel-visibility-btn--active', isPublic); visibilityPublic.setAttribute('aria-pressed', isPublic); }
+                if (visibilityPrivate) { visibilityPrivate.classList.toggle('channel-visibility-btn--active', !isPublic); visibilityPrivate.setAttribute('aria-pressed', !isPublic); }
+            }
+            if (visibilityPublic) visibilityPublic.addEventListener('click', function() { setVisibility('public'); });
+            if (visibilityPrivate) visibilityPrivate.addEventListener('click', function() { setVisibility('private'); });
             function updateCreateBtn() {
                 var live = document.getElementById('channel-live').checked;
                 var comments = document.getElementById('channel-comments').checked;
@@ -410,6 +496,30 @@
                 channelPhotoDataUrl = dataUrl;
                 if (photoPreview) { photoPreview.src = dataUrl; photoPreview.style.display = 'block'; }
                 if (uploadPlaceholder) uploadPlaceholder.style.display = 'none';
+            }
+
+            var channelBannerDataUrl = null;
+            var bannerInput = document.getElementById('channel-banner');
+            var bannerPreview = document.getElementById('channel-banner-preview');
+            var bannerPlaceholder = document.getElementById('channel-banner-placeholder');
+            if (bannerInput) {
+                bannerInput.addEventListener('change', function() {
+                    var f = this.files && this.files[0];
+                    if (!f) return;
+                    var r = new FileReader();
+                    r.onload = function() {
+                        channelBannerDataUrl = r.result;
+                        if (bannerPreview) { bannerPreview.src = channelBannerDataUrl; bannerPreview.style.display = 'block'; }
+                        if (bannerPlaceholder) bannerPlaceholder.style.display = 'none';
+                    };
+                    r.readAsDataURL(f);
+                });
+            }
+            function showBannerPreview(dataUrl) {
+                if (!dataUrl) return;
+                channelBannerDataUrl = dataUrl;
+                if (bannerPreview) { bannerPreview.src = dataUrl; bannerPreview.style.display = 'block'; }
+                if (bannerPlaceholder) bannerPlaceholder.style.display = 'none';
             }
 
             var existingName = localStorage.getItem('nokUserChannel');
@@ -450,37 +560,65 @@
                         if (b3) b3.value = existingData.benefits[2] || '';
                     }
                     if (existingData.photoUrl) showPhotoPreview(existingData.photoUrl);
+                    if (existingData.bannerUrl) showBannerPreview(existingData.bannerUrl);
                     var liveToggle = document.getElementById('channel-live-toggle');
                     var commentsToggle = document.getElementById('channel-comments-toggle');
                     var paidToggle = document.getElementById('channel-paid-toggle');
                     if (liveToggle) liveToggle.classList.toggle('channel-toggle--on', !!existingData.live);
                     if (commentsToggle) commentsToggle.classList.toggle('channel-toggle--on', existingData.comments !== false);
                     if (paidToggle) paidToggle.classList.toggle('channel-toggle--on', !!existingData.paid);
-                }
+if (typeof setVisibility === 'function') setVisibility(existingData.visibility === 'private' ? 'private' : 'public');
+                    }
+                var deleteWrap = document.getElementById('channel-delete-wrap');
+                if (deleteWrap) deleteWrap.style.display = (existingName && existingName.trim()) ? 'block' : 'none';
             }
 
             var form = document.getElementById('channel-form');
+            var nameError = document.getElementById('channel-name-error');
+            function showNameError(msg) {
+                if (nameError) { nameError.textContent = msg || ''; nameError.style.display = msg ? 'block' : 'none'; }
+            }
+            document.getElementById('channel-name').addEventListener('input', function() { showNameError(''); });
+
+            document.getElementById('channel-cancel-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                var next = new URLSearchParams(window.location.search).get('next');
+                window.location.href = (next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'home.html';
+            });
+
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
+                showNameError('');
                 var live = document.getElementById('channel-live').checked;
                 var comments = document.getElementById('channel-comments').checked;
                 var paid = document.getElementById('channel-paid').checked;
-                if (!(live || comments || paid)) return;
-                var name = document.getElementById('channel-name').value.trim();
-                if (!name) return;
+                if (!(live || comments || paid)) { alert('Please enable at least one option: Live, Comments, or Paid Subscription.'); return; }
+                var nameEl = document.getElementById('channel-name');
+                var name = nameEl ? nameEl.value.trim() : '';
+                if (!name) { showNameError('Please enter your channel name.'); if (nameEl) nameEl.focus(); return; }
+                if (name.length < 2) { showNameError('Channel name must be at least 2 characters.'); if (nameEl) nameEl.focus(); return; }
+                if (paid) {
+                    var priceVal = parseFloat((document.getElementById('channel-price') || {}).value, 10);
+                    if (isNaN(priceVal) || priceVal < 0.99) { alert('Please set a valid subscription price (minimum $0.99).'); return; }
+                }
                 localStorage.setItem('nokUserChannel', name);
+                var visibility = (document.getElementById('channel-visibility-private') && document.getElementById('channel-visibility-private').classList.contains('channel-visibility-btn--active')) ? 'private' : 'public';
                 var data = {
                     desc: document.getElementById('channel-desc').value.trim(),
                     category: document.getElementById('channel-category').value,
                     live: document.getElementById('channel-live').checked,
                     comments: document.getElementById('channel-comments').checked,
+                    visibility: visibility,
                     paid: document.getElementById('channel-paid').checked,
                     price: document.getElementById('channel-price').value || '1.99',
                     benefits: [document.getElementById('benefit-1').value.trim(), document.getElementById('benefit-2').value.trim(), document.getElementById('benefit-3').value.trim()].filter(Boolean)
                 };
                 if (channelPhotoDataUrl) data.photoUrl = channelPhotoDataUrl;
                 else if (existingData && existingData.photoUrl) data.photoUrl = existingData.photoUrl;
+                if (channelBannerDataUrl) data.bannerUrl = channelBannerDataUrl;
+                else if (existingData && existingData.bannerUrl) data.bannerUrl = existingData.bannerUrl;
                 try { localStorage.setItem('nokChannelData', JSON.stringify(data)); } catch (_) {}
+                if (data.photoUrl) try { localStorage.setItem('nokUserPhotoUrl', data.photoUrl); } catch (_) {}
                 var next = new URLSearchParams(window.location.search).get('next') || 'upload.html';
                 window.location.href = next;
             });
