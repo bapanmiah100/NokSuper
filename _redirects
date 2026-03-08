@@ -1,0 +1,2 @@
+# Serve the app at site root so noksuper.netlify.app/ opens the app
+/    /style.css/index.html   200

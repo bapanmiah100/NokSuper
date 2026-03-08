@@ -45,6 +45,9 @@
         .caption-comments__submit { padding: 10px 20px; border: none; border-radius: 20px; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
         .caption-comments__submit:hover { opacity: 0.9; }
         .caption-reply-input-wrap { margin-top: 8px; margin-left: 42px; display: flex; gap: 8px; }
+        .caption-comments__login-prompt { margin-top: 12px; padding: 10px 0; }
+        .caption-comments__login-link { color: var(--accent-light); text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+        .caption-comments__login-link:hover { text-decoration: underline; }
         .caption-empty { text-align: center; padding: 48px 24px; color: rgba(255,255,255,0.5); }
         .caption-empty a { color: var(--accent-light); text-decoration: none; }
         .caption-empty a:hover { text-decoration: underline; }
@@ -88,6 +91,15 @@
         var listEl = document.getElementById('captions-list');
         var emptyEl = document.getElementById('captions-empty');
         var currentUser = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You';
+        function isLoggedIn() {
+            return (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+        }
+        function requireLoginForAction(action) {
+            if (isLoggedIn()) return true;
+            if (action === 'like') window.location.href = 'login.html?next=' + encodeURIComponent('captions.html');
+            else if (action === 'comment') window.location.href = 'login.html?next=' + encodeURIComponent('captions.html');
+            return false;
+        }
 
         function getPosts() {
             try { return JSON.parse(localStorage.getItem('nokCaptionPosts') || '[]'); } catch (e) { return []; }
@@ -135,13 +147,17 @@
             card.dataset.postId = post.id;
             var avatarHtml = initial(post.author);
             var photoHtml = post.photoData ? '<div class="caption-card__photo"><img src="' + post.photoData.replace(/"/g, '&quot;') + '" alt=""></div>' : '';
-            card.innerHTML = '<div class="caption-card__head"><div class="caption-card__avatar">' + avatarHtml + '</div><div class="caption-card__meta"><div class="caption-card__author">' + (post.author || 'User') + '</div><div class="caption-card__time">' + timeAgo(post.createdAt) + '</div></div></div>' + (post.caption ? '<div class="caption-card__text">' + (post.caption || '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div>' : '') + photoHtml + '<div class="caption-card__actions"><button type="button" class="caption-card__btn caption-like-btn" data-post-id="' + post.id + '" aria-label="Like"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg><span class="like-count">' + (post.likes || 0) + '</span></button><button type="button" class="caption-card__btn caption-comment-toggle" data-post-id="' + post.id + '" aria-label="Comment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="comment-count">' + (post.comments ? post.comments.length : 0) + '</span></button><button type="button" class="caption-card__btn caption-share-btn" data-post-id="' + post.id + '" aria-label="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span class="share-count">' + (post.shares || 0) + '</span></button></div><div class="caption-comments" id="comments-' + post.id + '" style="display:none;"><div class="caption-comments__list"></div><div class="caption-comments__input-wrap"><input type="text" class="caption-comments__input" placeholder="Add a comment..." maxlength="300" data-post-id="' + post.id + '"><button type="button" class="caption-comments__submit" data-post-id="' + post.id + '">Comment</button></div></div>';
+            var commentInputHtml = isLoggedIn()
+                ? '<div class="caption-comments__input-wrap"><input type="text" class="caption-comments__input" placeholder="Add a comment..." maxlength="300" data-post-id="' + post.id + '"><button type="button" class="caption-comments__submit" data-post-id="' + post.id + '">Comment</button></div>'
+                : '<div class="caption-comments__login-prompt"><a href="login.html?next=' + encodeURIComponent('captions.html') + '" class="caption-comments__login-link">Log in to comment</a></div>';
+            card.innerHTML = '<div class="caption-card__head"><div class="caption-card__avatar">' + avatarHtml + '</div><div class="caption-card__meta"><div class="caption-card__author">' + (post.author || 'User') + '</div><div class="caption-card__time">' + timeAgo(post.createdAt) + '</div></div></div>' + (post.caption ? '<div class="caption-card__text">' + (post.caption || '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div>' : '') + photoHtml + '<div class="caption-card__actions"><button type="button" class="caption-card__btn caption-like-btn" data-post-id="' + post.id + '" aria-label="Like"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg><span class="like-count">' + (post.likes || 0) + '</span></button><button type="button" class="caption-card__btn caption-comment-toggle" data-post-id="' + post.id + '" aria-label="Comment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="comment-count">' + (post.comments ? post.comments.length : 0) + '</span></button><button type="button" class="caption-card__btn caption-share-btn" data-post-id="' + post.id + '" aria-label="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span class="share-count">' + (post.shares || 0) + '</span></button></div><div class="caption-comments" id="comments-' + post.id + '" style="display:none;"><div class="caption-comments__list"></div>' + commentInputHtml + '</div>';
             listEl.appendChild(card);
 
             var commentsContainer = card.querySelector('.caption-comments__list');
             renderComments(post.id, post.comments, commentsContainer);
 
             card.querySelector('.caption-like-btn').addEventListener('click', function() {
+                if (!requireLoginForAction('like')) return;
                 var posts = getPosts();
                 var p = posts.find(function(x) { return x.id === post.id; });
                 if (p) { p.likes = (p.likes || 0) + 1; savePosts(posts); this.querySelector('.like-count').textContent = p.likes; }
@@ -155,25 +171,30 @@
                 var commentsDiv = card.querySelector('.caption-comments');
                 commentsDiv.style.display = commentsDiv.style.display === 'none' ? 'block' : 'none';
             });
-            card.querySelector('.caption-comments__submit').addEventListener('click', function() {
-                var input = card.querySelector('.caption-comments__input');
-                var text = (input && input.value || '').trim();
-                if (!text) return;
-                var posts = getPosts();
-                var p = posts.find(function(x) { return x.id === post.id; });
-                if (!p) return;
-                p.comments = p.comments || [];
-                p.comments.push({ id: 'c_' + Date.now(), text: text, author: currentUser, createdAt: Date.now(), replies: [] });
-                savePosts(posts);
-                renderComments(p.id, p.comments, commentsContainer);
-                input.value = '';
-                card.querySelector('.comment-count').textContent = p.comments.length;
-                card.querySelector('.caption-comments').style.display = 'block';
-            });
+            var submitBtn = card.querySelector('.caption-comments__submit');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function() {
+                    if (!requireLoginForAction('comment')) return;
+                    var input = card.querySelector('.caption-comments__input');
+                    var text = (input && input.value || '').trim();
+                    if (!text) return;
+                    var posts = getPosts();
+                    var p = posts.find(function(x) { return x.id === post.id; });
+                    if (!p) return;
+                    p.comments = p.comments || [];
+                    p.comments.push({ id: 'c_' + Date.now(), text: text, author: currentUser, createdAt: Date.now(), replies: [] });
+                    savePosts(posts);
+                    renderComments(p.id, p.comments, commentsContainer);
+                    input.value = '';
+                    card.querySelector('.comment-count').textContent = p.comments.length;
+                    card.querySelector('.caption-comments').style.display = 'block';
+                });
+            }
             card.addEventListener('click', function(e) {
                 var replyBtn = e.target.closest('.caption-comment__reply-btn');
                 if (replyBtn) {
                     e.preventDefault();
+                    if (!requireLoginForAction('comment')) return;
                     var commentId = replyBtn.dataset.replyTo;
                     var wrap = replyBtn.closest('.caption-comment__body');
                     var existing = wrap.querySelector('.caption-reply-input-wrap');

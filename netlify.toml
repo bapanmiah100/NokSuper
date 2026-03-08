@@ -1,0 +1,11 @@
+# Publish repo root. Root URL serves the app via redirect.
+[build]
+  publish = "."
+  command = ""
+
+# Serve app at site root (avoids 404 even if root index is missing)
+[[redirects]]
+  from = "/"
+  to = "/style.css/index.html"
+  status = 200
+  force = true
