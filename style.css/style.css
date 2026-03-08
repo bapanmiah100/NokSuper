@@ -1809,7 +1809,7 @@ html:has(.home-body) .home-feed {
 .home-bottom-nav {
     display: flex;
     position: fixed;
-    bottom: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
     left: 50%;
     transform: translateX(-50%);
     width: var(--bottom-nav-width);
@@ -2476,8 +2476,8 @@ html:has(.home-body) .home-feed {
 
 .chat-trigger--float {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    right: calc(24px + env(safe-area-inset-right, 0px));
     z-index: 999;
     width: 56px;
     height: 56px;
@@ -3666,22 +3666,163 @@ html:has(.home-body.chat-overlay-open) {
     text-decoration: underline;
 }
 
-/* Responsive */
+/* ========== Responsive: Tablet & Mobile ========== */
+
+/* Tablet (e.g. iPad) */
 @media (max-width: 1024px) {
     .content {
         flex-direction: column;
         justify-content: center;
         gap: 32px;
         padding: 32px 24px;
+        min-height: auto;
     }
 
     .left-panel {
         max-width: 100%;
         text-align: center;
+        margin-left: 0;
+        margin-top: 0;
+    }
+
+    .left-panel__logo {
+        width: 180px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .greeting {
+        font-size: 2.2rem;
+        margin-left: 0;
+        margin-top: 0;
+    }
+
+    .line {
+        margin-left: 0;
     }
 
     .right-panel {
         justify-content: center;
+        margin-right: 0;
+    }
+
+    .glass {
+        width: 100%;
+        max-width: 380px;
+        padding: 28px 24px 24px;
+    }
+}
+
+/* Small tablet / large phone */
+@media (max-width: 768px) {
+    .content {
+        padding: 24px 16px;
+        gap: 24px;
+    }
+
+    .left-panel__logo {
+        width: 140px;
+        margin-bottom: 16px;
+    }
+
+    .greeting {
+        font-size: 1.85rem;
+        margin-bottom: 12px;
+    }
+
+    .line {
+        font-size: 1rem;
+    }
+
+    .glass {
+        max-width: 100%;
+        padding: 24px 20px 20px;
+        border-radius: 16px;
+    }
+
+    .glass__logo {
+        width: 160px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .glass__btn {
+        height: 48px;
+        font-size: 0.95rem;
+    }
+
+    /* Home: reduce padding, comfortable tap targets */
+    .home-below {
+        padding-left: 12px;
+        padding-right: 12px;
+        gap: 12px;
+    }
+
+    .home-feed {
+        padding: 16px 12px;
+    }
+
+    .home-trending-btns {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .home-trending-btn {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .content {
+        padding: 20px 12px;
+        gap: 20px;
+    }
+
+    .left-panel__logo {
+        width: 120px;
+    }
+
+    .greeting {
+        font-size: 1.6rem;
+    }
+
+    .line {
+        font-size: 0.95rem;
+    }
+
+    .glass {
+        padding: 20px 16px 16px;
+    }
+
+    .glass__legal {
+        font-size: 10px;
+    }
+
+    .home-below {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .home-feed {
+        padding: 12px 8px;
+    }
+
+    /* Match layout padding to shorter header */
+    .home-layout:has(.long-video__header) {
+        padding-top: 48px;
+    }
+
+    .chat-trigger--float {
+        bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+        right: 16px;
+        width: 48px;
+        height: 48px;
+    }
+    .chat-trigger--float svg {
+        width: 24px;
+        height: 24px;
     }
 }
 
