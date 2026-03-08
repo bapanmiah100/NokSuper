@@ -1,4 +1,4 @@
-# Publish repo root. Root URL serves the app via redirect.
+# Netlify only (ignored by Vercel). Publish repo root, serve app at /.
 [build]
   publish = "."
   command = ""

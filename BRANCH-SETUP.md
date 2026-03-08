@@ -1,4 +1,4 @@
-# দ্বিতীয় ব্রাঞ্চ তৈরি (Netlify / GitHub এর জন্য)
+# দ্বিতীয় ব্রাঞ্চ তৈরি (Vercel / Netlify / GitHub এর জন্য)
 
 টার্মিনাল বা Git Bash এ প্রজেক্ট ফোল্ডারে গিয়ে নিচের কমান্ড চালান:
 
@@ -27,4 +27,4 @@ git push -u origin develop
 git checkout main
 ```
 
-এখন রিপোজিটরিতে ২টা ব্রাঞ্চ থাকবে: main ও develop। তারপর Netlify/GitHub এ আবার চেষ্টা করুন।
+এখন রিপোজিটরিতে ২টা ব্রাঞ্চ থাকবে: main ও develop। তারপর Vercel/Netlify/GitHub এ আবার চেষ্টা করুন।

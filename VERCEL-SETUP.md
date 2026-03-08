@@ -1,5 +1,16 @@
 # Vercel setup for NOK Super
 
+## Why you might see “Netlify” in the repo
+
+This project was also set up for Netlify. These files are **only for Netlify** and are **ignored by Vercel**:
+
+- **netlify.toml** – Netlify build/redirect config (Vercel uses `vercel.json` instead).
+- **_redirects** – Netlify redirects (Vercel uses rewrites in `vercel.json`).
+
+They don’t affect your Vercel deploy. You can leave them if you use Netlify later, or delete them if you only use Vercel.
+
+---
+
 ## If you see an error at `/style.css/index.html`
 
 **Option A – You set "Root Directory" to `style.css` in Vercel**  
