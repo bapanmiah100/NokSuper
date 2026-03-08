@@ -9,25 +9,46 @@
     <link rel="stylesheet" href="video-long.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .settings-page { font-family: 'Outfit', -apple-system, sans-serif; min-height: 100vh; padding: 24px 16px 100px; padding-top: calc(24px + 56px); position: relative; z-index: 1; }
-        .settings-title { font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 28px; }
-        .settings-section { margin-bottom: 24px; }
-        .settings-section__title { font-size: 0.8rem; font-weight: 600; color: rgba(200,210,255,0.5); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; padding-left: 4px; }
-        .settings-card { background: rgba(15,22,41,0.5); backdrop-filter: blur(20px); border: 1px solid rgba(100,130,255,0.1); border-radius: 16px; overflow: hidden; }
-        .settings-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid rgba(100,130,255,0.06); text-decoration: none; color: inherit; transition: background 0.2s; }
+        .settings-page { font-family: 'Outfit', -apple-system, sans-serif; min-height: 100vh; padding: 24px 16px 100px; padding-top: calc(24px + 56px); position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+        .settings-hero { margin-bottom: 28px; }
+        .settings-title { font-size: 1.75rem; font-weight: 800; color: #fff; margin: 0 0 6px 0; letter-spacing: -0.02em; }
+        .settings-subtitle { font-size: 0.9rem; color: rgba(200,210,255,0.6); margin: 0; }
+        .settings-profile-card { background: linear-gradient(135deg, rgba(99,102,241,0.2) 0%, rgba(139,92,246,0.15) 100%); backdrop-filter: blur(20px); border: 1px solid rgba(139,92,246,0.25); border-radius: 20px; padding: 24px; margin-bottom: 28px; display: flex; align-items: center; gap: 20px; }
+        .settings-profile-card__avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; color: #fff; }
+        .settings-profile-card__avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .settings-profile-card__info { flex: 1; min-width: 0; }
+        .settings-profile-card__name { font-size: 1.2rem; font-weight: 700; color: #fff; margin: 0 0 4px 0; }
+        .settings-profile-card__meta { font-size: 0.85rem; color: rgba(200,210,255,0.7); margin: 0 0 12px 0; }
+        .settings-profile-card__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .settings-profile-card__btn { padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; font-family: inherit; border: none; cursor: pointer; }
+        .settings-profile-card__btn--primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: #fff; }
+        .settings-profile-card__btn--secondary { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+        .settings-section { margin-bottom: 28px; }
+        .settings-section__title { font-size: 0.75rem; font-weight: 700; color: rgba(200,210,255,0.55); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; padding-left: 4px; }
+        .settings-card { background: rgba(15,22,41,0.55); backdrop-filter: blur(20px); border: 1px solid rgba(100,130,255,0.12); border-radius: 18px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
+        .settings-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid rgba(100,130,255,0.06); text-decoration: none; color: inherit; transition: background 0.2s; }
         .settings-item:last-child { border-bottom: none; }
-        .settings-item:hover { background: rgba(255,255,255,0.04); }
+        .settings-item:hover { background: rgba(255,255,255,0.05); }
         .settings-item__left { display: flex; align-items: center; gap: 14px; }
-        .settings-item__icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(99,102,241,0.2); display: flex; align-items: center; justify-content: center; }
+        .settings-item__icon { width: 42px; height: 42px; border-radius: 12px; background: rgba(99,102,241,0.18); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .settings-item__icon svg { width: 20px; height: 20px; color: var(--accent-light); }
-        .settings-item__label { font-size: 0.95rem; font-weight: 500; color: rgba(255,255,255,0.95); }
-        .settings-item__hint { font-size: 0.8rem; color: rgba(200,210,255,0.5); margin-top: 2px; }
-        .settings-item__arrow { color: rgba(200,210,255,0.4); }
-        .settings-toggle { width: 48px; height: 26px; border-radius: 13px; background: rgba(100,130,255,0.3); border: none; cursor: pointer; position: relative; transition: background 0.2s; }
+        .settings-item__icon.settings-item__icon--green { background: rgba(34,197,94,0.2); }
+        .settings-item__icon.settings-item__icon--green svg { color: #4ade80; }
+        .settings-item__icon.settings-item__icon--amber { background: rgba(245,158,11,0.2); }
+        .settings-item__icon.settings-item__icon--amber svg { color: #fbbf24; }
+        .settings-item__icon.settings-item__icon--red { background: rgba(239,68,68,0.2); }
+        .settings-item__icon.settings-item__icon--red svg { color: #f87171; }
+        .settings-item__label { font-size: 0.95rem; font-weight: 600; color: rgba(255,255,255,0.95); }
+        .settings-item__hint { font-size: 0.8rem; color: rgba(200,210,255,0.55); margin-top: 2px; }
+        .settings-item__arrow { color: rgba(200,210,255,0.4); flex-shrink: 0; }
+        .settings-toggle { width: 50px; height: 28px; border-radius: 14px; background: rgba(100,130,255,0.3); border: none; cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0; }
         .settings-toggle.settings-toggle--on { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); }
-        .settings-toggle::after { content: ''; position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: transform 0.2s; }
+        .settings-toggle::after { content: ''; position: absolute; width: 24px; height: 24px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
         .settings-toggle.settings-toggle--on::after { transform: translateX(22px); }
-        .settings-version { text-align: center; font-size: 0.8rem; color: rgba(200,210,255,0.4); margin-top: 32px; }
+        .settings-theme-select { padding: 8px 12px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(100,130,255,0.25); color: #fff; font-size: 0.9rem; font-family: inherit; cursor: pointer; }
+        .settings-btn-secondary { padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+        .settings-btn-secondary:hover { background: rgba(255,255,255,0.15); }
+        .settings-version { text-align: center; font-size: 0.8rem; color: rgba(200,210,255,0.4); margin-top: 36px; padding-bottom: 20px; }
         #settings-auth-btns.auth-hidden { display: none !important; }
         #settings-profile-wrap.auth-hidden { display: none !important; }
         #settings-profile-wrap.auth-visible { display: flex !important; }
@@ -49,11 +70,11 @@
             </a>
         </div>
         <div class="long-video__search">
-            <div class="home-search">
+            <form class="home-search" action="home.html" method="get" role="search">
                 <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                <input type="text" class="home-search__input" placeholder="Search">
+                <input type="text" class="home-search__input" name="q" placeholder="Search" aria-label="Search">
                 <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
-            </div>
+            </form>
         </div>
         <div class="long-video__header-right">
             <button type="button" class="long-video__header-icon" id="settings-notification-btn" aria-label="Notifications" title="Notifications">
@@ -64,8 +85,8 @@
                 <div class="long-video__avatar" id="settings-avatar">?</div>
             </a>
             <div class="long-video__auth-btns" id="settings-auth-btns">
-                <a href="login.html" class="home-header__btn home-header__btn--ghost">Log In</a>
-                <a href="signup.html" class="home-header__btn home-header__btn--primary">Sign Up</a>
+                <a href="login.html?next=settings.html" class="home-header__btn home-header__btn--ghost">Log In</a>
+                <a href="signup.html?next=settings.html" class="home-header__btn home-header__btn--primary">Sign Up</a>
             </div>
         </div>
     </header>
@@ -90,7 +111,22 @@
     </aside>
 
     <main class="settings-page" style="position:relative;z-index:1;">
-        <h1 class="settings-title">Settings</h1>
+        <div class="settings-hero">
+            <h1 class="settings-title">Settings</h1>
+            <p class="settings-subtitle">Manage your account, preferences & privacy</p>
+        </div>
+
+        <div class="settings-profile-card" id="settings-profile-card" style="display:none;">
+            <div class="settings-profile-card__avatar" id="settings-profile-card-avatar">?</div>
+            <div class="settings-profile-card__info">
+                <h2 class="settings-profile-card__name" id="settings-profile-card-name">Your Name</h2>
+                <p class="settings-profile-card__meta" id="settings-profile-card-meta">Channel creator</p>
+                <div class="settings-profile-card__actions">
+                    <a href="channel.html" class="settings-profile-card__btn settings-profile-card__btn--primary">View Channel</a>
+                    <a href="profile-setup.html" class="settings-profile-card__btn settings-profile-card__btn--secondary">Edit Profile</a>
+                </div>
+            </div>
+        </div>
 
         <section class="settings-section" id="settings-account-section">
             <h2 class="settings-section__title">Account</h2>
@@ -119,24 +155,24 @@
                     </div>
                     <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                 </a>
+                <a href="wallet.html" class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--amber">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Wallet & Coins</span>
+                            <p class="settings-item__hint">Add money (৳) and buy coins</p>
+                        </div>
+                    </div>
+                    <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
             </div>
         </section>
 
         <section class="settings-section">
             <h2 class="settings-section__title">Preferences</h2>
             <div class="settings-card">
-                <div class="settings-item">
-                    <div class="settings-item__left">
-                        <div class="settings-item__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                        </div>
-                        <div>
-                            <span class="settings-item__label">Notifications</span>
-                            <p class="settings-item__hint">Video & channel updates</p>
-                        </div>
-                    </div>
-                    <button type="button" class="settings-toggle settings-toggle--on" id="toggle-notifications" aria-label="Toggle notifications"></button>
-                </div>
                 <div class="settings-item">
                     <div class="settings-item__left">
                         <div class="settings-item__icon">
@@ -148,6 +184,183 @@
                         </div>
                     </div>
                     <button type="button" class="settings-toggle" id="toggle-autoplay" aria-label="Toggle autoplay"></button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Sound effects</span>
+                            <p class="settings-item__hint">UI sounds & feedback</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle settings-toggle--on" id="toggle-sound" aria-label="Toggle sound"></button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Show comments by default</span>
+                            <p class="settings-item__hint">Expand comments on video pages</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle settings-toggle--on" id="toggle-comments-default" aria-label="Toggle comments default"></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title">Playback</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Default video quality</span>
+                            <p class="settings-item__hint">Preferred quality when available</p>
+                        </div>
+                    </div>
+                    <select id="settings-quality-select" class="settings-theme-select" aria-label="Video quality">
+                        <option value="auto">Auto</option>
+                        <option value="1080">1080p</option>
+                        <option value="720">720p</option>
+                        <option value="480">480p</option>
+                        <option value="360">360p</option>
+                    </select>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Default playback speed</span>
+                            <p class="settings-item__hint" id="settings-speed-hint">1x</p>
+                        </div>
+                    </div>
+                    <select id="settings-speed-select" class="settings-theme-select" aria-label="Playback speed">
+                        <option value="0.25">0.25x</option><option value="0.5">0.5x</option><option value="0.75">0.75x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.25">1.25x</option><option value="1.5">1.5x</option><option value="1.75">1.75x</option>
+                        <option value="2">2x</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title">Notifications</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Push notifications</span>
+                            <p class="settings-item__hint">Video & channel updates</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle settings-toggle--on" id="toggle-notifications" aria-label="Toggle notifications"></button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Email notifications</span>
+                            <p class="settings-item__hint">Updates & newsletters</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle" id="toggle-email-notif" aria-label="Toggle email notifications"></button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">New uploads from subscriptions</span>
+                            <p class="settings-item__hint">When creators you follow post</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle settings-toggle--on" id="toggle-sub-uploads" aria-label="Toggle subscription uploads"></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title">Appearance</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--amber">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Theme</span>
+                            <p class="settings-item__hint" id="settings-theme-hint">Dark (default)</p>
+                        </div>
+                    </div>
+                    <select id="settings-theme-select" class="settings-theme-select" aria-label="Theme">
+                        <option value="dark">Dark</option>
+                        <option value="light">Light</option>
+                        <option value="system">System</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title">Privacy & Security</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Watch history</span>
+                            <p class="settings-item__hint">Clear your watch & search history</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-btn-secondary" id="settings-clear-history-btn">Clear</button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Cache & temporary data</span>
+                            <p class="settings-item__hint">Free up space</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-btn-secondary" id="settings-clear-cache-btn">Clear</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title">Data & Storage</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Data saver</span>
+                            <p class="settings-item__hint">Reduce data usage for videos</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle" id="toggle-data-saver" aria-label="Toggle data saver"></button>
                 </div>
             </div>
         </section>
@@ -175,6 +388,98 @@
                         <div>
                             <span class="settings-item__label">Privacy Policy</span>
                             <p class="settings-item__hint">Terms of service</p>
+                        </div>
+                    </div>
+                    <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title">Language & Region</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Language</span>
+                            <p class="settings-item__hint">App language</p>
+                        </div>
+                    </div>
+                    <select id="settings-language-select" class="settings-theme-select" aria-label="Language">
+                        <option value="en">English</option>
+                        <option value="bn">বাংলা</option>
+                        <option value="hi">हिन्दी</option>
+                        <option value="ar">العربية</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                    </select>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Country / Region</span>
+                            <p class="settings-item__hint" id="settings-region-hint">Bangladesh</p>
+                        </div>
+                    </div>
+                    <select id="settings-region-select" class="settings-theme-select" aria-label="Region">
+                        <option value="BD">Bangladesh</option>
+                        <option value="IN">India</option>
+                        <option value="US">United States</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="SA">Saudi Arabia</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title">Accessibility</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Captions by default</span>
+                            <p class="settings-item__hint">Show subtitles when available</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle" id="toggle-captions" aria-label="Toggle captions"></button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label">Reduced motion</span>
+                            <p class="settings-item__hint">Minimize animations</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle" id="toggle-reduced-motion" aria-label="Toggle reduced motion"></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title">Danger zone</h2>
+            <div class="settings-card" style="border-color: rgba(239,68,68,0.2);">
+                <a href="channel-delete.html" class="settings-item" id="settings-delete-account-item" style="display:none;">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--red">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" style="color:#f87171">Delete account</span>
+                            <p class="settings-item__hint">Permanently delete your account & data</p>
                         </div>
                     </div>
                     <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
@@ -319,6 +624,7 @@
                         var name = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You';
                         var initial = (name && name.charAt(0)) ? name.charAt(0).toUpperCase() : '?';
                         var photoUrl = localStorage.getItem('nokUserPhotoUrl');
+                        try { var chData = JSON.parse(localStorage.getItem('nokChannelData') || '{}'); if (chData.photoUrl) photoUrl = chData.photoUrl; } catch (_) {}
                         if (avatarEl) {
                             if (photoUrl) avatarEl.innerHTML = '<img src="' + photoUrl.replace(/"/g, '&quot;') + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
                             else avatarEl.textContent = initial;
@@ -334,6 +640,26 @@
                 }
                 var logoutBtn = document.getElementById('settings-logout-btn');
                 if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'flex' : 'none';
+                var deleteAccountItem = document.getElementById('settings-delete-account-item');
+                if (deleteAccountItem) deleteAccountItem.style.display = isLoggedIn ? 'flex' : 'none';
+                var profileCard = document.getElementById('settings-profile-card');
+                var profileCardAvatar = document.getElementById('settings-profile-card-avatar');
+                var profileCardName = document.getElementById('settings-profile-card-name');
+                var profileCardMeta = document.getElementById('settings-profile-card-meta');
+                if (profileCard) {
+                    if (isLoggedIn) {
+                        profileCard.style.display = 'flex';
+                        var name = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'Creator';
+                        if (profileCardName) profileCardName.textContent = name;
+                        if (profileCardMeta) profileCardMeta.textContent = 'Channel creator • NOK Super';
+                        var photoUrl = localStorage.getItem('nokUserPhotoUrl') || '';
+                        try { var cd = JSON.parse(localStorage.getItem('nokChannelData') || '{}'); if (cd.photoUrl) photoUrl = cd.photoUrl; } catch (_) {}
+                        if (profileCardAvatar) {
+                            if (photoUrl) profileCardAvatar.innerHTML = '<img src="' + photoUrl.replace(/"/g, '&quot;') + '" alt="">';
+                            else profileCardAvatar.textContent = (name && name.charAt(0)) ? name.charAt(0).toUpperCase() : '?';
+                        }
+                    } else profileCard.style.display = 'none';
+                }
             }
             updateSettingsAuthView();
             if (document.readyState === 'loading') {
@@ -378,22 +704,104 @@
             var chan = localStorage.getItem('nokUserChannel');
             if (chan && channelHint) channelHint.textContent = chan;
 
+            var themeSelect = document.getElementById('settings-theme-select');
+            var themeHint = document.getElementById('settings-theme-hint');
+            if (themeSelect) {
+                var savedTheme = localStorage.getItem('nokTheme') || 'dark';
+                themeSelect.value = savedTheme;
+                if (themeHint) themeHint.textContent = savedTheme === 'system' ? 'Follow system' : (savedTheme === 'light' ? 'Light' : 'Dark (default)');
+                themeSelect.addEventListener('change', function() {
+                    var v = this.value;
+                    localStorage.setItem('nokTheme', v);
+                    if (themeHint) themeHint.textContent = v === 'system' ? 'Follow system' : (v === 'light' ? 'Light' : 'Dark (default)');
+                });
+            }
+            var clearHistoryBtn = document.getElementById('settings-clear-history-btn');
+            if (clearHistoryBtn) clearHistoryBtn.addEventListener('click', function() {
+                if (!confirm('Clear all watch and search history?')) return;
+                try { localStorage.removeItem('nokWatchHistory'); localStorage.removeItem('nokSearchHistory'); sessionStorage.removeItem('nokWatchHistory'); } catch (_) {}
+                alert('History cleared.');
+            });
+            var clearCacheBtn = document.getElementById('settings-clear-cache-btn');
+            if (clearCacheBtn) clearCacheBtn.addEventListener('click', function() {
+                if (!confirm('Clear cached data? This may log you out of some sessions.')) return;
+                try { sessionStorage.clear(); } catch (_) {}
+                alert('Cache cleared.');
+            });
+            var toggleDataSaver = document.getElementById('toggle-data-saver');
+            if (toggleDataSaver) {
+                var dsOn = localStorage.getItem('nokDataSaver') === '1';
+                toggleDataSaver.classList.toggle('settings-toggle--on', dsOn);
+                toggleDataSaver.addEventListener('click', function() {
+                    this.classList.toggle('settings-toggle--on');
+                    localStorage.setItem('nokDataSaver', this.classList.contains('settings-toggle--on') ? '1' : '0');
+                });
+            }
+            function bindSettingToggle(id, key, defaultValue) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var on = defaultValue ? (localStorage.getItem(key) !== '0') : (localStorage.getItem(key) === '1');
+                el.classList.toggle('settings-toggle--on', on);
+                el.addEventListener('click', function() {
+                    this.classList.toggle('settings-toggle--on');
+                    localStorage.setItem(key, this.classList.contains('settings-toggle--on') ? '1' : '0');
+                });
+            }
+            function bindSettingSelect(id, key, hintId) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var saved = localStorage.getItem(key);
+                if (saved) el.value = saved;
+                el.addEventListener('change', function() {
+                    localStorage.setItem(key, this.value);
+                    if (hintId) {
+                        var hint = document.getElementById(hintId);
+                        if (hint) hint.textContent = this.options[this.selectedIndex].text;
+                    }
+                });
+            }
+            bindSettingToggle('toggle-sound', 'nokSound', true);
+            bindSettingToggle('toggle-comments-default', 'nokCommentsDefault', true);
+            bindSettingToggle('toggle-email-notif', 'nokEmailNotif', false);
+            bindSettingToggle('toggle-sub-uploads', 'nokSubUploads', true);
+            bindSettingToggle('toggle-captions', 'nokCaptionsDefault', false);
+            bindSettingToggle('toggle-reduced-motion', 'nokReducedMotion', false);
+            bindSettingSelect('settings-quality-select', 'nokVideoQuality');
+            bindSettingSelect('settings-speed-select', 'nokPlaybackSpeed', 'settings-speed-hint');
+            bindSettingSelect('settings-language-select', 'nokLanguage');
+            bindSettingSelect('settings-region-select', 'nokRegion', 'settings-region-hint');
+            var speedHint = document.getElementById('settings-speed-hint');
+            var speedSelect = document.getElementById('settings-speed-select');
+            if (speedHint && speedSelect) speedHint.textContent = speedSelect.options[speedSelect.selectedIndex].text;
+            var regionHint = document.getElementById('settings-region-hint');
+            var regionSelect = document.getElementById('settings-region-select');
+            if (regionHint && regionSelect) regionHint.textContent = regionSelect.options[regionSelect.selectedIndex].text;
+
             var toggleNotif = document.getElementById('toggle-notifications');
-            if (toggleNotif) toggleNotif.addEventListener('click', function() {
-                this.classList.toggle('settings-toggle--on');
-                localStorage.setItem('nokNotificationOn', this.classList.contains('settings-toggle--on') ? '1' : '0');
-                if (notifBtn) {
-                    var on = localStorage.getItem('nokNotificationOn') !== '0';
-                    var ow = notifBtn.querySelector('.long-video__icon-bell-wrap');
-                    var ofw = notifBtn.querySelector('.long-video__icon-bell-off-wrap');
-                    if (ow) ow.style.display = on ? '' : 'none';
-                    if (ofw) ofw.style.display = on ? 'none' : '';
-                }
-            });
+            if (toggleNotif) {
+                var notifOn = localStorage.getItem('nokNotificationOn') !== '0';
+                toggleNotif.classList.toggle('settings-toggle--on', notifOn);
+                toggleNotif.addEventListener('click', function() {
+                    this.classList.toggle('settings-toggle--on');
+                    localStorage.setItem('nokNotificationOn', this.classList.contains('settings-toggle--on') ? '1' : '0');
+                    if (notifBtn) {
+                        var on = localStorage.getItem('nokNotificationOn') !== '0';
+                        var ow = notifBtn.querySelector('.long-video__icon-bell-wrap');
+                        var ofw = notifBtn.querySelector('.long-video__icon-bell-off-wrap');
+                        if (ow) ow.style.display = on ? '' : 'none';
+                        if (ofw) ofw.style.display = on ? 'none' : '';
+                    }
+                });
+            }
             var toggleAutoplay = document.getElementById('toggle-autoplay');
-            if (toggleAutoplay) toggleAutoplay.addEventListener('click', function() {
-                this.classList.toggle('settings-toggle--on');
-            });
+            if (toggleAutoplay) {
+                var apOn = localStorage.getItem('nokAutoplay') !== '0';
+                toggleAutoplay.classList.toggle('settings-toggle--on', apOn);
+                toggleAutoplay.addEventListener('click', function() {
+                    this.classList.toggle('settings-toggle--on');
+                    localStorage.setItem('nokAutoplay', this.classList.contains('settings-toggle--on') ? '1' : '0');
+                });
+            }
 
             // Chat overlay: handled by nok-chat-overlay.js (same card on all pages)
             function updateChatView() {
