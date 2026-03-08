@@ -2389,20 +2389,7 @@ body.long-video-v2.chat-overlay-open {
     display: flex !important;
 }
 
-/* ========== Responsive: Header & layout for tablet & mobile ========== */
-
-@media (max-width: 1024px) {
-    .long-video__header {
-        padding: 0 16px;
-    }
-    .long-video__logo-img {
-        height: 80px;
-    }
-    .long-video__search {
-        max-width: 320px;
-        margin: 0 12px;
-    }
-}
+/* ========== Responsive: Windows + Tab same; only mobile (≤768px) different ========== */
 
 @media (max-width: 768px) {
     .home-layout:has(.long-video__header) {

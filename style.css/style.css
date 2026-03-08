@@ -3700,15 +3700,16 @@ html:has(.home-body.chat-overlay-open) {
     text-decoration: underline;
 }
 
-/* ========== Responsive: Tablet & Mobile ========== */
+/* ========== Responsive: Windows + Tab same | Mobile different ========== */
+/* Desktop (Windows) & Tablet: same layout. Only below 768px = mobile. */
 
-/* Tablet (e.g. iPad) */
-@media (max-width: 1024px) {
+/* Mobile only (≤768px): landing stacked, smaller UI */
+@media (max-width: 768px) {
     .content {
         flex-direction: column;
         justify-content: center;
         gap: 32px;
-        padding: 32px 24px;
+        padding: 24px 16px;
         min-height: auto;
     }
 
@@ -3720,19 +3721,22 @@ html:has(.home-body.chat-overlay-open) {
     }
 
     .left-panel__logo {
-        width: 180px;
+        width: 140px;
         margin-left: auto;
         margin-right: auto;
+        margin-bottom: 16px;
     }
 
     .greeting {
-        font-size: 2.2rem;
+        font-size: 1.85rem;
         margin-left: 0;
         margin-top: 0;
+        margin-bottom: 12px;
     }
 
     .line {
         margin-left: 0;
+        font-size: 1rem;
     }
 
     .right-panel {
@@ -3742,13 +3746,23 @@ html:has(.home-body.chat-overlay-open) {
 
     .glass {
         width: 100%;
-        max-width: 380px;
-        padding: 28px 24px 24px;
+        max-width: 100%;
+        padding: 24px 20px 20px;
+        border-radius: 16px;
     }
-}
 
-/* Small tablet / large phone */
-@media (max-width: 768px) {
+    .glass__logo {
+        width: 160px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .glass__btn {
+        height: 48px;
+        font-size: 0.95rem;
+    }
+
+    /* Home feed: mobile padding */
     .content {
         padding: 24px 16px;
         gap: 24px;
