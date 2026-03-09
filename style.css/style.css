@@ -18,6 +18,60 @@
     --bottom-nav-radius: 26px;
 }
 
+/* Theme: dark – black dark (full UI) */
+html[data-theme="dark"] {
+    --bg-deep: #000000;
+    --bg-dark: #0a0a0a;
+    --bg-panel: #0d0d0d;
+    --glass-bg: rgba(0, 0, 0, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+}
+html[data-theme="dark"] body,
+html[data-theme="dark"] .bg {
+    background: #000000 !important;
+    background-image: none !important;
+}
+html[data-theme="dark"] .long-video__header { background: rgba(0, 0, 0, 0.85); border-color: rgba(255,255,255,0.06); }
+html[data-theme="dark"] .settings-card,
+html[data-theme="dark"] .settings-profile-card { background: rgba(15, 15, 15, 0.95); border-color: rgba(255,255,255,0.06); }
+html[data-theme="dark"] .wallet-balance-card,
+html[data-theme="dark"] .wallet-card,
+html[data-theme="dark"] .wallet-earning-card { background: rgba(15, 15, 15, 0.9); border-color: rgba(255,255,255,0.06); }
+html[data-theme="dark"] .home-bottom-nav { background: rgba(0, 0, 0, 0.95); border-color: rgba(255,255,255,0.06); }
+
+/* Theme: light – applied when Settings > Theme = Light or System (light) */
+html[data-theme="light"] {
+    --bg-deep: #eef1f8;
+    --bg-dark: #e8ecf4;
+    --bg-panel: #fff;
+    --text-white: rgba(20, 25, 45, 0.98);
+    --text-muted: rgba(40, 50, 80, 0.9);
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(100, 130, 255, 0.2);
+}
+html[data-theme="light"] body {
+    color: var(--text-muted);
+    background: var(--bg-deep);
+}
+html[data-theme="light"] .bg {
+    background: linear-gradient(160deg, #e8ecf4 0%, #d4dce8 50%, #c8d0e0 100%);
+    background-image: none;
+}
+html[data-theme="light"] .settings-title,
+html[data-theme="light"] .settings-profile-card__name,
+html[data-theme="light"] .settings-item__label { color: #1a1f38; }
+html[data-theme="light"] .settings-subtitle,
+html[data-theme="light"] .settings-item__hint,
+html[data-theme="light"] .settings-profile-card__meta { color: rgba(40, 50, 80, 0.7); }
+html[data-theme="light"] .settings-card,
+html[data-theme="light"] .settings-profile-card { background: rgba(255, 255, 255, 0.9); border-color: rgba(100, 130, 255, 0.15); }
+html[data-theme="light"] .settings-item:hover { background: rgba(0, 0, 0, 0.04); }
+html[data-theme="light"] .long-video__header { background: var(--glass-bg); border-color: var(--glass-border); }
+html[data-theme="light"] .wallet-title,
+html[data-theme="light"] .wallet-balance-value,
+html[data-theme="light"] .greeting { color: #1a1f38; }
+html[data-theme="light"] .home-search__input { background: rgba(255,255,255,0.9); color: #1a1f38; border-color: rgba(100,130,255,0.2); }
+
 * {
     margin: 0;
     padding: 0;
