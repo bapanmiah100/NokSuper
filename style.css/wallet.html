@@ -12,6 +12,9 @@
         .wallet-page { font-family: 'Outfit', -apple-system, sans-serif; min-height: 100vh; padding: 24px 16px 100px; padding-top: calc(24px + 56px); max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
         .wallet-title { font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 24px; }
         .wallet-balance-card { background: linear-gradient(135deg, rgba(99,102,241,0.25) 0%, rgba(139,92,246,0.2) 100%); border: 1px solid rgba(139,92,246,0.3); border-radius: 20px; padding: 24px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between; }
+        .wallet-earning-card { background: linear-gradient(135deg, rgba(34,197,94,0.22) 0%, rgba(22,163,74,0.18) 100%); border: 1px solid rgba(34,197,94,0.35); border-radius: 20px; padding: 24px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between; }
+        .wallet-earning-card .wallet-balance-label { color: rgba(255,255,255,0.8); }
+        .wallet-earning-card .wallet-balance-value { color: #86efac; }
         .wallet-balance-item { display: flex; align-items: center; gap: 14px; }
         .wallet-balance-icon { width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; }
         .wallet-balance-icon svg { width: 26px; height: 26px; color: #fff; }
@@ -20,6 +23,7 @@
         .wallet-balance-label { font-size: 0.85rem; color: rgba(255,255,255,0.75); margin-bottom: 2px; }
         .wallet-balance-value { font-size: 1.5rem; font-weight: 800; color: #fff; }
         .wallet-section { margin-bottom: 24px; }
+        .wallet-section--withdraw { margin-bottom: 32px; }
         .wallet-section__title { font-size: 0.8rem; font-weight: 700; color: rgba(200,210,255,0.55); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
         .wallet-card { background: rgba(15,22,41,0.55); backdrop-filter: blur(20px); border: 1px solid rgba(100,130,255,0.12); border-radius: 18px; padding: 20px; }
         .wallet-add-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
@@ -29,6 +33,8 @@
         .wallet-btn { padding: 14px 24px; border-radius: 12px; font-size: 1rem; font-weight: 600; border: none; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; text-decoration: none; }
         .wallet-btn--primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: #fff; }
         .wallet-btn--primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(79,109,216,0.4); }
+        .wallet-btn--outline { background: transparent; border: 2px solid rgba(100,130,255,0.5); color: rgba(230,235,255,0.95); }
+        .wallet-btn--outline:hover { background: rgba(100,130,255,0.15); border-color: rgba(100,130,255,0.7); }
         .wallet-coins-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .wallet-coin-pkg { background: rgba(0,0,0,0.25); border: 2px solid rgba(100,130,255,0.2); border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s; text-align: center; }
         .wallet-coin-pkg:hover { border-color: rgba(139,92,246,0.5); background: rgba(99,102,241,0.15); }
@@ -38,6 +44,12 @@
         .wallet-coin-pkg__price { font-size: 1rem; font-weight: 700; color: rgba(255,200,100,0.95); }
         .wallet-buy-actions { margin-top: 18px; }
         .wallet-buy-actions .wallet-btn { width: 100%; justify-content: center; }
+        .wallet-calc { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(34,197,94,0.25); }
+        .wallet-calc__label { font-size: 0.8rem; color: rgba(200,210,255,0.6); margin-bottom: 8px; }
+        .wallet-calc__row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .wallet-calc__row input { width: 100px; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(100,130,255,0.25); background: rgba(0,0,0,0.3); color: #fff; font-size: 1rem; font-family: inherit; }
+        .wallet-calc__row input:focus { outline: none; border-color: rgba(34,197,94,0.5); }
+        .wallet-calc__result { font-size: 0.95rem; color: #86efac; font-weight: 600; margin-top: 8px; }
     </style>
 </head>
 <body class="home-body has-bottom-nav">
@@ -70,8 +82,8 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                     </div>
                     <div>
-                        <p class="wallet-balance-label">Balance (৳)</p>
-                        <p class="wallet-balance-value" id="wallet-taka-display">৳ 0</p>
+                        <p class="wallet-balance-label">Balance ($)</p>
+                        <p class="wallet-balance-value" id="wallet-taka-display">$ 0</p>
                     </div>
                 </div>
                 <div class="wallet-balance-item">
@@ -119,11 +131,11 @@
             </div>
 
             <section class="wallet-section">
-                <h2 class="wallet-section__title">Add money (৳)</h2>
+                <h2 class="wallet-section__title">Add money ($)</h2>
                 <div class="wallet-card">
-                    <p style="font-size:0.9rem;color:rgba(200,210,255,0.7);margin:0 0 14px 0;">Add Taka to your wallet to buy coins or use in the app.</p>
+                    <p style="font-size:0.9rem;color:rgba(200,210,255,0.7);margin:0 0 14px 0;">Add dollars to your wallet. You get bonus coins: $5 = 100 coins. (1 USD ≈ 115 BDT)</p>
                     <div class="wallet-add-row">
-                        <input type="number" id="wallet-add-amount" placeholder="Amount (৳)" min="10" step="10" value="">
+                        <input type="number" id="wallet-add-amount" placeholder="Amount ($)" min="0.5" step="0.5" value="">
                         <button type="button" class="wallet-btn wallet-btn--primary" id="wallet-add-btn">Add money</button>
                     </div>
                 </div>
@@ -136,23 +148,80 @@
                     <div class="wallet-coins-grid" id="wallet-coins-grid">
                         <div class="wallet-coin-pkg" data-coins="100" data-price="50">
                             <div class="wallet-coin-pkg__coins">100 <span>coins</span></div>
-                            <div class="wallet-coin-pkg__price">৳ 50</div>
+                            <div class="wallet-coin-pkg__price">$ 0.43</div>
                         </div>
                         <div class="wallet-coin-pkg" data-coins="500" data-price="200">
                             <div class="wallet-coin-pkg__coins">500 <span>coins</span></div>
-                            <div class="wallet-coin-pkg__price">৳ 200</div>
+                            <div class="wallet-coin-pkg__price">$ 1.74</div>
                         </div>
                         <div class="wallet-coin-pkg" data-coins="1000" data-price="350">
                             <div class="wallet-coin-pkg__coins">1000 <span>coins</span></div>
-                            <div class="wallet-coin-pkg__price">৳ 350</div>
+                            <div class="wallet-coin-pkg__price">$ 3.04</div>
                         </div>
                         <div class="wallet-coin-pkg" data-coins="5000" data-price="1500">
                             <div class="wallet-coin-pkg__coins">5000 <span>coins</span></div>
-                            <div class="wallet-coin-pkg__price">৳ 1,500</div>
+                            <div class="wallet-coin-pkg__price">$ 13.04</div>
                         </div>
                     </div>
                     <div class="wallet-buy-actions">
                         <button type="button" class="wallet-btn wallet-btn--primary" id="wallet-buy-btn" disabled>Buy coins</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="wallet-section">
+                <h2 class="wallet-section__title">Earning</h2>
+                <div class="wallet-earning-card">
+                    <div class="wallet-balance-item">
+                        <div class="wallet-balance-icon" style="background: rgba(34,197,94,0.3);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        </div>
+                        <div>
+                            <p class="wallet-balance-label">Earned ($)</p>
+                            <p class="wallet-balance-value" id="wallet-earned-taka-display">$ 0</p>
+                        </div>
+                    </div>
+                    <div class="wallet-balance-item">
+                        <div class="wallet-balance-icon wallet-balance-icon--coins" style="margin:0;">
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <radialGradient id="coinFaceEarn" cx="35%" cy="35%" r="70%"><stop offset="0%" stop-color="#f8f9fc"/><stop offset="40%" stop-color="#e8eaef"/><stop offset="80%" stop-color="#b8bcc8"/><stop offset="100%" stop-color="#8b90a0"/></radialGradient>
+                                    <linearGradient id="coinEdgeEarn" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c8ccd4"/><stop offset="50%" stop-color="#9ca3b2"/><stop offset="100%" stop-color="#6b7280"/></linearGradient>
+                                    <filter id="coinShadowEarn" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.35"/><feDropShadow dx="0" dy="4" stdDeviation="2" flood-color="#000" flood-opacity="0.2"/></filter>
+                                    <linearGradient id="heartGoldEarn" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffd700"/><stop offset="50%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#d97706"/></linearGradient>
+                                </defs>
+                                <g filter="url(#coinShadowEarn)"><circle cx="32" cy="32" r="28" fill="url(#coinEdgeEarn)"/><circle cx="32" cy="32" r="24" fill="url(#coinFaceEarn)"/><circle cx="32" cy="32" r="24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.2"/><path d="M32 18v6M32 40v6M18 32h6M40 32h6" stroke="#8b90a0" stroke-width="1.5" stroke-linecap="round"/><path d="M24.2 24.2l5.6 5.6M34.2 34.2l5.6 5.6M24.2 39.8l5.6-5.6M34.2 29.8l5.6-5.6" stroke="#6b7280" stroke-width="1.2" stroke-linecap="round"/><g transform="translate(32,32) scale(1.5) translate(-12,-13)"><path fill="url(#heartGoldEarn)" stroke="#b45309" stroke-width="0.8" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></g></g>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="wallet-balance-label">Earned (coins)</p>
+                            <p class="wallet-balance-value" id="wallet-earned-coins-display">0</p>
+                        </div>
+                    </div>
+                    <div class="wallet-calc">
+                        <p class="wallet-calc__label">Convert to Dollar ($5 = 100 coins)</p>
+                        <div class="wallet-calc__row">
+                            <input type="number" id="wallet-calc-coins" placeholder="Coins" min="0" step="1" value="">
+                            <span style="color:rgba(200,210,255,0.6);">=</span>
+                            <span id="wallet-calc-dollar-output" style="color:#86efac;font-weight:600;">$ 0.00</span>
+                        </div>
+                        <div class="wallet-calc__row" style="margin-top:10px;">
+                            <input type="number" id="wallet-calc-dollar" placeholder="Dollars" min="0" step="0.01" value="">
+                            <span style="color:rgba(200,210,255,0.6);">=</span>
+                            <span id="wallet-calc-coins-output" style="color:#86efac;font-weight:600;">0 coins</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="wallet-section wallet-section--withdraw">
+                <h2 class="wallet-section__title">Withdraw ($)</h2>
+                <div class="wallet-card">
+                    <p style="font-size:0.9rem;color:rgba(200,210,255,0.7);margin:0 0 8px 0;">Only <strong>earned</strong> balance can be withdrawn. Minimum $100 to withdraw.</p>
+                    <p style="font-size:0.85rem;color:rgba(200,210,255,0.6);margin:0 0 14px 0;">Withdrawable: $<span id="wallet-withdrawable-display">0</span></p>
+                    <div class="wallet-add-row">
+                        <input type="number" id="wallet-withdraw-amount" placeholder="Amount ($)" min="100" step="10" value="">
+                        <button type="button" class="wallet-btn wallet-btn--outline" id="wallet-withdraw-btn">Withdraw</button>
                     </div>
                 </div>
             </section>
@@ -169,27 +238,84 @@
 
     <script>
         (function() {
-            function getTaka() { var v = localStorage.getItem('nokBalanceTaka'); return (v === null || v === '') ? 0 : parseFloat(v, 10) || 0; }
-            function setTaka(n) { localStorage.setItem('nokBalanceTaka', String(n)); }
+            var TAKA_TO_USD = 115;
+            function toDollar(taka) { return taka / TAKA_TO_USD; }
+            function toTaka(dollar) { return dollar * TAKA_TO_USD; }
+            function formatDollar(num) { return (Math.round(num * 100) / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+            function getTakaAdded() {
+                var v = localStorage.getItem('nokBalanceTakaAdded');
+                return (v === null || v === '') ? 0 : parseFloat(v, 10) || 0;
+            }
+            function setTakaAdded(n) { localStorage.setItem('nokBalanceTakaAdded', String(n)); }
+            function getTakaEarned() {
+                var v = localStorage.getItem('nokBalanceTakaEarned');
+                return (v === null || v === '') ? 0 : parseFloat(v, 10) || 0;
+            }
+            function setTakaEarned(n) { localStorage.setItem('nokBalanceTakaEarned', String(n)); }
+            function getTaka() {
+                var added = getTakaAdded();
+                var earned = getTakaEarned();
+                var legacy = localStorage.getItem('nokBalanceTaka');
+                if ((added === 0 && earned === 0) && legacy !== null && legacy !== '') {
+                    var leg = parseFloat(legacy, 10) || 0;
+                    if (leg > 0) { setTakaAdded(leg); localStorage.removeItem('nokBalanceTaka'); return leg; }
+                }
+                return added + earned;
+            }
+            function setTaka(n) {
+                var added = getTakaAdded();
+                var earned = getTakaEarned();
+                if (n >= added + earned) return;
+                if (earned >= n) { setTakaEarned(earned - n); return; }
+                var fromEarned = earned;
+                setTakaEarned(0);
+                setTakaAdded(added - (n - fromEarned));
+            }
             function getCoins() { var v = localStorage.getItem('nokCoins'); return (v === null || v === '') ? 0 : parseInt(v, 10) || 0; }
             function setCoins(n) { localStorage.setItem('nokCoins', String(n)); }
+            function getCoinsEarned() { var v = localStorage.getItem('nokCoinsEarned'); return (v === null || v === '') ? 0 : parseInt(v, 10) || 0; }
+            function setCoinsEarned(n) { localStorage.setItem('nokCoinsEarned', String(n)); }
             function updateDisplay() {
                 var takaEl = document.getElementById('wallet-taka-display');
                 var coinsEl = document.getElementById('wallet-coins-display');
-                if (takaEl) takaEl.textContent = '৳ ' + getTaka().toLocaleString();
+                var withdrawableEl = document.getElementById('wallet-withdrawable-display');
+                var earnedTakaEl = document.getElementById('wallet-earned-taka-display');
+                var earnedCoinsEl = document.getElementById('wallet-earned-coins-display');
+                if (takaEl) takaEl.textContent = '$ ' + formatDollar(toDollar(getTaka()));
                 if (coinsEl) coinsEl.textContent = getCoins().toLocaleString();
+                if (withdrawableEl) withdrawableEl.textContent = formatDollar(toDollar(getTakaEarned()));
+                if (earnedTakaEl) earnedTakaEl.textContent = '$ ' + formatDollar(toDollar(getTakaEarned()));
+                if (earnedCoinsEl) earnedCoinsEl.textContent = getCoinsEarned().toLocaleString();
             }
             updateDisplay();
 
             var addAmount = document.getElementById('wallet-add-amount');
             var addBtn = document.getElementById('wallet-add-btn');
             if (addBtn && addAmount) addBtn.addEventListener('click', function() {
-                var amt = parseFloat(addAmount.value, 10);
-                if (isNaN(amt) || amt < 10) { alert('Please enter at least ৳10'); return; }
-                setTaka(getTaka() + amt);
+                var amtD = parseFloat(addAmount.value, 10);
+                if (isNaN(amtD) || amtD < 0.5) { alert('Please enter at least $0.50'); return; }
+                var amtTaka = toTaka(amtD);
+                var bonusCoins = Math.round(amtD * 20);
+                setTakaAdded(getTakaAdded() + amtTaka);
+                setCoins(getCoins() + bonusCoins);
                 updateDisplay();
                 addAmount.value = '';
-                alert('৳' + amt + ' added to your wallet.');
+                alert('$' + formatDollar(amtD) + ' added. You got ' + bonusCoins + ' coins ($5 = 100 coins). Added balance cannot be withdrawn.');
+            });
+
+            var withdrawAmount = document.getElementById('wallet-withdraw-amount');
+            var withdrawBtn = document.getElementById('wallet-withdraw-btn');
+            if (withdrawBtn && withdrawAmount) withdrawBtn.addEventListener('click', function() {
+                var amtD = parseFloat(withdrawAmount.value, 10);
+                if (isNaN(amtD) || amtD < 100) { alert('Minimum withdraw is $100.'); return; }
+                var amtTaka = toTaka(amtD);
+                var earned = getTakaEarned();
+                if (earned <= 0) { alert('Only earned balance can be withdrawn. You have $0 withdrawable. Add money cannot be withdrawn.'); return; }
+                if (amtTaka > earned) { alert('You can only withdraw earned balance. Withdrawable: $' + formatDollar(toDollar(earned)) + '.'); return; }
+                setTakaEarned(earned - amtTaka);
+                updateDisplay();
+                withdrawAmount.value = '';
+                alert('$' + formatDollar(amtD) + ' withdrawn from your wallet.');
             });
 
             var grid = document.getElementById('wallet-coins-grid');
@@ -205,10 +331,14 @@
             });
             if (buyBtn) buyBtn.addEventListener('click', function() {
                 if (!selectedPkg) return;
-                var taka = getTaka();
-                if (taka < selectedPkg.price) { alert('Insufficient balance. You need ৳' + selectedPkg.price + '. Add money first.'); return; }
+                var total = getTaka();
+                if (total < selectedPkg.price) { alert('Insufficient balance. You need $' + formatDollar(toDollar(selectedPkg.price)) + '. Add money first.'); return; }
                 var coins = selectedPkg.coins;
-                setTaka(taka - selectedPkg.price);
+                var added = getTakaAdded();
+                var earned = getTakaEarned();
+                var pay = selectedPkg.price;
+                if (earned >= pay) setTakaEarned(earned - pay);
+                else { setTakaEarned(0); setTakaAdded(added - (pay - earned)); }
                 setCoins(getCoins() + coins);
                 updateDisplay();
                 grid.querySelectorAll('.wallet-coin-pkg').forEach(function(p) { p.classList.remove('wallet-coin-pkg--selected'); });
@@ -235,6 +365,22 @@
             }
             updateAuthView();
             window.addEventListener('pageshow', updateAuthView);
+
+            var COINS_PER_DOLLAR = 20;
+            var calcCoinsIn = document.getElementById('wallet-calc-coins');
+            var calcDollarIn = document.getElementById('wallet-calc-dollar');
+            var calcDollarOut = document.getElementById('wallet-calc-dollar-output');
+            var calcCoinsOut = document.getElementById('wallet-calc-coins-output');
+            function updateCoinCalc() {
+                var c = parseFloat(calcCoinsIn ? calcCoinsIn.value : '', 10);
+                if (calcDollarOut) calcDollarOut.textContent = isNaN(c) || c < 0 ? '$ 0.00' : '$ ' + formatDollar((c || 0) / COINS_PER_DOLLAR);
+            }
+            function updateDollarCalc() {
+                var d = parseFloat(calcDollarIn ? calcDollarIn.value : '', 10);
+                if (calcCoinsOut) calcCoinsOut.textContent = isNaN(d) || d < 0 ? '0 coins' : (Math.round((d || 0) * COINS_PER_DOLLAR) + ' coins');
+            }
+            if (calcCoinsIn) calcCoinsIn.addEventListener('input', updateCoinCalc);
+            if (calcDollarIn) calcDollarIn.addEventListener('input', updateDollarCalc);
         })();
     </script>
 </body>
