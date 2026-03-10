@@ -6,6 +6,7 @@
     <title>Wallet & Coins - NOK Super</title>
     <script src="nok-studio-auth.js"></script>
     <script src="nok-theme.js"></script>
+    <script src="nok-wallet-country.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="video-long.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -83,8 +84,8 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                     </div>
                     <div>
-                        <p class="wallet-balance-label">Balance ($)</p>
-                        <p class="wallet-balance-value" id="wallet-taka-display">$ 0</p>
+                        <p class="wallet-balance-label" id="wallet-balance-label">Balance (৳)</p>
+                        <p class="wallet-balance-value" id="wallet-taka-display">৳ 0</p>
                     </div>
                 </div>
                 <div class="wallet-balance-item">
@@ -132,13 +133,10 @@
             </div>
 
             <section class="wallet-section">
-                <h2 class="wallet-section__title">Add money ($)</h2>
+                <h2 class="wallet-section__title" id="wallet-add-title">Add money (৳)</h2>
                 <div class="wallet-card">
-                    <p style="font-size:0.9rem;color:rgba(200,210,255,0.7);margin:0 0 14px 0;">Add dollars to your wallet. You get bonus coins: $5 = 100 coins. (1 USD ≈ 115 BDT)</p>
-                    <div class="wallet-add-row">
-                        <input type="number" id="wallet-add-amount" placeholder="Amount ($)" min="0.5" step="0.5" value="">
-                        <button type="button" class="wallet-btn wallet-btn--primary" id="wallet-add-btn">Add money</button>
-                    </div>
+                    <p style="font-size:0.9rem;color:rgba(200,210,255,0.7);margin:0 0 14px 0;" id="wallet-add-desc">Add money in your country currency. You get bonus coins. Set country in Settings.</p>
+                    <a href="wallet-add.html" class="wallet-btn wallet-btn--primary" style="display:inline-flex;text-decoration:none;">Add money</a>
                 </div>
             </section>
 
@@ -146,22 +144,13 @@
                 <h2 class="wallet-section__title">Buy coins</h2>
                 <div class="wallet-card">
                     <p style="font-size:0.9rem;color:rgba(200,210,255,0.7);margin:0 0 14px 0;">Use your balance to buy coins. Coins can be used for Super Thanks, memberships & more.</p>
-                    <div class="wallet-coins-grid" id="wallet-coins-grid">
-                        <div class="wallet-coin-pkg" data-coins="100" data-price="50">
-                            <div class="wallet-coin-pkg__coins">100 <span>coins</span></div>
-                            <div class="wallet-coin-pkg__price">$ 0.43</div>
-                        </div>
-                        <div class="wallet-coin-pkg" data-coins="500" data-price="200">
-                            <div class="wallet-coin-pkg__coins">500 <span>coins</span></div>
-                            <div class="wallet-coin-pkg__price">$ 1.74</div>
-                        </div>
-                        <div class="wallet-coin-pkg" data-coins="1000" data-price="350">
-                            <div class="wallet-coin-pkg__coins">1000 <span>coins</span></div>
-                            <div class="wallet-coin-pkg__price">$ 3.04</div>
-                        </div>
-                        <div class="wallet-coin-pkg" data-coins="5000" data-price="1500">
-                            <div class="wallet-coin-pkg__coins">5000 <span>coins</span></div>
-                            <div class="wallet-coin-pkg__price">$ 13.04</div>
+                    <div class="wallet-coins-grid" id="wallet-coins-grid"><!-- filled from nok-wallet-country.js --></div>
+                    <div class="wallet-custom-coins" style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(100,130,255,0.2);">
+                        <p style="font-size:0.85rem;color:rgba(200,210,255,0.7);margin:0 0 8px 0;">Or enter any amount:</p>
+                        <div class="wallet-add-row" style="align-items:center;gap:10px;">
+                            <input type="number" id="wallet-custom-coins-input" placeholder="Coins" min="1" step="1" value="" style="flex:1;min-width:80px;">
+                            <span style="color:rgba(200,210,255,0.6);">=</span>
+                            <span id="wallet-custom-coins-price" style="color:rgba(255,200,100,0.95);font-weight:600;">—</span>
                         </div>
                     </div>
                     <div class="wallet-buy-actions">
@@ -200,7 +189,7 @@
                         </div>
                     </div>
                     <div class="wallet-calc">
-                        <p class="wallet-calc__label">Convert to Dollar ($5 = 100 coins)</p>
+                        <p class="wallet-calc__label">1 coin = $0.05 (shown in your currency)</p>
                         <div class="wallet-calc__row">
                             <input type="number" id="wallet-calc-coins" placeholder="Coins" min="0" step="1" value="">
                             <span style="color:rgba(200,210,255,0.6);">=</span>
@@ -216,12 +205,12 @@
             </section>
 
             <section class="wallet-section wallet-section--withdraw">
-                <h2 class="wallet-section__title">Withdraw ($)</h2>
+                <h2 class="wallet-section__title" id="wallet-withdraw-title">Withdraw (৳)</h2>
                 <div class="wallet-card">
-                    <p style="font-size:0.9rem;color:rgba(200,210,255,0.7);margin:0 0 8px 0;">Only <strong>earned</strong> balance can be withdrawn. Minimum $100 to withdraw.</p>
-                    <p style="font-size:0.85rem;color:rgba(200,210,255,0.6);margin:0 0 14px 0;">Withdrawable: $<span id="wallet-withdrawable-display">0</span></p>
+                    <p style="font-size:0.9rem;color:rgba(200,210,255,0.7);margin:0 0 8px 0;">Only <strong>earned</strong> balance can be withdrawn. <span id="wallet-withdraw-min-text">Min ৳11,500</span>.</p>
+                    <p style="font-size:0.85rem;color:rgba(200,210,255,0.6);margin:0 0 14px 0;">Withdrawable: <span id="wallet-withdrawable-prefix">৳</span><span id="wallet-withdrawable-display">0</span></p>
                     <div class="wallet-add-row">
-                        <input type="number" id="wallet-withdraw-amount" placeholder="Amount ($)" min="100" step="10" value="">
+                        <input type="number" id="wallet-withdraw-amount" placeholder="Amount" min="11500" step="100" value="">
                         <button type="button" class="wallet-btn wallet-btn--outline" id="wallet-withdraw-btn">Withdraw</button>
                     </div>
                 </div>
@@ -239,10 +228,16 @@
 
     <script>
         (function() {
-            var TAKA_TO_USD = 115;
-            function toDollar(taka) { return taka / TAKA_TO_USD; }
-            function toTaka(dollar) { return dollar * TAKA_TO_USD; }
+            var BDT_PER_USD = 115;
+            var MIN_WITHDRAW_BDT = 11500;
+            function getWalletConfig() {
+                return (typeof NOK_WALLET_COUNTRY !== 'undefined' && NOK_WALLET_COUNTRY.getWalletConfig) ? NOK_WALLET_COUNTRY.getWalletConfig() : { currency: '$', code: 'USD', localPerBdt: 1/115 };
+            }
+            function toDollar(taka) { return taka / BDT_PER_USD; }
+            function toTaka(dollar) { return dollar * BDT_PER_USD; }
             function formatDollar(num) { return (Math.round(num * 100) / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+            function bdtToLocal(bdt, config) { return bdt * config.localPerBdt; }
+            function formatLocal(n) { return (Math.round(n * 100) / 100).toLocaleString(); }
             function getTakaAdded() {
                 var v = localStorage.getItem('nokBalanceTakaAdded');
                 return (v === null || v === '') ? 0 : parseFloat(v, 10) || 0;
@@ -276,75 +271,139 @@
             function setCoins(n) { localStorage.setItem('nokCoins', String(n)); }
             function getCoinsEarned() { var v = localStorage.getItem('nokCoinsEarned'); return (v === null || v === '') ? 0 : parseInt(v, 10) || 0; }
             function setCoinsEarned(n) { localStorage.setItem('nokCoinsEarned', String(n)); }
+            function renderCoinPackages() {
+                var gridEl = document.getElementById('wallet-coins-grid');
+                if (!gridEl) return;
+                var list = (typeof NOK_WALLET_COUNTRY !== 'undefined' && NOK_WALLET_COUNTRY.getCoinPackages) ? NOK_WALLET_COUNTRY.getCoinPackages() : [{ coins: 5, priceUsd: 0.25 }, { coins: 7, priceUsd: 0.35 }, { coins: 10, priceUsd: 0.5 }, { coins: 11, priceUsd: 0.55 }, { coins: 12, priceUsd: 0.6 }];
+                gridEl.innerHTML = '';
+                list.forEach(function(p) {
+                    var d = document.createElement('div');
+                    d.className = 'wallet-coin-pkg';
+                    d.setAttribute('data-coins', String(p.coins));
+                    d.setAttribute('data-price-usd', String(p.priceUsd));
+                    d.innerHTML = '<div class="wallet-coin-pkg__coins">' + p.coins + ' <span>coins</span></div><div class="wallet-coin-pkg__price"></div>';
+                    gridEl.appendChild(d);
+                });
+            }
+            renderCoinPackages();
             function updateDisplay() {
+                var config = getWalletConfig();
                 var takaEl = document.getElementById('wallet-taka-display');
                 var coinsEl = document.getElementById('wallet-coins-display');
                 var withdrawableEl = document.getElementById('wallet-withdrawable-display');
                 var earnedTakaEl = document.getElementById('wallet-earned-taka-display');
                 var earnedCoinsEl = document.getElementById('wallet-earned-coins-display');
-                if (takaEl) takaEl.textContent = '$ ' + formatDollar(toDollar(getTaka()));
+                var balanceLabel = document.getElementById('wallet-balance-label');
+                var addTitle = document.getElementById('wallet-add-title');
+                var withdrawTitle = document.getElementById('wallet-withdraw-title');
+                var withdrawMinText = document.getElementById('wallet-withdraw-min-text');
+                var withdrawablePrefix = document.getElementById('wallet-withdrawable-prefix');
+                var totalBdt = getTaka();
+                var earnedBdt = getTakaEarned();
+                if (balanceLabel) balanceLabel.textContent = 'Balance (' + config.currency + ')';
+                if (takaEl) takaEl.textContent = config.currency + ' ' + formatLocal(bdtToLocal(totalBdt, config));
                 if (coinsEl) coinsEl.textContent = getCoins().toLocaleString();
-                if (withdrawableEl) withdrawableEl.textContent = formatDollar(toDollar(getTakaEarned()));
-                if (earnedTakaEl) earnedTakaEl.textContent = '$ ' + formatDollar(toDollar(getTakaEarned()));
+                if (withdrawableEl) withdrawableEl.textContent = formatLocal(bdtToLocal(earnedBdt, config));
+                if (earnedTakaEl) earnedTakaEl.textContent = config.currency + ' ' + formatLocal(bdtToLocal(earnedBdt, config));
                 if (earnedCoinsEl) earnedCoinsEl.textContent = getCoinsEarned().toLocaleString();
+                if (addTitle) addTitle.textContent = 'Add money (' + config.currency + ')';
+                if (withdrawTitle) withdrawTitle.textContent = 'Withdraw (' + config.currency + ')';
+                var minLocal = bdtToLocal(MIN_WITHDRAW_BDT, config);
+                if (withdrawMinText) withdrawMinText.textContent = 'Min ' + config.currency + ' ' + formatLocal(minLocal);
+                if (withdrawablePrefix) withdrawablePrefix.textContent = config.currency + ' ';
+                var amountInput = document.getElementById('wallet-withdraw-amount');
+                if (amountInput) { amountInput.placeholder = 'Amount (' + config.currency + ')'; amountInput.min = Math.round(minLocal); amountInput.step = config.localPerBdt >= 0.1 ? 100 : 10; }
+                var pkgs = document.querySelectorAll('.wallet-coin-pkg');
+                pkgs.forEach(function(p) {
+                    var priceUsd = parseFloat(p.getAttribute('data-price-usd'), 10) || 0;
+                    var priceLocal = priceUsd * BDT_PER_USD * config.localPerBdt;
+                    var priceEl = p.querySelector('.wallet-coin-pkg__price');
+                    if (priceEl) priceEl.textContent = config.currency + ' ' + formatLocal(priceLocal);
+                });
             }
             updateDisplay();
-
-            var addAmount = document.getElementById('wallet-add-amount');
-            var addBtn = document.getElementById('wallet-add-btn');
-            if (addBtn && addAmount) addBtn.addEventListener('click', function() {
-                var amtD = parseFloat(addAmount.value, 10);
-                if (isNaN(amtD) || amtD < 0.5) { alert('Please enter at least $0.50'); return; }
-                var amtTaka = toTaka(amtD);
-                var bonusCoins = Math.round(amtD * 20);
-                setTakaAdded(getTakaAdded() + amtTaka);
-                setCoins(getCoins() + bonusCoins);
-                updateDisplay();
-                addAmount.value = '';
-                alert('$' + formatDollar(amtD) + ' added. You got ' + bonusCoins + ' coins ($5 = 100 coins). Added balance cannot be withdrawn.');
-            });
 
             var withdrawAmount = document.getElementById('wallet-withdraw-amount');
             var withdrawBtn = document.getElementById('wallet-withdraw-btn');
             if (withdrawBtn && withdrawAmount) withdrawBtn.addEventListener('click', function() {
-                var amtD = parseFloat(withdrawAmount.value, 10);
-                if (isNaN(amtD) || amtD < 100) { alert('Minimum withdraw is $100.'); return; }
-                var amtTaka = toTaka(amtD);
+                var config = getWalletConfig();
+                var amtLocal = parseFloat(withdrawAmount.value, 10);
+                var minLocal = bdtToLocal(MIN_WITHDRAW_BDT, config);
+                if (isNaN(amtLocal) || amtLocal < minLocal) { alert('Minimum withdraw is ' + config.currency + ' ' + formatLocal(minLocal) + '.'); return; }
+                var amtBdt = amtLocal / config.localPerBdt;
                 var earned = getTakaEarned();
-                if (earned <= 0) { alert('Only earned balance can be withdrawn. You have $0 withdrawable. Add money cannot be withdrawn.'); return; }
-                if (amtTaka > earned) { alert('You can only withdraw earned balance. Withdrawable: $' + formatDollar(toDollar(earned)) + '.'); return; }
-                setTakaEarned(earned - amtTaka);
+                if (earned <= 0) { alert('Only earned balance can be withdrawn. Add money cannot be withdrawn.'); return; }
+                if (amtBdt > earned) { alert('You can only withdraw earned balance. Withdrawable: ' + config.currency + ' ' + formatLocal(bdtToLocal(earned, config)) + '.'); return; }
+                setTakaEarned(earned - amtBdt);
                 updateDisplay();
                 withdrawAmount.value = '';
-                alert('$' + formatDollar(amtD) + ' withdrawn from your wallet.');
+                alert(config.currency + ' ' + formatLocal(amtLocal) + ' withdrawn from your wallet.');
             });
 
+            var PRICE_PER_COIN_USD = 0.05;
             var grid = document.getElementById('wallet-coins-grid');
             var buyBtn = document.getElementById('wallet-buy-btn');
+            var customCoinsInput = document.getElementById('wallet-custom-coins-input');
+            var customCoinsPriceEl = document.getElementById('wallet-custom-coins-price');
             var selectedPkg = null;
+
+            function updateCustomCoinsPrice() {
+                var config = getWalletConfig();
+                var c = parseInt(customCoinsInput && customCoinsInput.value ? customCoinsInput.value : '', 10);
+                if (customCoinsPriceEl) {
+                    if (isNaN(c) || c < 1) customCoinsPriceEl.textContent = '—';
+                    else customCoinsPriceEl.textContent = config.currency + ' ' + formatLocal(c * PRICE_PER_COIN_USD * BDT_PER_USD * config.localPerBdt);
+                }
+            }
+            function updateBuyButtonState() {
+                var fromCustom = customCoinsInput && (parseInt(customCoinsInput.value, 10) || 0) >= 1;
+                if (buyBtn) buyBtn.disabled = !selectedPkg && !fromCustom;
+            }
+            if (customCoinsInput) {
+                customCoinsInput.addEventListener('input', function() {
+                    if (this.value && grid) grid.querySelectorAll('.wallet-coin-pkg').forEach(function(p) { p.classList.remove('wallet-coin-pkg--selected'); });
+                    selectedPkg = null;
+                    updateCustomCoinsPrice();
+                    updateBuyButtonState();
+                });
+            }
+
             if (grid) grid.querySelectorAll('.wallet-coin-pkg').forEach(function(pkg) {
                 pkg.addEventListener('click', function() {
                     grid.querySelectorAll('.wallet-coin-pkg').forEach(function(p) { p.classList.remove('wallet-coin-pkg--selected'); });
                     this.classList.add('wallet-coin-pkg--selected');
-                    selectedPkg = { coins: parseInt(this.getAttribute('data-coins'), 10), price: parseInt(this.getAttribute('data-price'), 10) };
-                    if (buyBtn) buyBtn.disabled = false;
+                    if (customCoinsInput) customCoinsInput.value = '';
+                    var priceUsd = parseFloat(this.getAttribute('data-price-usd'), 10) || 0;
+                    selectedPkg = { coins: parseInt(this.getAttribute('data-coins'), 10), priceUsd: priceUsd, priceBdt: priceUsd * BDT_PER_USD };
+                    updateCustomCoinsPrice();
+                    updateBuyButtonState();
                 });
             });
             if (buyBtn) buyBtn.addEventListener('click', function() {
-                if (!selectedPkg) return;
+                var coins = 0, pay = 0;
+                if (selectedPkg) {
+                    coins = selectedPkg.coins;
+                    pay = selectedPkg.priceBdt;
+                } else if (customCoinsInput) {
+                    var c = parseInt(customCoinsInput.value, 10);
+                    if (isNaN(c) || c < 1) { alert('Enter at least 1 coin.'); return; }
+                    coins = c;
+                    pay = coins * PRICE_PER_COIN_USD * BDT_PER_USD;
+                }
+                if (!coins || pay <= 0) return;
                 var total = getTaka();
-                if (total < selectedPkg.price) { alert('Insufficient balance. You need $' + formatDollar(toDollar(selectedPkg.price)) + '. Add money first.'); return; }
-                var coins = selectedPkg.coins;
+                if (total < pay) { alert('Insufficient balance. You need ' + (getWalletConfig().currency + ' ' + formatLocal(pay * getWalletConfig().localPerBdt)) + '. Add money first.'); return; }
                 var added = getTakaAdded();
                 var earned = getTakaEarned();
-                var pay = selectedPkg.price;
                 if (earned >= pay) setTakaEarned(earned - pay);
                 else { setTakaEarned(0); setTakaAdded(added - (pay - earned)); }
                 setCoins(getCoins() + coins);
                 updateDisplay();
-                grid.querySelectorAll('.wallet-coin-pkg').forEach(function(p) { p.classList.remove('wallet-coin-pkg--selected'); });
+                if (grid) grid.querySelectorAll('.wallet-coin-pkg').forEach(function(p) { p.classList.remove('wallet-coin-pkg--selected'); });
                 selectedPkg = null;
-                buyBtn.disabled = true;
+                if (customCoinsInput) customCoinsInput.value = '';
+                updateCustomCoinsPrice();
+                updateBuyButtonState();
                 alert(coins + ' coins added!');
             });
 

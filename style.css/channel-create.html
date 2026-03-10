@@ -456,12 +456,23 @@
 
             var visibilityPublic = document.getElementById('channel-visibility-public');
             var visibilityPrivate = document.getElementById('channel-visibility-private');
+            function isChannelInRecoveryMode() {
+                try {
+                    var s = localStorage.getItem('nokChannelDeletion');
+                    if (!s) return false;
+                    var del = JSON.parse(s);
+                    return del && del.deleteAt && del.deleteAt > Date.now();
+                } catch (_) { return false; }
+            }
             function setVisibility(value) {
                 var isPublic = (value !== 'private');
                 if (visibilityPublic) { visibilityPublic.classList.toggle('channel-visibility-btn--active', isPublic); visibilityPublic.setAttribute('aria-pressed', isPublic); }
                 if (visibilityPrivate) { visibilityPrivate.classList.toggle('channel-visibility-btn--active', !isPublic); visibilityPrivate.setAttribute('aria-pressed', !isPublic); }
             }
-            if (visibilityPublic) visibilityPublic.addEventListener('click', function() { setVisibility('public'); });
+            if (visibilityPublic) visibilityPublic.addEventListener('click', function() {
+                if (isChannelInRecoveryMode()) { window.location.href = 'channel-delete.html'; return; }
+                setVisibility('public');
+            });
             if (visibilityPrivate) visibilityPrivate.addEventListener('click', function() { setVisibility('private'); });
             function updateCreateBtn() {
                 var live = document.getElementById('channel-live').checked;

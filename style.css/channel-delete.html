@@ -126,6 +126,15 @@
                         <button type="button" class="channel-delete-btn channel-delete-btn--primary" id="recover-channel-btn">Recover channel</button>
                     </div>
                 </div>
+
+                <!-- State 3: Permanently deleted – show Recovery button -->
+                <div id="delete-done-view" style="display:none;">
+                    <h1 class="channel-delete-title">Channel deleted</h1>
+                    <p class="channel-delete-sub">Your channel has been permanently deleted. You can recover by signing in and creating a new channel.</p>
+                    <div class="channel-delete-actions" style="margin-top:24px;">
+                        <a href="login.html?next=channel-create.html" class="channel-delete-btn channel-delete-btn--primary" id="recover-after-delete-btn">Recovery</a>
+                    </div>
+                </div>
             </div>
         </main>
 
@@ -167,9 +176,11 @@
             var NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
             var formView = document.getElementById('delete-form-view');
             var pendingView = document.getElementById('delete-pending-view');
+            var doneView = document.getElementById('delete-done-view');
             var deleteDateText = document.getElementById('delete-date-text');
             var deleteSubmitBtn = document.getElementById('delete-submit-btn');
             var recoverBtn = document.getElementById('recover-channel-btn');
+            var recoverAfterDeleteBtn = document.getElementById('recover-after-delete-btn');
 
             function getDeletion() {
                 try {
@@ -188,6 +199,12 @@
             function setChannelData(obj) { try { localStorage.setItem('nokChannelData', JSON.stringify(obj)); } catch (_) {} }
 
             function applyView() {
+                if (localStorage.getItem('nokChannelPermanentlyDeleted') === '1') {
+                    if (doneView) doneView.style.display = 'block';
+                    if (formView) formView.style.display = 'none';
+                    if (pendingView) pendingView.style.display = 'none';
+                    return;
+                }
                 var del = getDeletion();
                 var now = Date.now();
                 if (del && del.deleteAt) {
@@ -195,19 +212,23 @@
                         clearDeletion();
                         localStorage.removeItem('nokUserChannel');
                         localStorage.removeItem('nokChannelData');
-                        if (formView) formView.style.display = 'block';
+                        try { localStorage.setItem('nokChannelPermanentlyDeleted', '1'); } catch (_) {}
+                        if (doneView) doneView.style.display = 'block';
+                        if (formView) formView.style.display = 'none';
                         if (pendingView) pendingView.style.display = 'none';
                         return;
                     }
                     if (pendingView) {
                         pendingView.style.display = 'block';
                         if (formView) formView.style.display = 'none';
+                        if (doneView) doneView.style.display = 'none';
                         if (deleteDateText) deleteDateText.textContent = new Date(del.deleteAt).toLocaleDateString(undefined, { dateStyle: 'long' });
                     }
                     return;
                 }
                 if (formView) formView.style.display = 'block';
                 if (pendingView) pendingView.style.display = 'none';
+                if (doneView) doneView.style.display = 'none';
             }
             applyView();
 
@@ -275,6 +296,12 @@
                     setChannelData(ch);
                     applyView();
                     window.location.href = 'channel-create.html';
+                });
+            }
+            if (recoverAfterDeleteBtn) {
+                recoverAfterDeleteBtn.addEventListener('click', function() {
+                    try { localStorage.removeItem('nokChannelPermanentlyDeleted'); } catch (_) {}
+                    window.location.href = 'login.html?next=channel-create.html';
                 });
             }
         })();

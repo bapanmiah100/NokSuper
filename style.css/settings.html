@@ -163,7 +163,6 @@
                         </div>
                         <div>
                             <span class="settings-item__label">Wallet & Coins</span>
-                            <p class="settings-item__hint">Add money (৳) and buy coins</p>
                         </div>
                     </div>
                     <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
@@ -318,7 +317,7 @@
             </div>
         </section>
 
-        <section class="settings-section">
+        <section class="settings-section" id="settings-privacy-section">
             <h2 class="settings-section__title">Privacy & Security</h2>
             <div class="settings-card">
                 <div class="settings-item">
@@ -903,6 +902,10 @@
                 if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'flex' : 'none';
                 var deleteAccountItem = document.getElementById('settings-delete-account-item');
                 if (deleteAccountItem) deleteAccountItem.style.display = isLoggedIn ? 'flex' : 'none';
+                var accountSection = document.getElementById('settings-account-section');
+                var privacySection = document.getElementById('settings-privacy-section');
+                if (accountSection) accountSection.style.display = isLoggedIn ? '' : 'none';
+                if (privacySection) privacySection.style.display = isLoggedIn ? '' : 'none';
                 var profileCard = document.getElementById('settings-profile-card');
                 var profileCardAvatar = document.getElementById('settings-profile-card-avatar');
                 var profileCardName = document.getElementById('settings-profile-card-name');
