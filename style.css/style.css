@@ -798,6 +798,10 @@ html:has(body.home-body) body.home-body {
 
 /* Background – main page = mainbg.png, other pages = bg.png */
 body.main-page .bg { background-image: url("../mainbg.png"); }
+/* Studio page – default theme: show bg.png behind content */
+body.studio-body { background: transparent !important; }
+body.studio-body .studio-layout { position: relative; z-index: 1; }
+html[data-theme="light"] body.studio-body .bg { display: none !important; }
 .bg {
     position: fixed;
     inset: 0;
