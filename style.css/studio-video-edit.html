@@ -55,6 +55,35 @@
         .studio-edit-radios { display: flex; flex-wrap: wrap; gap: 12px; }
         .studio-edit-radio { display: flex; align-items: center; gap: 8px; cursor: pointer; color: rgba(255,255,255,0.9); font-size: 0.9rem; }
         .studio-edit-radio input { accent-color: #8b5cf6; }
+        /* Light theme: edit page – colorful and readable */
+        html[data-theme="light"] body.studio-body { background: var(--bg-deep); }
+        html[data-theme="light"] .studio-topbar__title { color: #1a1f38; }
+        html[data-theme="light"] .studio-topbar__back { background: rgba(79,109,216,0.2); color: #1e3a8a; }
+        html[data-theme="light"] .studio-topbar__back:hover { background: rgba(79,109,216,0.35); color: #4338ca; }
+        html[data-theme="light"] .studio-edit-section__title { color: #1a1f38; }
+        html[data-theme="light"] .studio-edit-section { border-bottom-color: rgba(79,109,216,0.25); }
+        html[data-theme="light"] .studio-edit-field label { color: #1e3a8a; font-weight: 700; }
+        html[data-theme="light"] .studio-edit-field input[type="text"],
+        html[data-theme="light"] .studio-edit-field textarea {
+            background: rgba(255,255,255,0.95); border: 1px solid rgba(79,109,216,0.4); color: #1a1f38;
+        }
+        html[data-theme="light"] .studio-edit-field input[type="text"]:focus,
+        html[data-theme="light"] .studio-edit-field textarea:focus { border-color: #4f6dd8; box-shadow: 0 0 0 2px rgba(79,109,216,0.2); }
+        html[data-theme="light"] .studio-edit-field select {
+            background: rgba(255,255,255,0.95); border: 1px solid rgba(79,109,216,0.4); color: #1a1f38;
+        }
+        html[data-theme="light"] .studio-edit-field select:focus { border-color: #4f6dd8; }
+        html[data-theme="light"] .studio-edit-thumb-slot label.slot-label { color: #1e3a8a; font-weight: 700; }
+        html[data-theme="light"] .studio-edit-thumb-placeholder { background: linear-gradient(135deg, rgba(79,109,216,0.2) 0%, rgba(99,102,241,0.2) 100%); }
+        html[data-theme="light"] .studio-edit-thumb-placeholder svg { color: #4f6dd8; }
+        html[data-theme="light"] .studio-edit-thumb-upload { color: #4338ca; font-weight: 600; }
+        html[data-theme="light"] .studio-edit-btn--primary { background: linear-gradient(135deg, #3b82f6, #6366f1); border-color: rgba(59,130,246,0.6); color: #fff; box-shadow: 0 2px 12px rgba(59,130,246,0.35); }
+        html[data-theme="light"] .studio-edit-btn--primary:hover { background: linear-gradient(135deg, #2563eb, #4f46e5); box-shadow: 0 4px 16px rgba(59,130,246,0.45); }
+        html[data-theme="light"] .studio-edit-btn--ghost { background: rgba(79,109,216,0.12); color: #1e3a8a; border: 1px solid rgba(79,109,216,0.35); }
+        html[data-theme="light"] .studio-edit-btn--ghost:hover { background: rgba(79,109,216,0.22); color: #4338ca; border-color: rgba(79,109,216,0.5); }
+        html[data-theme="light"] .studio-edit-radio { color: #1a1f38; font-weight: 600; }
+        html[data-theme="light"] .studio-edit-radio input { accent-color: #4338ca; }
+        html[data-theme="light"] .studio-edit-error { color: #b91c1c; }
     </style>
 </head>
 <body class="home-body has-bottom-nav studio-body">

@@ -1,0 +1,46 @@
+---
+description: Theme (Light/Dark) and new pages – same look across the app
+globs: style.css/**/*.html, style.css/*.html, style.css/**/*.css, style.css/*.css
+alwaysApply: false
+---
+
+# Theme & New Pages – Same Look Everywhere
+
+## Goal
+
+Every page in the app (current and future) must support **Light** and **Dark** theme and look consistent. New pages must follow the same patterns so they automatically get the same styling.
+
+## How theme works
+
+- **Theme is set in Settings** and stored in `localStorage` as `nokTheme`: `'system' | 'light' | 'dark'`.
+- **`nok-theme.js`** runs on every page: it reads `nokTheme`, resolves `system` → normal (no `data-theme`), and sets `document.documentElement.setAttribute('data-theme', 'light')` or `'dark')` or removes it for system/normal.
+- **`style.css`** contains all theme styles under `html[data-theme="light"]` and `html[data-theme="dark"]`. Light theme uses colors like `#1a1f38`, `#2d3a5c`, `#4338ca`, `#4f6dd8`, `rgba(79,109,216,...)` for text, borders, and accents.
+
+## Rules for NEW pages (so they look the same)
+
+1. **Include theme script and main CSS on every new HTML page:**
+   - `<script src="nok-theme.js"></script>` (before other scripts).
+   - `<link rel="stylesheet" href="style.css">` (and `video-long.css` if it’s a video/shorts-like page).
+
+2. **Prefer theme variables instead of hardcoded colors:**
+   - Use `var(--glass-bg)`, `var(--glass-border)`, `var(--bg-deep)`, `var(--bg-dark)`, `var(--text-white)`, `var(--text-muted)` so Light/Dark apply automatically.
+   - Avoid fixed `color: #fff` or `background: rgba(0,0,0,...)` for main UI; use variables or existing classes.
+
+3. **Reuse existing classes when possible:**
+   - Headers: `long-video__header`, `video-header`, or shared header that already uses `var(--glass-bg)`.
+   - Buttons: `btn btn--primary`, `btn btn--ghost`, `home-header__btn--primary`, `home-header__btn--ghost`, `wallet-btn--primary`, etc.
+   - Cards/panels: classes that already have light overrides in `style.css` (e.g. `studio-card`, `add-card`, `wallet-card`, `settings-card`).
+   - Inputs: use existing patterns (e.g. `home-search__input`, or inputs inside `.upload-field`, `.add-card-form`, etc.) so existing light theme rules apply.
+
+4. **If you add new page-specific classes:**
+   - Add light theme overrides in **`style.css`** in the same block as other pages, under `html[data-theme="light"] .your-new-class { ... }`.
+   - Use the same color palette: text `#1a1f38` / `#2d3a5c`, accents `#4338ca` / `#4f6dd8`, borders `rgba(79,109,216,0.25)` to `0.4`, backgrounds `rgba(255,255,255,0.9)` or `var(--glass-bg)`.
+   - Keep buttons and links clearly visible (e.g. blue/indigo shades, not faint gray).
+
+5. **Naming:**
+   - Page-specific blocks can follow the pattern: `/* Light theme: Page name (filename.html) */` then selectors for that page’s classes. This keeps the app consistent and makes it easy to add future pages in the same way.
+
+## Summary
+
+- **Current pages:** Already have light (and where needed dark) overrides in `style.css`.
+- **New pages:** Use `nok-theme.js` + `style.css`, prefer theme variables and existing classes, and add new `html[data-theme="light"]` rules in `style.css` for any new classes so every page keeps the same look.
