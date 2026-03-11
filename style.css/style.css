@@ -72,6 +72,106 @@ html[data-theme="light"] .wallet-balance-value,
 html[data-theme="light"] .greeting { color: #1a1f38; }
 html[data-theme="light"] .home-search__input { background: rgba(255,255,255,0.9); color: #1a1f38; border-color: rgba(100,130,255,0.2); }
 
+/* Light theme: buttons & text more colorful and readable */
+html[data-theme="light"] .settings-subtitle,
+html[data-theme="light"] .settings-item__hint,
+html[data-theme="light"] .settings-profile-card__meta { color: #2d3a5c; }
+html[data-theme="light"] .settings-section__title { color: #4f6dd8; font-weight: 800; }
+html[data-theme="light"] .settings-item__label { color: #1a1f38; font-weight: 700; }
+html[data-theme="light"] .settings-item__arrow { color: #4f6dd8; }
+html[data-theme="light"] .settings-theme-select,
+html[data-theme="light"] .settings-quality-select,
+html[data-theme="light"] .settings-speed-select,
+html[data-theme="light"] .settings-language-select,
+html[data-theme="light"] .settings-region-select {
+    background: linear-gradient(135deg, rgba(79,109,216,0.15), rgba(99,102,241,0.12));
+    border: 1px solid rgba(79,109,216,0.45);
+    color: #1e3a8a;
+    font-weight: 600;
+}
+html[data-theme="light"] .settings-btn-secondary {
+    background: rgba(79,109,216,0.12);
+    border: 1px solid rgba(79,109,216,0.4);
+    color: #1e3a8a;
+    font-weight: 600;
+}
+html[data-theme="light"] .settings-btn-secondary:hover {
+    background: rgba(79,109,216,0.22);
+    border-color: rgba(79,109,216,0.55);
+    color: #1e40af;
+}
+html[data-theme="light"] .settings-profile-card__btn--secondary {
+    background: rgba(79,109,216,0.15);
+    border-color: rgba(79,109,216,0.45);
+    color: #1e3a8a;
+}
+html[data-theme="light"] .settings-profile-card__btn--secondary:hover {
+    background: rgba(79,109,216,0.25);
+    color: #1e40af;
+}
+html[data-theme="light"] .home-bottom-nav {
+    background: rgba(79,109,216,0.25);
+    border: 1px solid rgba(79,109,216,0.35);
+    box-shadow: 0 4px 20px rgba(79,109,216,0.2);
+}
+html[data-theme="light"] .home-bottom-nav__item {
+    color: #1e3a8a;
+    font-weight: 600;
+}
+html[data-theme="light"] .home-bottom-nav__item:hover {
+    color: #1e40af;
+    background: rgba(79,109,216,0.15);
+}
+html[data-theme="light"] .home-bottom-nav__item--active,
+html[data-theme="light"] .home-bottom-nav__item--active:hover {
+    color: #4338ca;
+}
+html[data-theme="light"] .home-bottom-nav__icon--purple {
+    color: #4338ca;
+}
+html[data-theme="light"] .home-trending-btn {
+    background: rgba(79,109,216,0.18);
+    border: 1px solid rgba(79,109,216,0.4);
+    color: #1e3a8a;
+    font-weight: 600;
+}
+html[data-theme="light"] .home-trending-btn:hover {
+    background: rgba(79,109,216,0.28);
+    border-color: rgba(79,109,216,0.55);
+    color: #1e40af;
+}
+html[data-theme="light"] .home-trending-btn--active {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    border-color: rgba(59,130,246,0.6);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(59,130,246,0.4);
+}
+html[data-theme="light"] .home-trending-btn--active:hover {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    box-shadow: 0 4px 20px rgba(59,130,246,0.5);
+}
+html[data-theme="light"] .home-header__menu { color: #1e3a8a; }
+html[data-theme="light"] .home-header__menu:hover { color: #4338ca; }
+html[data-theme="light"] .home-search__icon { color: #4f6dd8; }
+html[data-theme="light"] .glass__divider span { color: #2d3a5c; }
+html[data-theme="light"] .glass__legal { color: #2d3a5c; }
+html[data-theme="light"] .glass__forgot { color: #1e3a8a; }
+html[data-theme="light"] .glass__forgot:hover { color: #4338ca; }
+html[data-theme="light"] .glass__skip { color: #4338ca; }
+html[data-theme="light"] .glass__skip:hover { color: #1e40af; }
+html[data-theme="light"] .glass__btn--outline {
+    border: 2px solid rgba(79,109,216,0.6);
+    color: #1e3a8a;
+}
+html[data-theme="light"] .glass__btn--outline:hover {
+    background: rgba(79,109,216,0.12);
+    border-color: rgba(79,109,216,0.8);
+    color: #1e40af;
+}
+html[data-theme="light"] .home-header__btn--ghost { color: #1e3a8a; }
+html[data-theme="light"] .home-header__btn--ghost:hover { color: #4338ca; background: rgba(79,109,216,0.1); }
+html[data-theme="light"] .settings-version { color: #4b5563; }
+
 * {
     margin: 0;
     padding: 0;

@@ -47,6 +47,11 @@
         .settings-toggle::after { content: ''; position: absolute; width: 24px; height: 24px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
         .settings-toggle.settings-toggle--on::after { transform: translateX(22px); }
         .settings-theme-select { padding: 8px 12px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(100,130,255,0.25); color: #fff; font-size: 0.9rem; font-family: inherit; cursor: pointer; }
+        html[data-theme="light"] .settings-item__icon { background: rgba(79,109,216,0.2); }
+        html[data-theme="light"] .settings-item__icon svg { color: #4338ca; }
+        html[data-theme="light"] .settings-item__icon.settings-item__icon--green svg { color: #15803d; }
+        html[data-theme="light"] .settings-item__icon.settings-item__icon--amber svg { color: #b45309; }
+        html[data-theme="light"] .settings-item__icon.settings-item__icon--red svg { color: #b91c1c; }
         .settings-btn-secondary { padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-family: inherit; transition: all 0.2s; }
         .settings-btn-secondary:hover { background: rgba(255,255,255,0.15); }
         .settings-version { text-align: center; font-size: 0.8rem; color: rgba(200,210,255,0.4); margin-top: 36px; padding-bottom: 20px; }
