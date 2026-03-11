@@ -1371,6 +1371,11 @@
                 if (window.history && window.history.replaceState) history.replaceState({}, '', 'video.html?id=' + encodeURIComponent(id));
             }).catch(function() {});
         }
+        function scheduleAutoplayWhenReady() {
+            if (!wantAutoplay) return;
+            videoEl.addEventListener('canplay', tryAutoplay, { once: true });
+            if (videoEl.readyState >= 2) setTimeout(tryAutoplay, 0);
+        }
         /* Always bind play button and controls so video can play once src is set */
         bindPlayback();
         /* Fallback URL when user video missing or external URL fails */
@@ -1388,24 +1393,24 @@
                 if (blob) {
                     currentBlobUrl = URL.createObjectURL(blob);
                     videoEl.src = currentBlobUrl;
-                    if (wantAutoplay) videoEl.addEventListener('canplay', tryAutoplay, { once: true });
+                    scheduleAutoplayWhenReady();
                 } else {
                     setFallbackSrc();
-                    if (wantAutoplay) videoEl.addEventListener('canplay', tryAutoplay, { once: true });
+                    scheduleAutoplayWhenReady();
                 }
             }).catch(function() {
                 setFallbackSrc();
-                if (wantAutoplay) videoEl.addEventListener('canplay', tryAutoplay, { once: true });
+                scheduleAutoplayWhenReady();
             });
         } else if (sampleInfo.sampleUrl !== undefined && sampleUrls[sampleInfo.sampleUrl]) {
             videoEl.setAttribute('preload', 'auto');
             videoEl.src = sampleUrls[sampleInfo.sampleUrl];
             videoEl.addEventListener('error', function() { setFallbackSrc(); }, { once: true });
-            if (wantAutoplay) videoEl.addEventListener('canplay', tryAutoplay, { once: true });
+            scheduleAutoplayWhenReady();
         } else {
             /* Unknown id: use default sample so something plays */
             setFallbackSrc();
-            if (wantAutoplay) videoEl.addEventListener('canplay', tryAutoplay, { once: true });
+            scheduleAutoplayWhenReady();
         }
     }
 
