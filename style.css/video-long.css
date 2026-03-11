@@ -581,7 +581,7 @@ body.long-video-v2 .video-page {
     background: rgba(22, 22, 42, 0.4);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(139, 92, 246, 0.3);
+    border: 1px solid rgba(139, 92, 246, 0.5);
     border-radius: 16px;
     padding: 20px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.15), 0 0 40px rgba(139, 92, 246, 0.06);
@@ -675,8 +675,9 @@ body.long-video-v2 .video-page {
 .long-video__title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #fff;
+    color: #e9d5ff;
     margin: 0 0 8px 0;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .long-video__tags {
@@ -1498,6 +1499,13 @@ body.long-video-v2 .video-page {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(139, 92, 246, 0.5);
+    transition: border-color 0.2s;
+}
+.long-video__more-item:hover {
+    border-color: rgba(139, 92, 246, 0.65);
 }
 
 .long-video__more-thumb {
@@ -1528,6 +1536,13 @@ body.long-video-v2 .video-page {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(139, 92, 246, 0.5);
+    transition: border-color 0.2s;
+}
+.long-video__creator-item:hover {
+    border-color: rgba(139, 92, 246, 0.65);
 }
 
 .long-video__creator-item .long-video__more-thumb {
@@ -1560,11 +1575,11 @@ body.long-video-v2 .video-page {
     border-radius: 12px;
     overflow: hidden;
     background: rgba(15, 22, 41, 0.4);
-    border: 1px solid rgba(100, 130, 255, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.5);
     transition: border-color 0.2s, background 0.2s;
 }
 .long-video__creator-upload-card:hover {
-    border-color: rgba(100, 130, 255, 0.3);
+    border-color: rgba(139, 92, 246, 0.65);
     background: rgba(15, 22, 41, 0.6);
 }
 .long-video__creator-upload-thumb {
@@ -1593,17 +1608,21 @@ body.long-video-v2 .video-page {
 .long-video__creator-upload-title {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #fff;
+    color: #c4b5fd;
     padding: 0 8px 4px;
     line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+.long-video__creator-upload-card:hover .long-video__creator-upload-title {
+    color: #e9d5ff;
 }
 .long-video__creator-upload-views {
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: #a5b4fc;
     padding: 0 8px 8px;
 }
 .long-video__creator-upload-badge {
@@ -1613,9 +1632,15 @@ body.long-video-v2 .video-page {
     font-size: 0.65rem;
     font-weight: 700;
     color: #fff;
-    background: rgba(139, 92, 246, 0.9);
-    padding: 2px 6px;
-    border-radius: 4px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.95), rgba(99, 102, 241, 0.95));
+    border: 1px solid rgba(167, 139, 250, 0.7);
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    box-shadow: 0 0 14px rgba(139, 92, 246, 0.4);
+}
+.long-video__creator-upload-card:hover .long-video__creator-upload-badge {
+    box-shadow: 0 0 18px rgba(139, 92, 246, 0.55);
 }
 .long-video__creator-upload-card--short {
     position: relative;
@@ -2313,9 +2338,12 @@ body.long-video-v2.chat-overlay-open {
     border-radius: 8px;
     overflow: hidden;
     background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(139, 92, 246, 0.5);
+    transition: border-color 0.2s, background 0.2s;
 }
 .long-video__drop-up-card:hover {
     background: rgba(255,255,255,0.1);
+    border-color: rgba(139, 92, 246, 0.65);
 }
 .long-video__drop-up-card-thumb {
     aspect-ratio: 16/9;
@@ -2326,12 +2354,16 @@ body.long-video-v2.chat-overlay-open {
 .long-video__drop-up-card-title {
     font-size: 0.75rem;
     font-weight: 500;
-    color: rgba(255,255,255,0.95);
+    color: #e9d5ff;
     padding: 6px 8px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+.long-video__drop-up-card:hover .long-video__drop-up-card-title {
+    color: #c4b5fd;
 }
 .long-video__drop-up-btn {
     display: none !important;
