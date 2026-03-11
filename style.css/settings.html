@@ -305,13 +305,13 @@
                         </div>
                         <div>
                             <span class="settings-item__label">Theme</span>
-                            <p class="settings-item__hint" id="settings-theme-hint">Dark (default)</p>
+                            <p class="settings-item__hint" id="settings-theme-hint">Normal (default)</p>
                         </div>
                     </div>
                     <select id="settings-theme-select" class="settings-theme-select" aria-label="Theme">
-                        <option value="dark">Dark</option>
-                        <option value="light">Light</option>
                         <option value="system">System</option>
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
                     </select>
                 </div>
             </div>
@@ -969,20 +969,23 @@
             if (chan && channelHint) channelHint.textContent = chan;
 
             function applyTheme() {
-                var t = localStorage.getItem('nokTheme') || 'dark';
-                document.documentElement.setAttribute('data-theme', t);
+                var t = localStorage.getItem('nokTheme') || 'system';
+                if (t === 'system')
+                    document.documentElement.removeAttribute('data-theme');
+                else
+                    document.documentElement.setAttribute('data-theme', t);
             }
             applyTheme();
             var themeSelect = document.getElementById('settings-theme-select');
             var themeHint = document.getElementById('settings-theme-hint');
             if (themeSelect) {
-                var savedTheme = localStorage.getItem('nokTheme') || 'dark';
+                var savedTheme = localStorage.getItem('nokTheme') || 'system';
                 themeSelect.value = savedTheme;
-                if (themeHint) themeHint.textContent = savedTheme === 'system' ? 'Follow system' : (savedTheme === 'light' ? 'Light' : 'Dark (default)');
+                if (themeHint) themeHint.textContent = savedTheme === 'system' ? 'Normal (default)' : (savedTheme === 'light' ? 'Light' : 'Dark');
                 themeSelect.addEventListener('change', function() {
                     var v = this.value;
                     localStorage.setItem('nokTheme', v);
-                    if (themeHint) themeHint.textContent = v === 'system' ? 'Follow system' : (v === 'light' ? 'Light' : 'Dark (default)');
+                    if (themeHint) themeHint.textContent = v === 'system' ? 'Normal (default)' : (v === 'light' ? 'Light' : 'Dark');
                     applyTheme();
                 });
             }
