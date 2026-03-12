@@ -1314,8 +1314,11 @@ body.long-video-v2 .video-page {
     background: #fff;
     box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.8);
     cursor: pointer;
-    pointer-events: none;
+    pointer-events: auto;
     transition: transform 0.05s ease;
+}
+.long-video__progress-thumb:active {
+    transform: translate(-50%, -50%) scale(1.15);
 }
 .long-video__progress-wrap:hover .long-video__progress-thumb {
     transform: translate(-50%, -50%) scale(1.2);
@@ -1485,11 +1488,20 @@ body.long-video-v2 .video-page {
     margin-bottom: 16px;
 }
 
+/* More like this section – extra space so it feels less cramped */
+.long-video__card.long-video__more:not(.long-video__related-section):not(.long-video__creator-uploads-section) {
+    padding: 24px 28px;
+    margin-bottom: 28px;
+}
+.long-video__card.long-video__more:not(.long-video__related-section):not(.long-video__creator-uploads-section) .long-video__section-title {
+    margin-bottom: 20px;
+}
+
 .long-video__more-grid {
     display: flex;
-    gap: 16px;
+    gap: 20px;
     overflow-x: auto;
-    padding-bottom: 8px;
+    padding: 4px 4px 14px 4px;
 }
 
 .long-video__more-item {

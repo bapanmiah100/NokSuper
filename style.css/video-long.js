@@ -1335,24 +1335,83 @@
 
             if (progressBar && progressWrap) {
                 function updateProgress() {
-                    var pct = videoEl.duration ? (videoEl.currentTime / videoEl.duration) * 100 : 0;
+                    var dur = videoEl.duration;
+                    var pct = (dur && !isNaN(dur) && isFinite(dur) && dur > 0) ? (videoEl.currentTime / dur) * 100 : 0;
                     progressBar.style.width = pct + '%';
                     if (progressThumb) progressThumb.style.left = pct + '%';
+                }
+                function seekToPct(pct) {
+                    var dur = videoEl.duration;
+                    if (!dur || isNaN(dur) || !isFinite(dur)) return;
+                    pct = Math.max(0, Math.min(1, pct));
+                    videoEl.currentTime = pct * dur;
+                    updateProgress();
+                    if (timeCurrent) timeCurrent.textContent = fmt(videoEl.currentTime);
+                }
+                function pctFromPageX(clientX) {
+                    var r = progressWrap.getBoundingClientRect();
+                    return (clientX - r.left) / r.width;
                 }
                 videoEl.addEventListener('timeupdate', updateProgress);
                 videoEl.addEventListener('loadedmetadata', function() {
                     if (timeDurationEl) timeDurationEl.textContent = fmt(videoEl.duration);
                     updateProgress();
                 });
+                videoEl.addEventListener('durationchange', function() {
+                    if (timeDurationEl && videoEl.duration) timeDurationEl.textContent = fmt(videoEl.duration);
+                    updateProgress();
+                });
                 videoEl.addEventListener('timeupdate', function() {
                     if (timeCurrent) timeCurrent.textContent = fmt(videoEl.currentTime);
                 });
                 progressWrap.addEventListener('click', function(e) {
-                    if (!videoEl.duration) return;
-                    var r = progressWrap.getBoundingClientRect();
-                    var pct = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-                    videoEl.currentTime = pct * videoEl.duration;
+                    if (e.target === progressThumb) return;
+                    seekToPct(pctFromPageX(e.clientX));
                 });
+                var dragging = false;
+                function onSeekMove(clientX) {
+                    if (!dragging) return;
+                    var pct = pctFromPageX(clientX);
+                    var dur = videoEl.duration;
+                    if (dur && !isNaN(dur) && isFinite(dur)) {
+                        var t = Math.max(0, Math.min(1, pct)) * dur;
+                        videoEl.currentTime = t;
+                        progressBar.style.width = (pct * 100) + '%';
+                        if (progressThumb) progressThumb.style.left = (pct * 100) + '%';
+                        if (timeCurrent) timeCurrent.textContent = fmt(t);
+                    }
+                }
+                function endDrag() {
+                    dragging = false;
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', endDrag);
+                    document.removeEventListener('touchmove', onTouchMove, { passive: false });
+                    document.removeEventListener('touchend', endDrag);
+                }
+                function onMouseMove(e) { onSeekMove(e.clientX); }
+                function onTouchMove(e) {
+                    if (e.cancelable && e.touches.length) {
+                        e.preventDefault();
+                        onSeekMove(e.touches[0].clientX);
+                    }
+                }
+                progressWrap.addEventListener('mousedown', function(e) {
+                    var d = videoEl.duration;
+                    if (!d || isNaN(d) || !isFinite(d)) return;
+                    e.preventDefault();
+                    dragging = true;
+                    onSeekMove(e.clientX);
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', endDrag);
+                });
+                progressWrap.addEventListener('touchstart', function(e) {
+                    var d = videoEl.duration;
+                    if (!d || isNaN(d) || !isFinite(d) || !e.touches.length) return;
+                    dragging = true;
+                    onSeekMove(e.touches[0].clientX);
+                    document.addEventListener('touchmove', onTouchMove, { passive: false });
+                    document.addEventListener('touchend', endDrag);
+                }, { passive: true });
             }
             if (timeDurationEl && videoEl.duration) timeDurationEl.textContent = fmt(videoEl.duration);
         }

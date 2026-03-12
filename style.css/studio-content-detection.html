@@ -28,13 +28,49 @@
         .studio-topbar__back:hover { background: rgba(139,92,246,0.4); color: #fff; }
         .studio-section { margin-bottom: 28px; }
         .studio-section__title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 16px; }
-        .studio-terms { background: rgba(30,30,50,0.6); border: 1px solid rgba(139,92,246,0.2); border-radius: 16px; padding: 28px 32px; max-height: 70vh; overflow-y: auto; color: rgba(255,255,255,0.9); font-size: 0.95rem; line-height: 1.65; }
+        .studio-terms { background: rgba(30,30,50,0.6); border: 1px solid rgba(139,92,246,0.2); border-radius: 16px; padding: 28px 32px; color: rgba(255,255,255,0.9); font-size: 0.95rem; line-height: 1.65; }
         .studio-terms h2 { font-size: 1.25rem; font-weight: 700; color: #fff; margin: 24px 0 12px; }
         .studio-terms h2:first-child { margin-top: 0; }
         .studio-terms p { margin: 0 0 14px; }
         .studio-terms ul { margin: 0 0 14px; padding-left: 24px; }
         .studio-terms li { margin-bottom: 6px; }
         .studio-terms-intro { color: rgba(255,255,255,0.7); margin-bottom: 20px; }
+        .cd-count-row { display: flex; gap: 20px; margin-bottom: 24px; flex-wrap: wrap; }
+        .cd-count-box { flex: 1; min-width: 160px; background: rgba(30,30,50,0.6); border: 1px solid rgba(139,92,246,0.3); border-radius: 14px; padding: 20px 24px; text-align: center; }
+        .cd-count-box--copyright { border-color: rgba(251,191,36,0.45); background: rgba(30,30,50,0.7); }
+        .cd-count-box__label { font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+        .cd-count-box--copyright .cd-count-box__label { color: #fbbf24; }
+        .cd-count-box__value { font-size: 2rem; font-weight: 800; color: #fff; line-height: 1.2; }
+        .cd-count-box--copyright .cd-count-box__value { color: #fbbf24; }
+        .cd-copyright-videos { margin-bottom: 24px; background: rgba(30,30,50,0.6); border: 1px solid rgba(251,191,36,0.3); border-radius: 14px; padding: 20px 24px; }
+        .cd-copyright-videos__title { font-size: 1rem; font-weight: 700; color: #fbbf24; margin: 0 0 14px; }
+        .cd-copyright-videos__list { display: flex; flex-direction: column; gap: 12px; }
+        .cd-copyright-videos__item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .cd-copyright-videos__item:last-child { border-bottom: none; }
+        .cd-copyright-videos__thumb { width: 120px; min-width: 120px; height: 68px; border-radius: 8px; background: linear-gradient(135deg, rgba(251,191,36,0.25), rgba(139,92,246,0.2)); object-fit: cover; }
+        .cd-copyright-videos__thumb--placeholder { background: linear-gradient(135deg, rgba(251,191,36,0.3), rgba(139,92,246,0.25)); display: flex; align-items: center; justify-content: center; }
+        .cd-copyright-videos__thumb--placeholder svg { width: 28px; height: 28px; color: rgba(255,255,255,0.4); }
+        .cd-copyright-videos__body { flex: 1; min-width: 0; }
+        .cd-copyright-videos__title-text { font-size: 0.95rem; font-weight: 600; color: rgba(255,255,255,0.95); margin: 0 0 6px; }
+        .cd-copyright-videos__datetime { font-size: 0.8rem; color: rgba(255,255,255,0.55); margin-bottom: 6px; }
+        .cd-copyright-videos__reason { font-size: 0.85rem; color: #fca5a5; margin: 0; padding: 8px 12px; background: rgba(239,68,68,0.12); border-radius: 8px; border-left: 3px solid rgba(239,68,68,0.5); }
+        .cd-copyright-videos__reason-label { font-weight: 600; color: rgba(255,255,255,0.7); margin-right: 4px; }
+        .cd-copyright-videos__status { display: inline-block; margin-top: 8px; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; }
+        .cd-copyright-videos__status--warning { background: rgba(251,191,36,0.2); color: #fbbf24; border: 1px solid rgba(251,191,36,0.4); }
+        .cd-copyright-videos__status--auto { background: rgba(148,163,184,0.25); color: #94a3b8; border: 1px solid rgba(148,163,184,0.4); }
+        .cd-copyright-videos__empty { font-size: 0.9rem; color: rgba(255,255,255,0.5); padding: 16px 0; }
+        .cd-copy-warn { margin-top: 28px; padding: 26px 28px; border-radius: 16px; border: 1px solid rgba(251,191,36,0.45); background: rgba(30,30,50,0.6); box-shadow: 0 0 20px rgba(251,191,36,0.08); }
+        .cd-copy-warn__title { font-size: 1.3rem; font-weight: 800; color: #fbbf24; margin: 0 0 8px; letter-spacing: 0.02em; }
+        .cd-copy-warn__intro { margin: 0 0 18px; color: rgba(255,255,255,0.85); font-size: 0.95rem; line-height: 1.5; }
+        .cd-copy-warn__list { list-style: none; padding: 0; margin: 0; font-size: 0.92rem; color: rgba(255,255,255,0.92); line-height: 1.6; }
+        .cd-copy-warn__list li { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.07); display: flex; align-items: flex-start; gap: 12px; }
+        .cd-copy-warn__list li:last-child { border-bottom: none; }
+        .cd-copy-warn__list li strong { color: rgba(255,255,255,0.95); font-weight: 600; }
+        .cd-copy-warn__step { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: rgba(251,191,36,0.35); color: #fbbf24; font-weight: 800; font-size: 0.85rem; display: inline-flex; align-items: center; justify-content: center; }
+        .cd-copy-warn__list li.cd-copy-warn__list--danger .cd-copy-warn__step { background: rgba(239,68,68,0.45); color: #fca5a5; }
+        .cd-copy-warn__days { color: #fbbf24; font-weight: 700; }
+        .cd-copy-warn__list li.cd-copy-warn__list--danger .cd-copy-warn__days { color: #fca5a5; }
+        .cd-copy-warn__footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.12); font-size: 0.9rem; color: #fca5a5; font-weight: 600; }
     </style>
 </head>
 <body class="home-body has-bottom-nav studio-body">
@@ -49,6 +85,7 @@
                 <a href="studio.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
                 <a href="upload.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Upload</span></a>
                 <a href="studio.html#earning" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M15 9.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span>Earning</span></a>
+                <a href="studio-monetization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><path d="M12 15h6"/></svg><span>Monetization</span></a>
                 <a href="studio.html#analytics" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Analytics</span></a>
                 <a href="studio-content-detection.html" class="studio-sidebar__item studio-sidebar__item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Content Detection</span></a>
                 <a href="studio.html#customization" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Customization</span></a>
@@ -64,8 +101,31 @@
             </a>
             <h1 class="studio-topbar__title">Content Detection</h1>
             <p class="studio-terms-intro">Please read our Terms and Conditions and Community Guidelines for content detection and moderation.</p>
+            <div class="cd-count-row">
+                <div class="cd-count-box cd-count-box--copyright">
+                    <div class="cd-count-box__label">Copyright Strike</div>
+                    <div class="cd-count-box__value" id="cd-copyright-count">0</div>
+                </div>
+            </div>
+            <div class="cd-copyright-videos">
+                <h2 class="cd-copyright-videos__title">Copyright videos</h2>
+                <div class="cd-copyright-videos__list" id="cd-copyright-videos-list"></div>
+            </div>
             <div class="studio-section">
                 <div class="studio-terms">
+                    <div class="cd-copy-warn">
+                        <h2 class="cd-copy-warn__title">Copyright Warning Policy</h2>
+                        <p class="cd-copy-warn__intro">The following conditions apply based on copyright strikes:</p>
+                        <ul class="cd-copy-warn__list">
+                            <li><span class="cd-copy-warn__step">1</span> <strong>1 copyright video</strong> → <span class="cd-copy-warn__days">7-day</span> warning</li>
+                            <li><span class="cd-copy-warn__step">2</span> <strong>Another copyright video within those 7 days</strong> → <span class="cd-copy-warn__days">30-day</span> warning</li>
+                            <li><span class="cd-copy-warn__step">3</span> <strong>Another copyright video within those 30 days</strong> → <span class="cd-copy-warn__days">90-day</span> warning</li>
+                            <li class="cd-copy-warn__list--danger"><span class="cd-copy-warn__step">4</span> <strong>Another copyright video within those 90 days</strong> → <span class="cd-copy-warn__days">Channel deleted</span> warning</li>
+                            <li class="cd-copy-warn__list--danger"><span class="cd-copy-warn__step">5</span> <strong>5 copyright videos in total within 90 days</strong> → <span class="cd-copy-warn__days">Channel auto deleted</span></li>
+                        </ul>
+                        <p class="cd-copy-warn__footer">Monetization is not eligible while any strike is active.</p>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.15); margin: 28px 0;" />
                     <h2>Community Guidelines</h2>
                     <p>Only the following will be <strong>automatically blocked</strong> (videos and shorts):</p>
                     <ul>
@@ -98,5 +158,63 @@
             </div>
         </main>
     </div>
+    <script>
+        (function() {
+            var KEY = 'nok_monetization_settings';
+            function getState() {
+                try {
+                    var raw = localStorage.getItem(KEY);
+                    if (raw) return JSON.parse(raw);
+                } catch (e) {}
+                return { copyrightStrikes: 0, copyrightVideos: [] };
+            }
+            var state = getState();
+            var copyrightEl = document.getElementById('cd-copyright-count');
+            if (copyrightEl) copyrightEl.textContent = state.copyrightStrikes || 0;
+            var listEl = document.getElementById('cd-copyright-videos-list');
+            function escapeHtml(s) {
+                if (!s) return '';
+                return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+            function formatDateTime(d) {
+                if (!d) return '—';
+                try {
+                    var dt = typeof d === 'string' ? new Date(d) : d;
+                    if (isNaN(dt.getTime())) return escapeHtml(d);
+                    return dt.toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                } catch (e) { return escapeHtml(d); }
+            }
+            if (listEl) {
+                var videos = state.copyrightVideos || [];
+                if (videos.length === 0) {
+                    listEl.innerHTML = '<p class="cd-copyright-videos__empty">No copyright videos reported.</p>';
+                } else {
+                    var nowMs = Date.now();
+                    listEl.innerHTML = videos.map(function(v) {
+                        var thumb = v.thumbnail
+                            ? '<img class="cd-copyright-videos__thumb" src="' + escapeHtml(v.thumbnail) + '" alt="">'
+                            : '<div class="cd-copyright-videos__thumb cd-copyright-videos__thumb--placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>';
+                        var title = escapeHtml(v.title || 'Untitled video');
+                        var datetime = formatDateTime(v.dateTime || v.datetime);
+                        var reason = escapeHtml(v.reason || v.cause || 'No reason specified.');
+                        var strikeDate = v.strikeDate || v.dateTime || v.datetime;
+                        var warningDays = Number(v.warningDays) || 7;
+                        var warningEndMs = strikeDate ? (new Date(strikeDate).getTime() + warningDays * 24 * 60 * 60 * 1000) : nowMs;
+                        var daysLeft = Math.ceil((warningEndMs - nowMs) / (24 * 60 * 60 * 1000));
+                        var statusHtml = daysLeft <= 0
+                            ? '<span class="cd-copyright-videos__status cd-copyright-videos__status--auto">Auto deleted (warning period ended)</span>'
+                            : '<span class="cd-copyright-videos__status cd-copyright-videos__status--warning">Warning: ' + daysLeft + ' day(s) left (' + warningDays + '-day period) – then auto deleted</span>';
+                        return '<div class="cd-copyright-videos__item">' + thumb +
+                            '<div class="cd-copyright-videos__body">' +
+                            '<h3 class="cd-copyright-videos__title-text">' + title + '</h3>' +
+                            '<p class="cd-copyright-videos__datetime">' + datetime + '</p>' +
+                            '<p class="cd-copyright-videos__reason"><span class="cd-copyright-videos__reason-label">Reason:</span>' + reason + '</p>' +
+                            '<div>' + statusHtml + '</div>' +
+                            '</div></div>';
+                    }).join('');
+                }
+            }
+        })();
+    </script>
 </body>
 </html>
