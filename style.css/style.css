@@ -5178,6 +5178,9 @@ body.shorts-body::-webkit-scrollbar { display: none; }
 .shorts-page--fullscreen .shorts-slide__action svg { width: 24px; height: 24px; }
 .shorts-page--fullscreen .shorts-slide__action--liked { color: #dc2626; }
 .shorts-page--fullscreen .shorts-slide__action--liked svg { fill: #dc2626; stroke: #dc2626; }
+.shorts-page--fullscreen .shorts-slide__action--coin { color: #fbbf24; }
+.shorts-page--fullscreen .shorts-slide__action--coin:hover { color: #fcd34d; }
+.shorts-page--fullscreen .shorts-slide__action--coin svg { stroke: currentColor; }
 .shorts-page--fullscreen .shorts-slide__comment-bar-wrap { position: relative; margin-top: 12px; pointer-events: auto !important; z-index: 50; }
 .shorts-page--fullscreen .shorts-slide__comment-wrap { display: flex; align-items: center; gap: 8px; pointer-events: auto !important; position: relative; isolation: isolate; }
 .shorts-page--fullscreen .shorts-slide__comment-form { margin: 0; padding: 0; border: none; background: none; }
@@ -5610,6 +5613,27 @@ body.shorts-body::-webkit-scrollbar { display: none; }
     visibility: visible;
 }
 .shorts-comment-overlay__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 1; }
+
+/* Coin gift modal */
+.shorts-coin-modal { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: flex-end; justify-content: center; pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 0.25s ease, visibility 0.25s ease; }
+.shorts-coin-modal--open { pointer-events: auto; opacity: 1; visibility: visible; }
+.shorts-coin-modal__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
+.shorts-coin-modal__panel { position: relative; width: 100%; max-width: 400px; background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%); border-radius: 20px 20px 0 0; padding: 24px 20px 32px; box-shadow: 0 -8px 32px rgba(0,0,0,0.4); border: 1px solid rgba(251,191,36,0.3); }
+.shorts-coin-modal__title { margin: 0 0 6px; font-size: 1.25rem; font-weight: 700; color: #fbbf24; }
+.shorts-coin-modal__hint { margin: 0 0 18px; font-size: 0.9rem; color: rgba(255,255,255,0.75); }
+.shorts-coin-modal__options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.shorts-coin-modal__opt { padding: 14px; border-radius: 12px; border: 2px solid rgba(251,191,36,0.4); background: rgba(251,191,36,0.1); color: #fbbf24; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.shorts-coin-modal__opt:hover { background: rgba(251,191,36,0.2); border-color: #fbbf24; color: #fff; }
+.shorts-coin-modal__opt--active { background: rgba(251,191,36,0.35); border-color: #fbbf24; color: #fff; }
+.shorts-coin-modal__selected { margin: 0 0 16px; font-size: 1rem; font-weight: 600; color: rgba(255,255,255,0.9); }
+.shorts-coin-modal__label { display: block; margin: 0 0 8px; font-size: 0.9rem; font-weight: 600; color: rgba(255,255,255,0.85); }
+.shorts-coin-modal__input { width: 100%; box-sizing: border-box; padding: 12px 16px; margin-bottom: 16px; border: 2px solid rgba(251,191,36,0.4); border-radius: 12px; background: rgba(0,0,0,0.25); color: #fff; font-size: 1rem; font-weight: 600; }
+.shorts-coin-modal__input::placeholder { color: rgba(255,255,255,0.45); }
+.shorts-coin-modal__input:focus { outline: none; border-color: #fbbf24; }
+.shorts-coin-modal__send { width: 100%; padding: 14px 24px; border: none; border-radius: 12px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e1b4b; font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+.shorts-coin-modal__send:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(251,191,36,0.4); }
+.shorts-coin-modal__close { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border: none; border-radius: 50%; background: rgba(255,255,255,0.1); color: #fff; font-size: 1.5rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.shorts-coin-modal__close:hover { background: rgba(255,255,255,0.2); }
 .shorts-comment-overlay__panel {
     position: relative;
     z-index: 2;

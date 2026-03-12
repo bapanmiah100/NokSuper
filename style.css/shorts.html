@@ -125,6 +125,28 @@
         </div>
     </div>
 
+    <!-- Coin gift modal -->
+    <div class="shorts-coin-modal" id="shorts-coin-modal" aria-hidden="true">
+        <div class="shorts-coin-modal__backdrop" id="shorts-coin-backdrop"></div>
+        <div class="shorts-coin-modal__panel">
+            <h3 class="shorts-coin-modal__title">Send coin gift</h3>
+            <p class="shorts-coin-modal__hint">Choose amount to support the creator</p>
+            <div class="shorts-coin-modal__options" id="shorts-coin-options">
+                <button type="button" class="shorts-coin-modal__opt" data-amount="5">5</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="10">10</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="25">25</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="50">50</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="100">100</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="200">200</button>
+            </div>
+            <p class="shorts-coin-modal__selected" id="shorts-coin-selected">0 coins</p>
+            <label class="shorts-coin-modal__label">Or enter amount</label>
+            <input type="number" class="shorts-coin-modal__input" id="shorts-coin-input" placeholder="e.g. 75" min="1" max="99999" step="1" inputmode="numeric">
+            <button type="button" class="shorts-coin-modal__send" id="shorts-coin-send">Send gift</button>
+            <button type="button" class="shorts-coin-modal__close" id="shorts-coin-close" aria-label="Close">×</button>
+        </div>
+    </div>
+
     <!-- Bottom Nav - Same as Home -->
     <nav class="home-bottom-nav">
         <a href="home.html" class="home-bottom-nav__item">
@@ -375,6 +397,10 @@
             function formatCount(n) { n = Math.round(n); if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'; if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K'; return String(n); }
             function getLikeCount(id) { var base = parseCountStr((userMap[id] || data[id] || defaultInfo).likes); var delta = JSON.parse(localStorage.getItem('nokShortsLikeDelta') || '{}'); return base + (delta[id] || 0); }
             function setLikeDelta(id, liked) { var o = JSON.parse(localStorage.getItem('nokShortsLikeDelta') || '{}'); o[id] = liked ? 1 : 0; localStorage.setItem('nokShortsLikeDelta', JSON.stringify(o)); }
+            function getCoinGifts() { try { return JSON.parse(localStorage.getItem('nokShortsCoinGifts') || '{}'); } catch (e) { return {}; } }
+            function getCoinGiftTotal(shortId) { var g = getCoinGifts(); return typeof g[shortId] === 'number' ? g[shortId] : 0; }
+            function addCoinGift(shortId, amount) { var g = getCoinGifts(); g[shortId] = (g[shortId] || 0) + (amount || 0); localStorage.setItem('nokShortsCoinGifts', JSON.stringify(g)); }
+            function formatCoinCount(n) { n = Math.round(n); if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'; if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K'; return String(n); }
             if (shortsList.length === 0) {
                 var t = document.getElementById('shorts-reels-track');
                 if (t) t.innerHTML = '<div class="shorts-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 45px);padding:24px;text-align:center;color:rgba(255,255,255,0.95);"><p style="font-size:1.2rem;margin:0 0 8px;">No shorts yet</p><p style="font-size:0.95rem;opacity:0.85;margin:0 0 20px;">Upload a short to get started</p><a href="upload.html" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:12px;text-decoration:none;font-weight:600;">Upload Short</a></div>';
@@ -415,6 +441,7 @@
                     '<div class="shorts-slide__actions"><button class="shorts-slide__action shorts-slide__action--like' + (JSON.parse(localStorage.getItem('nokShortsLiked') || '{}')[s.id] ? ' shorts-slide__action--liked' : '') + '" aria-label="Like" data-idx="' + idx + '" data-id="' + s.id + '"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>' + formatCount(getLikeCount(s.id)) + '</span></button>' +
                     '<button class="shorts-slide__action shorts-comment-trigger" aria-label="Comments" data-idx="' + idx + '" data-id="' + s.id + '"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>' + (inf.comments || '0') + '</span></button>' +
                     '<button class="shorts-slide__action shorts-slide__action--share" aria-label="Share" data-id="' + s.id + '" data-idx="' + idx + '"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>' + (inf.shares || '0') + '</span></button>' +
+                    '<button class="shorts-slide__action shorts-slide__action--coin" aria-label="Send coins" data-id="' + s.id + '" data-idx="' + idx + '"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="16" height="14" rx="2"/><circle cx="16" cy="12" r="3"/><path d="M6 9V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4"/></svg><span>' + (formatCoinCount(getCoinGiftTotal(s.id))) + '</span></button>' +
                     '<button class="shorts-slide__action" aria-label="Save"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg><span>' + (inf.saves || '0') + '</span></button></div>' +
                     '<div class="shorts-slide__progress-slot"></div>' +
                     '<div class="shorts-slide__comment-bar-wrap"><form class="shorts-slide__comment-wrap shorts-slide__comment-form" data-idx="' + idx + '"><input type="text" class="shorts-slide__comment-inline-input" placeholder="Add a comment..." maxlength="200" name="comment" autocomplete="off"><button type="button" class="shorts-slide__comment-gift-inline" aria-label="Super" data-idx="' + idx + '" data-id="' + s.id + '"><span class="shorts-slide__comment-gift-letter">S</span></button></form></div><p class="shorts-slide__swipe">Swipe up to watch next</p></div></div>';
@@ -632,6 +659,14 @@
                     }
                     return;
                 }
+                var coinBtn = e.target.closest('.shorts-slide__action--coin');
+                if (coinBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var cid = coinBtn.getAttribute('data-id');
+                    if (cid && window.openCoinGiftModal) window.openCoinGiftModal(cid);
+                    return;
+                }
                 var shareBtn = e.target.closest('.shorts-slide__action--share');
                 if (shareBtn) {
                     e.preventDefault();
@@ -690,6 +725,76 @@
             });
             if (commentCloseBtn) commentCloseBtn.addEventListener('click', closeCommentOverlay);
             if (commentBackdrop) commentBackdrop.addEventListener('click', closeCommentOverlay);
+
+            (function initCoinGiftModal() {
+                var coinModal = document.getElementById('shorts-coin-modal');
+                var coinBackdrop = document.getElementById('shorts-coin-backdrop');
+                var coinOptions = document.getElementById('shorts-coin-options');
+                var coinSelectedEl = document.getElementById('shorts-coin-selected');
+                var coinInput = document.getElementById('shorts-coin-input');
+                var coinSendBtn = document.getElementById('shorts-coin-send');
+                var coinCloseBtn = document.getElementById('shorts-coin-close');
+                var pendingCoinShortId = null;
+                var selectedAmount = 0;
+                function updateCoinDisplay(shortId) {
+                    var slide = track.querySelector('.shorts-slide[data-id="' + shortId + '"]');
+                    if (slide) {
+                        var btn = slide.querySelector('.shorts-slide__action--coin span');
+                        if (btn) btn.textContent = formatCoinCount(getCoinGiftTotal(shortId));
+                    }
+                }
+                function getEffectiveAmount() {
+                    var manual = coinInput ? parseInt(coinInput.value, 10) : NaN;
+                    if (!isNaN(manual) && manual > 0) return manual;
+                    return selectedAmount;
+                }
+                function closeCoinModal() {
+                    if (coinModal) coinModal.classList.remove('shorts-coin-modal--open');
+                    if (coinModal) coinModal.setAttribute('aria-hidden', 'true');
+                    pendingCoinShortId = null;
+                    selectedAmount = 0;
+                    if (coinSelectedEl) coinSelectedEl.textContent = '0 coins';
+                    if (coinInput) coinInput.value = '';
+                    if (coinOptions) coinOptions.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                }
+                window.openCoinGiftModal = function(shortId) {
+                    pendingCoinShortId = shortId;
+                    selectedAmount = 0;
+                    if (coinSelectedEl) coinSelectedEl.textContent = '0 coins';
+                    if (coinInput) coinInput.value = '';
+                    if (coinOptions) coinOptions.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                    if (coinModal) { coinModal.classList.add('shorts-coin-modal--open'); coinModal.setAttribute('aria-hidden', 'false'); }
+                };
+                if (coinBackdrop) coinBackdrop.addEventListener('click', closeCoinModal);
+                if (coinCloseBtn) coinCloseBtn.addEventListener('click', closeCoinModal);
+                if (coinOptions) coinOptions.addEventListener('click', function(e) {
+                    var opt = e.target.closest('.shorts-coin-modal__opt');
+                    if (!opt) return;
+                    coinOptions.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                    opt.classList.add('shorts-coin-modal__opt--active');
+                    selectedAmount = parseInt(opt.getAttribute('data-amount'), 10) || 0;
+                    if (coinSelectedEl) coinSelectedEl.textContent = selectedAmount + ' coins';
+                    if (coinInput) coinInput.value = selectedAmount > 0 ? selectedAmount : '';
+                });
+                if (coinInput) coinInput.addEventListener('input', function() {
+                    var v = parseInt(coinInput.value, 10);
+                    if (!isNaN(v) && v > 0) {
+                        selectedAmount = v;
+                        if (coinSelectedEl) coinSelectedEl.textContent = v + ' coins';
+                        coinOptions.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                    } else {
+                        if (coinSelectedEl) coinSelectedEl.textContent = selectedAmount > 0 ? selectedAmount + ' coins' : '0 coins';
+                    }
+                });
+                if (coinSendBtn) coinSendBtn.addEventListener('click', function() {
+                    var amount = getEffectiveAmount();
+                    if (!pendingCoinShortId || amount <= 0) return;
+                    addCoinGift(pendingCoinShortId, amount);
+                    updateCoinDisplay(pendingCoinShortId);
+                    closeCoinModal();
+                    if (typeof alert === 'function') alert('Gift sent! \uD83C\uDF81');
+                });
+            })();
             commentListEl.addEventListener('click', function(e) {
                 var replyBtn = e.target.closest('.shorts-comment-overlay__reply-btn');
                 if (replyBtn && commentShortId) {
