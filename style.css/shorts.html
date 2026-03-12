@@ -881,58 +881,32 @@
                 updateSuperDisplay(idx);
             }
 
-            /* Swipe up = next, swipe down = previous */
+            /* Swipe up = next, swipe down = previous – extra card slide bondo (no drag preview) */
             var touchStartY = 0, touchActive = false;
             reels.addEventListener('touchstart', function(e) { touchStartY = e.touches[0].clientY; touchActive = true; }, { passive: true });
-            reels.addEventListener('touchmove', function(e) {
-                if (!touchActive || !e.touches.length) return;
-                var h = getSlideHeight();
-                if (h === 0) return;
-                var delta = touchStartY - e.touches[0].clientY;
-                var max = h * 0.4;
-                delta = Math.max(-max, Math.min(max, delta));
-                track.style.transition = 'none';
-                track.style.transform = 'translateY(-' + (currentIdx * h - delta) + 'px)';
-            }, { passive: true });
             reels.addEventListener('touchend', function(e) {
                 touchActive = false;
-                track.style.transition = '';
                 var touchEndY = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientY : touchStartY;
                 var delta = touchStartY - touchEndY;
                 var idx = currentIdx;
                 if (delta > 40 && currentIdx < shortsList.length - 1) idx = currentIdx + 1;
                 else if (delta < -40 && currentIdx > 0) idx = currentIdx - 1;
-                if (idx !== currentIdx) { currentIdx = idx; loadVideoForIdx(idx); }
-                setSlidePosition(currentIdx);
+                if (idx !== currentIdx) { currentIdx = idx; loadVideoForIdx(idx); setSlidePosition(currentIdx); }
             }, { passive: true });
             var mouseStartY = 0, isDragging = false;
             reels.addEventListener('mousedown', function(e) { mouseStartY = e.clientY; isDragging = true; });
-            reels.addEventListener('mousemove', function(e) {
-                if (!isDragging) return;
-                var h = getSlideHeight();
-                if (h === 0) return;
-                var delta = mouseStartY - e.clientY;
-                var max = h * 0.4;
-                delta = Math.max(-max, Math.min(max, delta));
-                track.style.transition = 'none';
-                track.style.transform = 'translateY(-' + (currentIdx * h - delta) + 'px)';
-            });
             function handleMouseUp(e) {
                 if (!isDragging) return;
                 isDragging = false;
-                track.style.transition = '';
                 var delta = mouseStartY - e.clientY;
                 var idx = currentIdx;
                 if (delta > 40 && currentIdx < shortsList.length - 1) idx = currentIdx + 1;
                 else if (delta < -40 && currentIdx > 0) idx = currentIdx - 1;
-                if (idx !== currentIdx) { currentIdx = idx; loadVideoForIdx(idx); }
-                setSlidePosition(currentIdx);
+                if (idx !== currentIdx) { currentIdx = idx; loadVideoForIdx(idx); setSlidePosition(currentIdx); }
             }
             reels.addEventListener('mouseup', handleMouseUp);
             document.addEventListener('mouseup', handleMouseUp);
-            reels.addEventListener('mouseleave', function() {
-                if (isDragging) { isDragging = false; track.style.transition = ''; setSlidePosition(currentIdx); }
-            });
+            reels.addEventListener('mouseleave', function() { if (isDragging) isDragging = false; });
             var wheelLock = 0;
             reels.addEventListener('wheel', function(e) {
                 if (Date.now() - wheelLock < 500) { e.preventDefault(); return; }
