@@ -592,6 +592,17 @@
                     }
                     return;
                 }
+                var teachSlide = e.target.closest('.shorts-slide__swipe');
+                if (teachSlide) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (currentIdx < shortsList.length - 1) {
+                        currentIdx++;
+                        setSlidePosition(currentIdx);
+                        loadVideoForIdx(currentIdx);
+                    }
+                    return;
+                }
                 var commentWrap = e.target.closest('.shorts-slide__comment-wrap');
                 if (commentWrap && e.target.closest('form')) {
                     var form = commentWrap.closest('form.shorts-slide__comment-form');

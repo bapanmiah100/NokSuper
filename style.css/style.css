@@ -5185,7 +5185,8 @@ body.shorts-body::-webkit-scrollbar { display: none; }
 .shorts-page--fullscreen .shorts-slide__comment-type-inline-btn { padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: #fff; font-size: 0.75rem; cursor: pointer; pointer-events: auto !important; }
 .shorts-page--fullscreen .shorts-slide__comment-gift-inline { display: none !important; }
 .shorts-page--fullscreen .shorts-slide__comment-gift-inline .shorts-slide__comment-gift-letter { font-size: 1rem; font-weight: 700; line-height: 1; }
-.shorts-page--fullscreen .shorts-slide__swipe { font-size: 0.8rem; color: rgba(255,255,255,0.9); margin-top: 10px; text-align: center; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+.shorts-page--fullscreen .shorts-slide__swipe { font-size: 0.8rem; color: rgba(255,255,255,0.9); margin-top: 10px; text-align: center; text-shadow: 0 1px 3px rgba(0,0,0,0.5); cursor: pointer; padding: 8px 12px; -webkit-tap-highlight-color: transparent; }
+.shorts-page--fullscreen .shorts-slide__swipe:hover { color: #fff; }
 
 /* Short video card – ekhon only stack animation (dui pane, play kora video soriye notun asbe) */
 .shorts-video-slot {
