@@ -358,6 +358,21 @@
             var viewerInterval = null;
             var durationInterval = null;
             var liveStartTime = 0;
+            var LIVE_SESSIONS_KEY = 'nokLiveSessions';
+            var currentLiveId = '';
+            function getLiveSessions() {
+                try { return JSON.parse(localStorage.getItem(LIVE_SESSIONS_KEY) || '[]'); } catch (_) { return []; }
+            }
+            function saveLiveSessions(list) {
+                try { localStorage.setItem(LIVE_SESSIONS_KEY, JSON.stringify(list)); } catch (_) {}
+            }
+            function upsertLiveSession(payload) {
+                var list = getLiveSessions();
+                var idx = list.findIndex(function(item) { return item.id === payload.id; });
+                if (idx >= 0) list[idx] = payload;
+                else list.unshift(payload);
+                saveLiveSessions(list.slice(0, 25));
+            }
             function formatDuration(sec) {
                 var m = Math.floor(sec / 60);
                 var s = sec % 60;
@@ -387,11 +402,36 @@
                 }
                 viewerCount = 0;
                 if (liveViewerCount) liveViewerCount.textContent = '0';
+                liveStartTime = Date.now();
+                currentLiveId = 'live-' + liveStartTime;
+                upsertLiveSession({
+                    id: currentLiveId,
+                    type: 'live',
+                    title: title,
+                    description: document.getElementById('live-desc').value.trim(),
+                    channelName: channelName,
+                    status: 'live',
+                    visibility: 'live',
+                    viewers: 0,
+                    peakViewers: 0,
+                    likes: 0,
+                    comments: 0,
+                    startedAt: liveStartTime
+                });
                 viewerInterval = setInterval(function() {
                     viewerCount += Math.floor(Math.random() * 3) + 1;
                     if (liveViewerCount) liveViewerCount.textContent = viewerCount;
+                    if (currentLiveId) {
+                        var activeSession = getLiveSessions().find(function(item) { return item.id === currentLiveId; });
+                        if (activeSession) {
+                            activeSession.status = 'live';
+                            activeSession.visibility = 'live';
+                            activeSession.viewers = viewerCount;
+                            activeSession.peakViewers = Math.max(parseInt(activeSession.peakViewers || 0, 10) || 0, viewerCount);
+                            upsertLiveSession(activeSession);
+                        }
+                    }
                 }, 4000);
-                liveStartTime = Date.now();
                 if (liveDurationEl) liveDurationEl.textContent = '0:00';
                 durationInterval = setInterval(function() {
                     if (liveDurationEl) liveDurationEl.textContent = formatDuration(Math.floor((Date.now() - liveStartTime) / 1000));
@@ -406,6 +446,18 @@
                 if (liveActiveVideo && liveActiveVideo.srcObject) liveActiveVideo.srcObject = null;
                 if (activeView) activeView.classList.remove('live-active-view--show');
                 if (liveCard) liveCard.classList.remove('live-card--hidden');
+                if (currentLiveId) {
+                    var session = getLiveSessions().find(function(item) { return item.id === currentLiveId; });
+                    if (session) {
+                        session.status = 'ended';
+                        session.visibility = 'public';
+                        session.totalViewers = viewerCount || 0;
+                        session.peakViewers = Math.max(parseInt(session.peakViewers || 0, 10) || 0, viewerCount || 0);
+                        session.endedAt = Date.now();
+                        upsertLiveSession(session);
+                    }
+                    currentLiveId = '';
+                }
                 alert('Stream ended. You had ' + (viewerCount || 0) + ' viewers.');
             });
         })();

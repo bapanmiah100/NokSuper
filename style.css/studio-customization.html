@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customization - Studio - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <style>
+        body.studio-body { min-height: 100vh; }
+        .studio-layout { display: flex; min-height: 100vh; }
+        .studio-sidebar { width: 240px; background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%); flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .studio-sidebar__logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+        .studio-sidebar__logo-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .studio-sidebar__logo-icon svg { width: 20px; height: 20px; color: #fff; }
+        .studio-sidebar__logo-text { font-size: 1.25rem; font-weight: 700; color: #fff; }
+        .studio-sidebar__nav { display: flex; flex-direction: column; gap: 4px; }
+        .studio-sidebar__item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: background 0.2s, color 0.2s; border: none; background: none; cursor: pointer; width: 100%; text-align: left; }
+        .studio-sidebar__item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .studio-sidebar__item--active { background: rgba(255,255,255,0.15); color: #fff; }
+        .studio-sidebar__item svg { width: 22px; height: 22px; flex-shrink: 0; }
+        .studio-main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 24px 32px 100px; }
+        .custom-back { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; background: rgba(139,92,246,0.25); color: #e9d5ff; font-size: 0.9rem; font-weight: 600; text-decoration: none; margin-bottom: 18px; width: fit-content; transition: all 0.2s; }
+        .custom-back:hover { background: rgba(139,92,246,0.4); color: #fff; }
+        .custom-topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+        .custom-title { margin: 0 0 8px; font-size: 1.9rem; font-weight: 800; color: #fff; letter-spacing: -0.03em; }
+        .custom-subtitle { margin: 0; color: rgba(220,228,255,0.74); max-width: 720px; line-height: 1.6; }
+        .custom-user { display: flex; align-items: center; gap: 12px; }
+        .custom-user__meta { display: grid; gap: 2px; text-align: right; }
+        .custom-user__label { color: rgba(220,228,255,0.55); font-size: 0.8rem; }
+        .custom-user__name { color: #fff; font-size: 0.95rem; font-weight: 700; }
+        .custom-user__avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; overflow: hidden; }
+        .custom-user__avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .custom-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.9fr); gap: 24px; align-items: start; }
+        .custom-column { display: grid; gap: 18px; }
+        .custom-card { background: rgba(22,22,42,0.62); backdrop-filter: blur(12px); border: 1px solid rgba(139,92,246,0.28); border-radius: 18px; padding: 20px; box-shadow: 0 0 24px rgba(139,92,246,0.08); }
+        .custom-card__title { margin: 0 0 8px; color: #fff; font-size: 1rem; font-weight: 700; }
+        .custom-card__text { margin: 0 0 16px; color: rgba(220,228,255,0.66); font-size: 0.9rem; line-height: 1.55; }
+        .custom-form { display: grid; gap: 14px; }
+        .custom-field { display: grid; gap: 8px; }
+        .custom-label { color: rgba(235,239,255,0.9); font-size: 0.88rem; font-weight: 600; }
+        .custom-input, .custom-textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(139,92,246,0.28);
+            background: rgba(10,12,24,0.55);
+            color: #fff;
+            font: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+        .custom-input::placeholder, .custom-textarea::placeholder { color: rgba(220,228,255,0.4); }
+        .custom-input:focus, .custom-textarea:focus { outline: none; border-color: rgba(167,139,250,0.7); box-shadow: 0 0 0 3px rgba(139,92,246,0.16); background: rgba(10,12,24,0.74); }
+        .custom-textarea { min-height: 116px; resize: vertical; }
+        .custom-file-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; }
+        .custom-file-note { color: rgba(220,228,255,0.52); font-size: 0.78rem; }
+        .custom-btn { border: none; border-radius: 12px; padding: 11px 16px; font: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: transform 0.18s, box-shadow 0.18s, background 0.18s; }
+        .custom-btn:hover { transform: translateY(-1px); }
+        .custom-btn--primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; box-shadow: 0 10px 24px rgba(99,102,241,0.24); }
+        .custom-btn--secondary { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); color: #fff; }
+        .custom-btn--ghost { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: rgba(235,239,255,0.78); }
+        .custom-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+        .custom-toggle-list { display: grid; gap: 12px; }
+        .custom-toggle { display: flex; justify-content: space-between; gap: 14px; align-items: center; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+        .custom-toggle:first-child { border-top: none; padding-top: 0; }
+        .custom-toggle__title { color: #fff; font-size: 0.93rem; font-weight: 600; display: block; }
+        .custom-toggle__hint { color: rgba(220,228,255,0.58); font-size: 0.82rem; display: block; margin-top: 4px; line-height: 1.45; }
+        .custom-switch { width: 54px; height: 30px; border-radius: 999px; background: rgba(255,255,255,0.14); border: none; position: relative; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
+        .custom-switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+        .custom-switch.is-on { background: linear-gradient(135deg, #3b82f6, #8b5cf6); }
+        .custom-switch.is-on::after { transform: translateX(24px); }
+        .custom-preset-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .custom-preset { border-radius: 14px; border: 1px solid rgba(139,92,246,0.28); background: rgba(255,255,255,0.05); color: #fff; padding: 14px; text-align: left; cursor: pointer; transition: border-color 0.2s, transform 0.18s, background 0.18s; }
+        .custom-preset:hover { transform: translateY(-1px); border-color: rgba(167,139,250,0.6); background: rgba(255,255,255,0.08); }
+        .custom-preset strong { display: block; font-size: 0.92rem; margin-bottom: 6px; }
+        .custom-preset span { color: rgba(220,228,255,0.62); font-size: 0.8rem; line-height: 1.45; }
+        .custom-color-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .custom-color-wrap { display: grid; gap: 8px; }
+        .custom-color-wrap input[type="color"] { width: 100%; height: 48px; border: 1px solid rgba(139,92,246,0.28); border-radius: 12px; background: rgba(10,12,24,0.55); padding: 4px; cursor: pointer; }
+        .custom-preview { overflow: hidden; padding: 0; }
+        .custom-preview__banner { min-height: 170px; background: linear-gradient(135deg, #6366f1, #ec4899); position: relative; display: flex; align-items: flex-end; padding: 18px; }
+        .custom-preview__dots { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.28) 1px, transparent 1px); background-size: 16px 16px; opacity: 0.5; pointer-events: none; }
+        .custom-preview__welcome { position: relative; z-index: 1; color: rgba(255,255,255,0.92); font-weight: 700; font-size: 1rem; max-width: 320px; line-height: 1.5; }
+        .custom-preview__body { padding: 20px; display: grid; gap: 14px; }
+        .custom-preview__top { display: flex; gap: 14px; align-items: center; }
+        .custom-preview__avatar { width: 78px; height: 78px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; overflow: hidden; flex-shrink: 0; border: 3px solid rgba(16,18,31,0.9); box-shadow: 0 0 0 4px rgba(255,255,255,0.14); }
+        .custom-preview__avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .custom-preview__name { margin: 0 0 4px; color: #fff; font-size: 1.35rem; font-weight: 800; }
+        .custom-preview__tagline { margin: 0 0 10px; color: rgba(220,228,255,0.8); font-size: 0.95rem; }
+        .custom-preview__badge { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(167,139,250,0.45); border-radius: 999px; padding: 6px 12px; color: rgba(255,255,255,0.9); font-size: 0.76rem; font-weight: 700; letter-spacing: 0.04em; }
+        .custom-preview__desc { margin: 0; color: rgba(220,228,255,0.72); font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap; }
+        .custom-preview__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .custom-preview__btn { display: inline-flex; align-items: center; justify-content: center; min-width: 128px; border-radius: 12px; padding: 11px 16px; font-size: 0.9rem; font-weight: 700; border: none; }
+        .custom-preview__btn--subscribe { color: #fff; background: linear-gradient(135deg, #ec4899, #8b5cf6); }
+        .custom-preview__btn--support { background: rgba(5,150,105,0.18); border: 1px solid rgba(16,185,129,0.4); color: #a7f3d0; }
+        .custom-list { margin: 0; padding-left: 18px; color: rgba(220,228,255,0.72); display: grid; gap: 8px; line-height: 1.5; font-size: 0.88rem; }
+        .custom-status { min-height: 20px; color: rgba(220,228,255,0.72); font-size: 0.88rem; font-weight: 600; }
+        .custom-status.is-success { color: #86efac; }
+        .custom-status.is-error { color: #fca5a5; }
+        @media (max-width: 1180px) {
+            .custom-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 900px) {
+            .studio-layout { display: block; }
+            .studio-sidebar { width: 100%; padding-bottom: 12px; }
+            .studio-sidebar__nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 0 10px; }
+            .studio-main { padding: 20px 16px 100px; }
+            .custom-topbar { flex-direction: column; align-items: stretch; }
+        }
+        @media (max-width: 640px) {
+            .custom-color-grid,
+            .custom-preset-grid,
+            .custom-file-row { grid-template-columns: 1fr; }
+            .custom-user { justify-content: space-between; width: 100%; }
+        }
+    </style>
+</head>
+<body class="home-body has-bottom-nav studio-body">
+    <div class="bg"></div>
+    <div class="studio-layout">
+        <aside class="studio-sidebar">
+            <div class="studio-sidebar__logo">
+                <div class="studio-sidebar__logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+                <span class="studio-sidebar__logo-text">Studio</span>
+            </div>
+            <nav class="studio-sidebar__nav">
+                <a href="studio.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+                <a href="upload.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Upload</span></a>
+                <a href="studio-monetization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><path d="M12 15h6"/></svg><span>Monetization</span></a>
+                <a href="studio-content-detection.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Content Detection</span></a>
+                <a href="studio-customization.html" class="studio-sidebar__item studio-sidebar__item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Customization</span></a>
+                <a href="studio-videos.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg><span>Videos</span></a>
+                <a href="studio-shorts.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span>Shorts</span></a>
+                <a href="studio-captions.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Captions</span></a>
+                <a href="channel.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="8" r="4"/></svg><span>Channel</span></a>
+                <a href="settings.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a>
+            </nav>
+        </aside>
+
+        <main class="studio-main">
+            <a href="studio.html" class="custom-back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                Back to Dashboard
+            </a>
+
+            <div class="custom-topbar">
+                <div>
+                    <h1 class="custom-title">Advanced Studio Customization</h1>
+                    <p class="custom-subtitle">Tune your creator identity, banner look, channel actions and preview style from one place. Saved changes sync to your channel page instantly.</p>
+                </div>
+                <div class="custom-user">
+                    <div class="custom-user__meta">
+                        <span class="custom-user__label">Studio creator</span>
+                        <span class="custom-user__name" id="custom-user-name">CREATOR</span>
+                    </div>
+                    <div class="custom-user__avatar" id="custom-user-avatar">C</div>
+                </div>
+            </div>
+
+            <div class="custom-grid">
+                <div class="custom-column">
+                    <section class="custom-card">
+                        <h2 class="custom-card__title">Brand Identity</h2>
+                        <p class="custom-card__text">Set the name, tagline and public description that viewers will see first on your channel.</p>
+                        <div class="custom-form">
+                            <div class="custom-field">
+                                <label class="custom-label" for="custom-channel-name">Channel name</label>
+                                <input class="custom-input" id="custom-channel-name" type="text" placeholder="Enter your channel name">
+                            </div>
+                            <div class="custom-field">
+                                <label class="custom-label" for="custom-tagline">Tagline / suffix</label>
+                                <input class="custom-input" id="custom-tagline" type="text" placeholder="Creator, Official, Gaming, Music">
+                            </div>
+                            <div class="custom-field">
+                                <label class="custom-label" for="custom-badge">Badge text</label>
+                                <input class="custom-input" id="custom-badge" type="text" placeholder="DIAMOND CREATOR">
+                            </div>
+                            <div class="custom-field">
+                                <label class="custom-label" for="custom-description">About description</label>
+                                <textarea class="custom-textarea" id="custom-description" placeholder="Tell viewers what your channel is about."></textarea>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="custom-card">
+                        <h2 class="custom-card__title">Visual Assets</h2>
+                        <p class="custom-card__text">Upload your profile photo and banner, or keep the gradient look with custom accent colors.</p>
+                        <div class="custom-form">
+                            <div class="custom-field">
+                                <label class="custom-label" for="custom-avatar-upload">Profile photo</label>
+                                <div class="custom-file-row">
+                                    <input class="custom-input" id="custom-avatar-upload" type="file" accept="image/*">
+                                    <button type="button" class="custom-btn custom-btn--secondary" id="custom-avatar-remove">Remove</button>
+                                    <span class="custom-file-note">Square photo recommended</span>
+                                </div>
+                            </div>
+                            <div class="custom-field">
+                                <label class="custom-label" for="custom-banner-upload">Banner image</label>
+                                <div class="custom-file-row">
+                                    <input class="custom-input" id="custom-banner-upload" type="file" accept="image/*">
+                                    <button type="button" class="custom-btn custom-btn--secondary" id="custom-banner-remove">Remove</button>
+                                    <span class="custom-file-note">Wide image works best</span>
+                                </div>
+                            </div>
+                            <div class="custom-color-grid">
+                                <div class="custom-color-wrap">
+                                    <label class="custom-label" for="custom-accent-start">Accent start</label>
+                                    <input id="custom-accent-start" type="color" value="#6366f1">
+                                </div>
+                                <div class="custom-color-wrap">
+                                    <label class="custom-label" for="custom-accent-end">Accent end</label>
+                                    <input id="custom-accent-end" type="color" value="#ec4899">
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="custom-card">
+                        <h2 class="custom-card__title">Channel Actions</h2>
+                        <p class="custom-card__text">Customize your main action button and the welcome note displayed over the banner preview.</p>
+                        <div class="custom-form">
+                            <div class="custom-field">
+                                <label class="custom-label" for="custom-subscribe-label">Primary button label</label>
+                                <input class="custom-input" id="custom-subscribe-label" type="text" placeholder="Subscribe">
+                            </div>
+                            <div class="custom-field">
+                                <label class="custom-label" for="custom-featured-label">Featured action label</label>
+                                <input class="custom-input" id="custom-featured-label" type="text" placeholder="Watch latest">
+                            </div>
+                            <div class="custom-field">
+                                <label class="custom-label" for="custom-featured-url">Featured action URL</label>
+                                <input class="custom-input" id="custom-featured-url" type="text" placeholder="video.html">
+                            </div>
+                            <div class="custom-field">
+                                <label class="custom-label" for="custom-welcome">Banner welcome note</label>
+                                <textarea class="custom-textarea" id="custom-welcome" placeholder="Welcome to my official channel."></textarea>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="custom-card">
+                        <h2 class="custom-card__title">Layout Controls</h2>
+                        <p class="custom-card__text">Choose which creator-facing actions stay visible on your public channel header.</p>
+                        <div class="custom-toggle-list">
+                            <div class="custom-toggle">
+                                <div>
+                                    <span class="custom-toggle__title">Show support button</span>
+                                    <span class="custom-toggle__hint">Keep the support creator button visible on the channel header.</span>
+                                </div>
+                                <button type="button" class="custom-switch" id="custom-toggle-support" aria-label="Toggle support button"></button>
+                            </div>
+                            <div class="custom-toggle">
+                                <div>
+                                    <span class="custom-toggle__title">Show subscriber count</span>
+                                    <span class="custom-toggle__hint">Display the subscribers stat inside the top channel stats row.</span>
+                                </div>
+                                <button type="button" class="custom-switch" id="custom-toggle-subs" aria-label="Toggle subscriber count"></button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="custom-column">
+                    <section class="custom-card custom-preview">
+                        <div class="custom-preview__banner" id="custom-preview-banner">
+                            <div class="custom-preview__dots"></div>
+                            <div class="custom-preview__welcome" id="custom-preview-welcome">Welcome to my official channel.</div>
+                        </div>
+                        <div class="custom-preview__body">
+                            <div class="custom-preview__top">
+                                <div class="custom-preview__avatar" id="custom-preview-avatar">C</div>
+                                <div>
+                                    <h2 class="custom-preview__name" id="custom-preview-name">Creator Channel</h2>
+                                    <p class="custom-preview__tagline" id="custom-preview-tagline">Creator</p>
+                                    <div class="custom-preview__badge" id="custom-preview-badge">DIAMOND CREATOR</div>
+                                </div>
+                            </div>
+                            <p class="custom-preview__desc" id="custom-preview-desc">Tell viewers what your channel is about.</p>
+                            <div class="custom-preview__actions">
+                                <button type="button" class="custom-preview__btn custom-preview__btn--subscribe" id="custom-preview-subscribe">Subscribe</button>
+                                <button type="button" class="custom-preview__btn custom-preview__btn--support" id="custom-preview-support">Support Creator</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="custom-card">
+                        <h2 class="custom-card__title">Quick Presets</h2>
+                        <p class="custom-card__text">Start faster with ready-made creator moods, then fine-tune the details.</p>
+                        <div class="custom-preset-grid">
+                            <button type="button" class="custom-preset" data-preset="gaming"><strong>Gaming Pro</strong><span>Neon badge, energetic welcome text and bold pink-purple gradient.</span></button>
+                            <button type="button" class="custom-preset" data-preset="vlog"><strong>Daily Vlog</strong><span>Warm brand tone with community-focused wording and softer actions.</span></button>
+                            <button type="button" class="custom-preset" data-preset="music"><strong>Music Artist</strong><span>Premium dark blend, performance-style badge and release-focused CTA.</span></button>
+                            <button type="button" class="custom-preset" data-preset="education"><strong>Education</strong><span>Cleaner blue-teal theme with trust-focused text and calm branding.</span></button>
+                        </div>
+                    </section>
+
+                    <section class="custom-card">
+                        <h2 class="custom-card__title">Publishing Checklist</h2>
+                        <ul class="custom-list">
+                            <li>Use a clear profile image so viewers can instantly recognize your brand.</li>
+                            <li>Keep the tagline short because it sits next to your channel name on the profile header.</li>
+                            <li>Write a direct button label that matches your content style, such as Subscribe, Join, Follow or Watch now.</li>
+                            <li>Try accent colors that still look good when the banner image is removed or unavailable.</li>
+                        </ul>
+                    </section>
+
+                    <section class="custom-card">
+                        <h2 class="custom-card__title">Save Changes</h2>
+                        <p class="custom-card__text">These settings update your public channel branding and stay saved in your Studio demo data.</p>
+                        <div class="custom-status" id="custom-status"></div>
+                        <div class="custom-actions">
+                            <button type="button" class="custom-btn custom-btn--primary" id="custom-save-btn">Save customization</button>
+                            <button type="button" class="custom-btn custom-btn--secondary" id="custom-reset-btn">Restore defaults</button>
+                            <a href="channel.html" class="custom-btn custom-btn--ghost" style="text-decoration:none;">Open channel</a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="chat-overlay" id="chat-overlay" aria-hidden="true">
+        <div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div>
+        <div class="chat-overlay__card">
+            <div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div>
+            <header class="nok-chat__header">
+                <a href="home.html" class="nok-chat__brand">
+                    <span class="nok-chat__logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                    <span class="nok-chat__logo-text">NOK Chat</span>
+                </a>
+                <div class="nok-chat__actions">
+                    <button type="button" class="nok-chat__action" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+                    <button type="button" class="nok-chat__action nok-chat__action--badge" aria-label="Notifications" data-badge="1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                    <button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize" title="Full screen"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><svg class="chat-resize-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                    <div class="nok-chat__menu-wrap">
+                        <button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+                        <div class="nok-chat__menu" id="chat-menu">
+                            <button type="button" class="nok-chat__menu-item">New chat</button>
+                            <button type="button" class="nok-chat__menu-item">New group</button>
+                            <a href="settings.html" class="nok-chat__menu-item">Settings</a>
+                            <button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="chat-login" id="chat-login">
+                <div class="chat-login__inner chat-login__step-login" id="chat-step-login">
+                    <h3 class="chat-login__title">Log in to Chat</h3>
+                    <p class="chat-login__sub">Sign in to start chatting with your subscriptions</p>
+                    <a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a>
+                    <p class="chat-login__legal">Don't have an account? <a href="signup.html" class="chat-login__link">Sign Up</a></p>
+                </div>
+                <div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none">
+                    <h3 class="chat-login__title">Verify Mobile Number</h3>
+                    <p class="chat-login__sub">Verify your mobile number to use Chat</p>
+                    <form class="chat-login__form" id="chat-verify-form">
+                        <div class="chat-login__phone-row">
+                            <select id="chat-verify-country" class="chat-login__select"><option value="880">+880 BD</option><option value="91">+91 IN</option><option value="1">+1 US</option><option value="44">+44 UK</option></select>
+                            <input type="tel" id="chat-verify-phone" class="chat-login__input chat-login__input--phone" placeholder="Mobile number" required>
+                        </div>
+                        <button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button>
+                    </form>
+                    <div id="chat-otp-step" style="display:none">
+                        <p class="chat-login__sub" style="margin-bottom:12px">Enter 6-digit code sent to your number</p>
+                        <div class="chat-login__otp-inputs">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
+                        <button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-content" id="chat-content">
+                <nav class="nok-chat__tabs">
+                    <button type="button" class="nok-chat__tab">Status</button>
+                    <button type="button" class="nok-chat__tab">Groups</button>
+                    <button type="button" class="nok-chat__tab nok-chat__tab--active">Updates</button>
+                    <button type="button" class="nok-chat__tab">Contacts</button>
+                </nav>
+                <a href="#" class="nok-chat__archived"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg><span>Archived Chats</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+                <div class="nok-chat__list">
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar nok-chat__avatar--verified">AR</span><div class="nok-chat__info"><span class="nok-chat__name">Amella Roy</span><span class="nok-chat__preview">Typing...</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--blue"></span>1h ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AN</span><div class="nok-chat__info"><span class="nok-chat__name">Ayesha Noor</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">11:36 AM</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">SD</span><div class="nok-chat__info"><span class="nok-chat__name">Sandeep Das</span><span class="nok-chat__preview">Catch you later!</span></div><span class="nok-chat__meta">20 min ago</span></a>
+                </div>
+            </div>
+            <div class="chat-overlay__resize-handle" id="chat-resize-handle" aria-label="Resize"></div>
+            <nav class="nok-chat__bottom">
+                <a href="home.html" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+                <a href="#" class="nok-chat__bottom-item nok-chat__bottom-item--active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Chat</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Call</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="3"/><path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855"/></svg><span>You</span></a>
+            </nav>
+        </div>
+    </div>
+
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+        <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+        <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+        <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+        <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+    </nav>
+
+    <script>
+        (function() {
+            var STORAGE_KEY = 'nokChannelData';
+            var DEFAULTS = {
+                tagline: 'Creator',
+                badgeText: 'DIAMOND CREATOR',
+                desc: '',
+                subscribeLabel: 'Subscribe',
+                featuredLabel: 'Watch latest',
+                featuredUrl: 'video.html',
+                welcomeText: 'Welcome to my official channel.',
+                accentStart: '#6366f1',
+                accentEnd: '#ec4899',
+                showSupportButton: '1',
+                showSubscriberCount: '1',
+                photoUrl: '',
+                bannerUrl: ''
+            };
+            var state = loadState();
+
+            function loadState() {
+                var saved = {};
+                try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (_) { saved = {}; }
+                return {
+                    channelName: localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'Creator Channel',
+                    tagline: saved.tagline || DEFAULTS.tagline,
+                    badgeText: saved.badgeText || DEFAULTS.badgeText,
+                    desc: saved.desc || '',
+                    subscribeLabel: saved.subscribeLabel || DEFAULTS.subscribeLabel,
+                    featuredLabel: saved.featuredLabel || DEFAULTS.featuredLabel,
+                    featuredUrl: saved.featuredUrl || DEFAULTS.featuredUrl,
+                    welcomeText: saved.welcomeText || DEFAULTS.welcomeText,
+                    accentStart: saved.accentStart || DEFAULTS.accentStart,
+                    accentEnd: saved.accentEnd || DEFAULTS.accentEnd,
+                    showSupportButton: saved.showSupportButton !== '0' ? '1' : '0',
+                    showSubscriberCount: saved.showSubscriberCount !== '0' ? '1' : '0',
+                    photoUrl: saved.photoUrl || localStorage.getItem('nokUserPhotoUrl') || '',
+                    bannerUrl: saved.bannerUrl || ''
+                };
+            }
+
+            function $(id) { return document.getElementById(id); }
+            function setStatus(message, type) {
+                var el = $('custom-status');
+                if (!el) return;
+                el.textContent = message || '';
+                el.className = 'custom-status' + (type ? ' is-' + type : '');
+            }
+            function bindSwitch(button, key) {
+                if (!button) return;
+                function render() {
+                    var isOn = state[key] !== '0';
+                    button.classList.toggle('is-on', isOn);
+                    button.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+                }
+                button.addEventListener('click', function() {
+                    state[key] = state[key] === '0' ? '1' : '0';
+                    render();
+                    renderPreview();
+                });
+                render();
+            }
+            function syncFields() {
+                $('custom-channel-name').value = state.channelName || '';
+                $('custom-tagline').value = state.tagline || '';
+                $('custom-badge').value = state.badgeText || '';
+                $('custom-description').value = state.desc || '';
+                $('custom-subscribe-label').value = state.subscribeLabel || '';
+                $('custom-featured-label').value = state.featuredLabel || '';
+                $('custom-featured-url').value = state.featuredUrl || '';
+                $('custom-welcome').value = state.welcomeText || '';
+                $('custom-accent-start').value = normalizeColor(state.accentStart, DEFAULTS.accentStart);
+                $('custom-accent-end').value = normalizeColor(state.accentEnd, DEFAULTS.accentEnd);
+            }
+            function normalizeColor(value, fallback) {
+                return /^#[0-9a-f]{6}$/i.test(value || '') ? value : fallback;
+            }
+            function updateUserMeta() {
+                var name = $('custom-channel-name').value.trim() || state.channelName || 'Creator';
+                $('custom-user-name').textContent = name.toUpperCase().slice(0, 18);
+                var avatar = $('custom-user-avatar');
+                if (state.photoUrl) avatar.innerHTML = '<img src="' + state.photoUrl.replace(/"/g, '&quot;') + '" alt="">';
+                else {
+                    avatar.innerHTML = '';
+                    avatar.textContent = name.charAt(0).toUpperCase();
+                }
+            }
+            function renderPreview() {
+                var name = $('custom-channel-name').value.trim() || 'Creator Channel';
+                var tagline = $('custom-tagline').value.trim() || DEFAULTS.tagline;
+                var badge = $('custom-badge').value.trim() || DEFAULTS.badgeText;
+                var desc = $('custom-description').value.trim() || 'Tell viewers what your channel is about.';
+                var subscribeLabel = $('custom-subscribe-label').value.trim() || DEFAULTS.subscribeLabel;
+                var welcome = $('custom-welcome').value.trim() || DEFAULTS.welcomeText;
+                var accentStart = normalizeColor($('custom-accent-start').value, DEFAULTS.accentStart);
+                var accentEnd = normalizeColor($('custom-accent-end').value, DEFAULTS.accentEnd);
+                var banner = $('custom-preview-banner');
+                if (state.bannerUrl) {
+                    banner.style.background = 'linear-gradient(135deg, rgba(8,12,24,0.15), rgba(8,12,24,0.45)), url(' + JSON.stringify(state.bannerUrl) + ') center/cover';
+                } else {
+                    banner.style.background = 'linear-gradient(135deg, ' + accentStart + ', ' + accentEnd + ')';
+                }
+                $('custom-preview-welcome').textContent = welcome;
+                $('custom-preview-name').textContent = name;
+                $('custom-preview-tagline').textContent = tagline;
+                $('custom-preview-badge').textContent = badge;
+                $('custom-preview-desc').textContent = desc;
+                $('custom-preview-subscribe').textContent = subscribeLabel;
+                $('custom-preview-subscribe').style.background = 'linear-gradient(135deg, ' + accentEnd + ', ' + accentStart + ')';
+                var previewAvatar = $('custom-preview-avatar');
+                if (state.photoUrl) previewAvatar.innerHTML = '<img src="' + state.photoUrl.replace(/"/g, '&quot;') + '" alt="">';
+                else {
+                    previewAvatar.innerHTML = '';
+                    previewAvatar.textContent = name.charAt(0).toUpperCase();
+                    previewAvatar.style.background = 'linear-gradient(135deg, ' + accentStart + ', ' + accentEnd + ')';
+                }
+                $('custom-preview-support').style.display = state.showSupportButton === '0' ? 'none' : 'inline-flex';
+                updateUserMeta();
+            }
+            function bindInput(id) {
+                var el = $(id);
+                if (!el) return;
+                el.addEventListener('input', renderPreview);
+            }
+            function readImage(file, callback) {
+                if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function() { callback(reader.result || ''); };
+                reader.readAsDataURL(file);
+            }
+            function saveCustomization() {
+                state.channelName = $('custom-channel-name').value.trim() || 'Creator Channel';
+                state.tagline = $('custom-tagline').value.trim() || DEFAULTS.tagline;
+                state.badgeText = $('custom-badge').value.trim() || DEFAULTS.badgeText;
+                state.desc = $('custom-description').value.trim();
+                state.subscribeLabel = $('custom-subscribe-label').value.trim() || DEFAULTS.subscribeLabel;
+                state.featuredLabel = $('custom-featured-label').value.trim() || DEFAULTS.featuredLabel;
+                state.featuredUrl = $('custom-featured-url').value.trim() || DEFAULTS.featuredUrl;
+                state.welcomeText = $('custom-welcome').value.trim() || DEFAULTS.welcomeText;
+                state.accentStart = normalizeColor($('custom-accent-start').value, DEFAULTS.accentStart);
+                state.accentEnd = normalizeColor($('custom-accent-end').value, DEFAULTS.accentEnd);
+
+                localStorage.setItem('nokUserChannel', state.channelName);
+                if (state.photoUrl) localStorage.setItem('nokUserPhotoUrl', state.photoUrl);
+                else localStorage.removeItem('nokUserPhotoUrl');
+
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    photoUrl: state.photoUrl || '',
+                    bannerUrl: state.bannerUrl || '',
+                    desc: state.desc || '',
+                    tagline: state.tagline,
+                    badgeText: state.badgeText,
+                    subscribeLabel: state.subscribeLabel,
+                    featuredLabel: state.featuredLabel,
+                    featuredUrl: state.featuredUrl,
+                    welcomeText: state.welcomeText,
+                    accentStart: state.accentStart,
+                    accentEnd: state.accentEnd,
+                    showSupportButton: state.showSupportButton,
+                    showSubscriberCount: state.showSubscriberCount
+                }));
+                setStatus('Customization saved. Your channel branding is updated.', 'success');
+                renderPreview();
+            }
+            function resetCustomization() {
+                state = {
+                    channelName: localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'Creator Channel',
+                    tagline: DEFAULTS.tagline,
+                    badgeText: DEFAULTS.badgeText,
+                    desc: '',
+                    subscribeLabel: DEFAULTS.subscribeLabel,
+                    featuredLabel: DEFAULTS.featuredLabel,
+                    featuredUrl: DEFAULTS.featuredUrl,
+                    welcomeText: DEFAULTS.welcomeText,
+                    accentStart: DEFAULTS.accentStart,
+                    accentEnd: DEFAULTS.accentEnd,
+                    showSupportButton: '1',
+                    showSubscriberCount: '1',
+                    photoUrl: '',
+                    bannerUrl: ''
+                };
+                syncFields();
+                bindSwitch($('custom-toggle-support'), 'showSupportButton');
+                bindSwitch($('custom-toggle-subs'), 'showSubscriberCount');
+                renderPreview();
+                setStatus('Defaults restored. Save if you want to keep them.', 'success');
+            }
+            function applyPreset(type) {
+                var presets = {
+                    gaming: { tagline: 'Gaming Creator', badgeText: 'LEGEND CREATOR', subscribeLabel: 'Join Squad', featuredLabel: 'Watch highlights', welcomeText: 'Welcome back. New wins, ranked pushes and live highlights drop here first.', accentStart: '#4f46e5', accentEnd: '#ec4899' },
+                    vlog: { tagline: 'Daily Vlogger', badgeText: 'OFFICIAL VLOG', subscribeLabel: 'Follow Journey', featuredLabel: 'Latest vlog', welcomeText: 'New stories, behind-the-scenes clips and everyday moments from my world.', accentStart: '#7c3aed', accentEnd: '#f97316' },
+                    music: { tagline: 'Music Artist', badgeText: 'OFFICIAL ARTIST', subscribeLabel: 'Listen Now', featuredLabel: 'New release', welcomeText: 'Official tracks, live cuts and music video drops all in one place.', accentStart: '#1d4ed8', accentEnd: '#9333ea' },
+                    education: { tagline: 'Educator', badgeText: 'TRUSTED EDUCATOR', subscribeLabel: 'Start Learning', featuredLabel: 'Top lesson', welcomeText: 'Clear lessons, useful breakdowns and practical tips to help you improve faster.', accentStart: '#0891b2', accentEnd: '#22c55e' }
+                };
+                var preset = presets[type];
+                if (!preset) return;
+                $('custom-tagline').value = preset.tagline;
+                $('custom-badge').value = preset.badgeText;
+                $('custom-subscribe-label').value = preset.subscribeLabel;
+                $('custom-featured-label').value = preset.featuredLabel;
+                $('custom-welcome').value = preset.welcomeText;
+                $('custom-accent-start').value = preset.accentStart;
+                $('custom-accent-end').value = preset.accentEnd;
+                renderPreview();
+                setStatus('Preset applied. Save to keep this look.', 'success');
+            }
+
+            syncFields();
+            bindSwitch($('custom-toggle-support'), 'showSupportButton');
+            bindSwitch($('custom-toggle-subs'), 'showSubscriberCount');
+            ['custom-channel-name', 'custom-tagline', 'custom-badge', 'custom-description', 'custom-subscribe-label', 'custom-featured-label', 'custom-featured-url', 'custom-welcome', 'custom-accent-start', 'custom-accent-end'].forEach(bindInput);
+
+            $('custom-avatar-upload').addEventListener('change', function() {
+                var file = this.files && this.files[0];
+                if (!file) return;
+                readImage(file, function(result) {
+                    state.photoUrl = result;
+                    renderPreview();
+                    setStatus('Profile photo ready. Save to publish it.', 'success');
+                });
+            });
+            $('custom-banner-upload').addEventListener('change', function() {
+                var file = this.files && this.files[0];
+                if (!file) return;
+                readImage(file, function(result) {
+                    state.bannerUrl = result;
+                    renderPreview();
+                    setStatus('Banner image ready. Save to publish it.', 'success');
+                });
+            });
+            $('custom-avatar-remove').addEventListener('click', function() {
+                state.photoUrl = '';
+                $('custom-avatar-upload').value = '';
+                renderPreview();
+                setStatus('Profile photo removed from preview.', 'success');
+            });
+            $('custom-banner-remove').addEventListener('click', function() {
+                state.bannerUrl = '';
+                $('custom-banner-upload').value = '';
+                renderPreview();
+                setStatus('Banner image removed from preview.', 'success');
+            });
+            document.querySelectorAll('[data-preset]').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    applyPreset(this.getAttribute('data-preset'));
+                });
+            });
+            $('custom-save-btn').addEventListener('click', saveCustomization);
+            $('custom-reset-btn').addEventListener('click', resetCustomization);
+
+            renderPreview();
+        })();
+    </script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

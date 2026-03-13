@@ -283,25 +283,25 @@
                             <h1 class="channel-view-name" id="channel-view-name">NOK SUPER</h1>
                             <span class="channel-view-name-suffix" id="channel-view-name-suffix">Creator</span>
                         </div>
-                        <div class="channel-view-badge">
+                        <div class="channel-view-badge" id="channel-view-badge">
                             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15 8L22 9L17 14L18 21L12 18L6 21L7 14L2 9L9 8L12 2Z"/></svg>
-                            DIAMOND CREATOR
+                            <span id="channel-view-badge-text">DIAMOND CREATOR</span>
                         </div>
                         <div class="channel-view-actions">
-                            <button type="button" class="channel-view-btn channel-view-btn--subscribe" id="channel-subscribe-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Subscribe</button>
-                            <button type="button" class="channel-view-btn channel-view-btn--bell" aria-label="Notifications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
-                            <a href="channel-create.html" class="channel-view-btn channel-view-btn--edit" id="channel-edit-btn" style="display:none;">Edit channel</a>
+                            <button type="button" class="channel-view-btn channel-view-btn--subscribe" id="channel-subscribe-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> <span id="channel-subscribe-label">Subscribe</span></button>
+                            <button type="button" class="channel-view-btn channel-view-btn--bell" id="channel-bell-btn" aria-label="Notifications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                            <a href="studio-customization.html" class="channel-view-btn channel-view-btn--edit" id="channel-edit-btn" style="display:none;">Customize channel</a>
                         </div>
                     </div>
                 </div>
-                <button type="button" class="channel-view-btn channel-view-btn--support"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> Support Creator <span aria-hidden="true">❤</span></button>
+                <button type="button" class="channel-view-btn channel-view-btn--support" id="channel-support-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> Support Creator <span aria-hidden="true">❤</span></button>
             </div>
 
             <div class="channel-stats-bar">
                 <button type="button" class="channel-stat channel-stat--prominent" id="channel-stat-videos" aria-label="Videos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> <span id="channel-stat-videos-n">248</span> Videos</button>
                 <button type="button" class="channel-stat channel-stat--prominent" id="channel-stat-views" aria-label="Views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> <span id="channel-stat-views-n">97.4M</span> Views</button>
                 <button type="button" class="channel-stat" id="channel-stat-shorts" aria-label="Shorts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c4-4 8-8 8-12 0-3-2-6-5-6-2 0-3 1-3 2-1-1-2-2-4-2-3 0-5 3-5 6 0 4 4 8 8 12z"/></svg> <span id="channel-stat-shorts-n">92</span> Shorts</button>
-                <button type="button" class="channel-stat" aria-label="Subscribers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> <span id="channel-stat-subs-n">1.2M</span> Subscribers</button>
+                <button type="button" class="channel-stat" id="channel-stat-subscribers" aria-label="Subscribers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> <span id="channel-stat-subs-n">1.2M</span> Subscribers</button>
                 <div class="channel-stats-sort">
                     <select id="channel-stats-sort-select" aria-label="Sort by"><option value="latest">Sort By: Latest</option><option value="popular">Popular</option><option value="oldest">Oldest</option></select>
                 </div>
@@ -469,7 +469,9 @@
             var channelViewName = document.getElementById('channel-view-name');
             var channelViewNameSuffix = document.getElementById('channel-view-name-suffix');
             if (channelViewName) channelViewName.textContent = channelName ? channelName.replace(/\s*Creator$/i, '') || channelName : 'NOK SUPER';
-            if (channelViewNameSuffix) channelViewNameSuffix.textContent = 'Creator';
+            if (channelViewNameSuffix) channelViewNameSuffix.textContent = channelData.tagline || 'Creator';
+            var badgeTextEl = document.getElementById('channel-view-badge-text');
+            if (badgeTextEl) badgeTextEl.textContent = channelData.badgeText || 'DIAMOND CREATOR';
             var avatarLarge = document.getElementById('channel-view-avatar-large');
             var avatarInitial = document.getElementById('channel-view-avatar-initial');
             if (channelData.photoUrl && avatarLarge) {
@@ -486,9 +488,27 @@
             if (bannerEl && channelData.bannerUrl) {
                 bannerEl.style.backgroundImage = 'url(' + JSON.stringify(channelData.bannerUrl) + ')';
                 bannerEl.classList.add('channel-banner--custom');
+            } else if (bannerEl && channelData.accentStart && channelData.accentEnd) {
+                bannerEl.style.background = 'linear-gradient(90deg, ' + channelData.accentStart + ' 0%, ' + channelData.accentEnd + ' 100%)';
+                bannerEl.classList.remove('channel-banner--custom');
             }
             var aboutDesc = document.getElementById('channel-about-desc');
-            if (channelData.desc && aboutDesc) aboutDesc.textContent = channelData.desc;
+            if (aboutDesc) aboutDesc.textContent = channelData.desc || channelData.welcomeText || 'Channel description will appear here.';
+            var subscribeBtn = document.getElementById('channel-subscribe-btn');
+            var subscribeLabel = document.getElementById('channel-subscribe-label');
+            if (subscribeLabel) subscribeLabel.textContent = channelData.subscribeLabel || 'Subscribe';
+            if (subscribeBtn && channelData.accentStart && channelData.accentEnd) {
+                subscribeBtn.style.background = 'linear-gradient(90deg, ' + channelData.accentEnd + ', ' + channelData.accentStart + ')';
+                subscribeBtn.style.boxShadow = '0 0 24px rgba(236,72,153,0.35), 0 0 18px rgba(99,102,241,0.35)';
+            }
+            var bellBtn = document.getElementById('channel-bell-btn');
+            if (bellBtn && channelData.accentStart && channelData.accentEnd) {
+                bellBtn.style.background = 'linear-gradient(135deg, ' + channelData.accentStart + ', ' + channelData.accentEnd + ')';
+            }
+            var supportBtn = document.getElementById('channel-support-btn');
+            if (supportBtn) supportBtn.style.display = channelData.showSupportButton === '0' ? 'none' : '';
+            var subscriberStat = document.getElementById('channel-stat-subscribers');
+            if (subscriberStat) subscriberStat.style.display = channelData.showSubscriberCount === '0' ? 'none' : '';
             var editBtn = document.getElementById('channel-edit-btn');
             if (editBtn) editBtn.style.display = isOwnChannel ? 'inline-flex' : 'none';
 
