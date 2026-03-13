@@ -368,7 +368,26 @@ html[data-theme="light"] .channel-delete-option:hover { border-color: rgba(79,10
 html[data-theme="light"] .channel-delete-option.channel-delete-option--selected { border-color: #4338ca; background: rgba(79,109,216,0.22); color: #1a1f38; }
 html[data-theme="light"] .channel-delete-option .channel-delete-option-check { border-color: rgba(79,109,216,0.5); }
 
-/* Light theme: Library, trending, live, captions, profile – shared elements */
+/* Light theme: Library – home page moto colour full */
+html[data-theme="light"] .library-page-title { color: #1a1f38 !important; }
+html[data-theme="light"] .library-page-sub { color: #2d3a5c !important; }
+html[data-theme="light"] .library-section__title { color: #4f6dd8 !important; font-weight: 700 !important; }
+html[data-theme="light"] .library-section__title svg { color: #4338ca; stroke: #4338ca; }
+html[data-theme="light"] .library-list { background: rgba(255,255,255,0.92) !important; border: 1px solid rgba(79,109,216,0.35) !important; }
+html[data-theme="light"] .library-list__row,
+html[data-theme="light"] .library-list__row--create { color: #1a1f38 !important; }
+html[data-theme="light"] .library-list__row .library-list__label { color: #4338ca !important; font-weight: 700 !important; }
+html[data-theme="light"] .library-list__row span:last-of-type { color: #4f46e5 !important; }
+html[data-theme="light"] .library-list__icon { background: rgba(34,197,94,0.2) !important; color: #15803d; }
+html[data-theme="light"] .library-list__icon svg { stroke: #15803d; }
+html[data-theme="light"] .library-card { background: rgba(255,255,255,0.92) !important; border: 1px solid rgba(79,109,216,0.35) !important; }
+html[data-theme="light"] .library-card p { color: #2d3a5c !important; }
+html[data-theme="light"] .library-card a { color: #4338ca !important; font-weight: 600; }
+html[data-theme="light"] .library-card a:hover { color: #3730a3 !important; }
+html[data-theme="light"] #library-playlists-empty { color: #2d3a5c !important; }
+html[data-theme="light"] .library-video-item { background: rgba(79,109,216,0.12) !important; border: 1px solid rgba(79,109,216,0.3); }
+html[data-theme="light"] .library-video-item:hover { background: rgba(79,109,216,0.2) !important; border-color: rgba(79,109,216,0.5); }
+html[data-theme="light"] .library-video-title { color: #1a1f38 !important; }
 html[data-theme="light"] .library-list__row { color: #1a1f38; }
 html[data-theme="light"] .library-list__row:hover,
 html[data-theme="light"] .library-list__row--create:hover { background: rgba(79,109,216,0.1); }

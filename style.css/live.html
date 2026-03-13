@@ -101,11 +101,11 @@
                 </a>
             </div>
             <div class="long-video__search">
-                <div class="home-search">
+                <form class="home-search" action="search.html" method="get" role="search">
                     <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                    <input type="text" class="home-search__input" placeholder="Search">
+                    <input type="text" class="home-search__input" name="q" placeholder="Search" aria-label="Search">
                     <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
-                </div>
+                </form>
             </div>
             <div class="long-video__header-right">
                 <button type="button" class="long-video__header-icon" id="live-notification-btn" aria-label="Notifications" title="Notifications">

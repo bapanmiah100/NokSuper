@@ -230,6 +230,15 @@
                 }
                 var userKey = user.email || user.phoneKey || key;
                 sessionStorage.setItem('nokUserEmail', userKey);
+                if (user.email) {
+                    localStorage.setItem('nokUserEmail', user.email.toLowerCase());
+                    localStorage.setItem('nokAccountEmail', user.email.toLowerCase());
+                } else if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userKey)) {
+                    localStorage.setItem('nokUserEmail', userKey.toLowerCase());
+                    localStorage.setItem('nokAccountEmail', userKey.toLowerCase());
+                } else {
+                    localStorage.removeItem('nokUserEmail');
+                }
                 sessionStorage.setItem('otpFrom', 'login');
                 localStorage.removeItem('nokMobileVerified');
                 var sentTo = isEmail ? key : ('+' + (document.getElementById('country-code') && document.getElementById('country-code').value) + ' ' + (phoneInput && phoneInput.value ? phoneInput.value.trim() : ''));
