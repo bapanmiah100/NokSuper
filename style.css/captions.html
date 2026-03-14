@@ -24,9 +24,11 @@
         .caption-card__text { font-size: 0.95rem; color: rgba(255,255,255,0.9); line-height: 1.5; margin-bottom: 12px; white-space: pre-wrap; word-break: break-word; }
         .caption-card__photo { border-radius: 12px; overflow: hidden; margin-bottom: 12px; background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
         .caption-card__photo img { max-width: 100%; width: auto; max-height: 75vh; height: auto; object-fit: contain; display: block; }
-        .caption-card__actions { display: flex; align-items: center; gap: 20px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); }
-        .caption-card__btn { display: inline-flex; align-items: center; gap: 6px; background: none; border: none; color: rgba(255,255,255,0.7); font-size: 0.9rem; cursor: pointer; padding: 4px 0; }
+        .caption-card__actions { display: flex; align-items: center; gap: 20px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap; }
+        .caption-card__btn { display: inline-flex; align-items: center; gap: 8px; background: none; border: none; color: rgba(255,255,255,0.7); font-size: 0.9rem; cursor: pointer; padding: 4px 0; }
         .caption-card__btn:hover { color: var(--accent-light); }
+        .caption-card__btn--gift { padding: 10px 18px; border-radius: 999px; background: linear-gradient(135deg, rgba(249,115,22,0.28), rgba(236,72,153,0.24)); border: 1px solid rgba(251,191,36,0.28); color: #fff; font-weight: 700; }
+        .caption-card__btn--gift:hover { color: #fff; background: linear-gradient(135deg, rgba(249,115,22,0.42), rgba(236,72,153,0.32)); }
         .caption-card__btn svg { width: 20px; height: 20px; }
         .caption-comments { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); }
         .caption-comments__list { margin-bottom: 12px; }
@@ -97,8 +99,9 @@
         }
         function requireLoginForAction(action) {
             if (isLoggedIn()) return true;
-            if (action === 'like') window.location.href = 'login.html?next=' + encodeURIComponent('captions.html');
-            else if (action === 'comment') window.location.href = 'login.html?next=' + encodeURIComponent('captions.html');
+            if (action === 'like' || action === 'comment' || action === 'gift') {
+                window.location.href = 'login.html?next=' + encodeURIComponent('captions.html');
+            }
             return false;
         }
 
@@ -107,6 +110,22 @@
         }
         function savePosts(posts) {
             try { localStorage.setItem('nokCaptionPosts', JSON.stringify(posts)); } catch (e) {}
+        }
+        function getCaptionGifts() {
+            try { return JSON.parse(localStorage.getItem('nokCaptionGifts') || '{}'); } catch (e) { return {}; }
+        }
+        function saveCaptionGifts(map) {
+            try { localStorage.setItem('nokCaptionGifts', JSON.stringify(map)); } catch (e) {}
+        }
+        function getCaptionGiftCount(postId) {
+            var map = getCaptionGifts();
+            return parseInt(map[postId] || 0, 10) || 0;
+        }
+        function addCaptionGift(postId, amount) {
+            var map = getCaptionGifts();
+            map[postId] = (parseInt(map[postId] || 0, 10) || 0) + (amount || 1);
+            saveCaptionGifts(map);
+            return map[postId];
         }
         function timeAgo(ts) {
             var d = Date.now() - ts;
@@ -151,7 +170,7 @@
             var commentInputHtml = isLoggedIn()
                 ? '<div class="caption-comments__input-wrap"><input type="text" class="caption-comments__input" placeholder="Add a comment..." maxlength="300" data-post-id="' + post.id + '"><button type="button" class="caption-comments__submit" data-post-id="' + post.id + '">Comment</button></div>'
                 : '<div class="caption-comments__login-prompt"><a href="login.html?next=' + encodeURIComponent('captions.html') + '" class="caption-comments__login-link">Log in to comment</a></div>';
-            card.innerHTML = '<div class="caption-card__head"><div class="caption-card__avatar">' + avatarHtml + '</div><div class="caption-card__meta"><div class="caption-card__author">' + (post.author || 'User') + '</div><div class="caption-card__time">' + timeAgo(post.createdAt) + '</div></div></div>' + (post.caption ? '<div class="caption-card__text">' + (post.caption || '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div>' : '') + photoHtml + '<div class="caption-card__actions"><button type="button" class="caption-card__btn caption-like-btn" data-post-id="' + post.id + '" aria-label="Like"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg><span class="like-count">' + (post.likes || 0) + '</span></button><button type="button" class="caption-card__btn caption-comment-toggle" data-post-id="' + post.id + '" aria-label="Comment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="comment-count">' + (post.comments ? post.comments.length : 0) + '</span></button><button type="button" class="caption-card__btn caption-share-btn" data-post-id="' + post.id + '" aria-label="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span class="share-count">' + (post.shares || 0) + '</span></button></div><div class="caption-comments" id="comments-' + post.id + '" style="display:none;"><div class="caption-comments__list"></div>' + commentInputHtml + '</div>';
+            card.innerHTML = '<div class="caption-card__head"><div class="caption-card__avatar">' + avatarHtml + '</div><div class="caption-card__meta"><div class="caption-card__author">' + (post.author || 'User') + '</div><div class="caption-card__time">' + timeAgo(post.createdAt) + '</div></div></div>' + (post.caption ? '<div class="caption-card__text">' + (post.caption || '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div>' : '') + photoHtml + '<div class="caption-card__actions"><button type="button" class="caption-card__btn caption-like-btn" data-post-id="' + post.id + '" aria-label="Like"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg><span class="like-count">' + (post.likes || 0) + '</span></button><button type="button" class="caption-card__btn caption-comment-toggle" data-post-id="' + post.id + '" aria-label="Comment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="comment-count">' + (post.comments ? post.comments.length : 0) + '</span></button><button type="button" class="caption-card__btn caption-share-btn" data-post-id="' + post.id + '" aria-label="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span class="share-count">' + (post.shares || 0) + '</span></button><button type="button" class="caption-card__btn caption-card__btn--gift caption-gift-btn" data-post-id="' + post.id + '" aria-label="Gift"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7"/><rect x="2" y="7" width="20" height="5" rx="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 1 1 0-5c3 0 4.5 5 4.5 5z"/><path d="M12 7h4.5a2.5 2.5 0 1 0 0-5c-3 0-4.5 5-4.5 5z"/></svg><span class="gift-count">' + getCaptionGiftCount(post.id) + '</span><span>Gift</span></button></div><div class="caption-comments" id="comments-' + post.id + '" style="display:none;"><div class="caption-comments__list"></div>' + commentInputHtml + '</div>';
             listEl.appendChild(card);
 
             var commentsContainer = card.querySelector('.caption-comments__list');
@@ -171,6 +190,11 @@
             card.querySelector('.caption-comment-toggle').addEventListener('click', function() {
                 var commentsDiv = card.querySelector('.caption-comments');
                 commentsDiv.style.display = commentsDiv.style.display === 'none' ? 'block' : 'none';
+            });
+            card.querySelector('.caption-gift-btn').addEventListener('click', function() {
+                if (!requireLoginForAction('gift')) return;
+                var count = addCaptionGift(post.id, 1);
+                this.querySelector('.gift-count').textContent = count;
             });
             var submitBtn = card.querySelector('.caption-comments__submit');
             if (submitBtn) {

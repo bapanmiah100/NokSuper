@@ -1198,7 +1198,8 @@
                 publishBtn.disabled = true;
                 publishBtn.innerHTML = '<span class="upload-spinner"></span> Publishing...';
                 var channel = savedChannel || (userVideos[0] && userVideos[0].channel) || 'User';
-                var id = 'user_' + Date.now();
+                var createdAt = Date.now();
+                var id = 'user_' + createdAt;
                 var thumbs = ['mountains','waterfall','city','wild','portrait','night','hike','beach'];
                 var allVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
                 var thumb = thumbs[allVideos.length % thumbs.length];
@@ -1211,10 +1212,10 @@
                     if (asShorts) {
                         /* Short video lokano: metadata localStorage e */
                         var allShorts = JSON.parse(localStorage.getItem('nokShortsVideos') || '[]');
-                        allShorts.unshift({ id: id, title: title, channel: channel, likes: '0', thumb: thumb, thumbData: thumbData, createdAt: Date.now() });
+                        allShorts.unshift({ id: id, title: title, channel: channel, likes: '0', thumb: thumb, thumbData: thumbData, createdAt: createdAt });
                         localStorage.setItem('nokShortsVideos', JSON.stringify(allShorts));
                     } else {
-                        allVideos.unshift({ id: id, title: title, channel: channel, views: '0 views • Just now', thumb: thumb, thumbData: thumbData, isShorts: false });
+                        allVideos.unshift({ id: id, title: title, channel: channel, views: '0 views • Just now', thumb: thumb, thumbData: thumbData, isShorts: false, createdAt: createdAt });
                         localStorage.setItem('nokUserVideos', JSON.stringify(allVideos));
                     }
                     localStorage.setItem('nokUserChannel', channel);

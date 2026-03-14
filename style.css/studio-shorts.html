@@ -134,7 +134,7 @@
                     var comments = fmtNum(parseInt(s.comments || 0, 10));
                     var watchUrl = 'shorts.html?id=' + encodeURIComponent(sid);
                     var analyticsUrl = 'studio-short-analytics.html?id=' + encodeURIComponent(sid);
-                    var editUrl = 'studio-short-edit.html?id=' + encodeURIComponent(sid);
+                    var editUrl = 'studio-content-edit.html?type=short&id=' + encodeURIComponent(sid);
                     var inPromo = promoIds[String(sid)];
                     var promoteCell = inPromo
                         ? '<span class="studio-table__promote-added">In promotion · <a href="studio-promotion-setup.html?type=short&id=' + encodeURIComponent(sid) + '">Setup</a> · <a href="studio-promotion.html">List</a></span>'

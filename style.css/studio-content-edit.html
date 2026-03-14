@@ -490,7 +490,9 @@
                     title = item.title || '';
                     description = item.desc || item.description || '';
                     views = parseCount(item.views || item.viewCount || 0);
-                    imageSet = item.thumbData ? [item.thumbData] : [];
+                    imageSet = Array.isArray(item.customThumbs) && item.customThumbs.length
+                        ? item.customThumbs.slice(0, 1)
+                        : (item.thumbData ? [item.thumbData] : (item.thumbnailData ? [item.thumbnailData] : (item.videoData ? [item.videoData] : [])));
                 } else if (type === 'caption') {
                     title = item.caption || '';
                     description = item.desc || item.description || '';
@@ -532,11 +534,14 @@
                 var count = type === 'video' ? 3 : 1;
                 uploadSlots = [];
                 wrap.innerHTML = '';
+                var uploadLabel = count === 1
+                    ? (type === 'short' ? 'Short thumbnail' : (type === 'caption' ? 'Post artwork' : (type === 'live' ? 'Stream poster' : 'Main artwork')))
+                    : 'Thumbnail ';
                 for (var i = 0; i < count; i++) {
                     var slot = document.createElement('div');
                     slot.className = 'editor-upload';
                     slot.innerHTML =
-                        '<span class="editor-upload__label">' + (count === 1 ? 'Main artwork' : 'Thumbnail ' + (i + 1)) + '</span>' +
+                        '<span class="editor-upload__label">' + (count === 1 ? uploadLabel : 'Thumbnail ' + (i + 1)) + '</span>' +
                         '<div class="editor-upload__preview" id="editor-upload-preview-' + i + '">' +
                         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>' +
                         '</div>' +
@@ -592,10 +597,12 @@
                 $('editor-notes').value = state.notes;
                 $('editor-title-label').textContent = state.type === 'caption' ? 'Caption text' : 'Title';
                 $('editor-description-label').textContent = state.type === 'live' ? 'Stream description' : 'Description';
-                $('editor-visual-title').textContent = state.type === 'caption' ? 'Caption Artwork' : 'Visual Assets';
+                $('editor-visual-title').textContent = state.type === 'caption' ? 'Caption Artwork' : (state.type === 'short' ? 'Short Thumbnail' : 'Visual Assets');
                 $('editor-visual-text').textContent = state.type === 'caption'
                     ? 'Update the supporting image for this caption post and keep feed presentation consistent.'
-                    : 'Refresh thumbnails or artwork so the content looks polished in feeds and previews.';
+                    : (state.type === 'short'
+                        ? 'Upload a real shorts thumbnail so your short looks correct in cards, feeds, analytics, and the shorts experience.'
+                        : 'Refresh thumbnails or artwork so the content looks polished in feeds and previews.');
                 document.querySelectorAll('.editor-switch__toggle[data-key]').forEach(function(toggle) {
                     var key = toggle.getAttribute('data-key');
                     var on = !!state[key];
@@ -716,7 +723,9 @@
                     item.spotlight = state.spotlight;
                     item.scheduleAt = state.scheduleAt;
                     item.creatorNotes = state.notes;
+                    item.customThumbs = state.imageSet.slice(0, 1);
                     item.thumbData = state.imageSet[0] || item.thumbData || '';
+                    item.thumbnailData = state.imageSet[0] || item.thumbnailData || '';
                 } else if (state.type === 'caption') {
                     item.caption = state.title;
                     item.desc = state.description;

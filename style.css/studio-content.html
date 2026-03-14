@@ -71,7 +71,9 @@
         .content-item__select { width: 18px; height: 18px; accent-color: #8b5cf6; }
         .content-item__main { display: flex; align-items: center; gap: 14px; min-width: 0; }
         .content-item__thumb { width: 112px; min-width: 112px; height: 64px; border-radius: 12px; overflow: hidden; background: rgba(99,102,241,0.14); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; }
+        .content-item__thumb--short { width: 68px; min-width: 68px; height: 112px; background: rgba(249,115,22,0.12); }
         .content-item__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .content-item__thumb--short { background-size: cover; background-position: center; background-repeat: no-repeat; }
         .content-item__thumb-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(99,102,241,0.26), rgba(139,92,246,0.3)); color: rgba(255,255,255,0.7); }
         .content-item__thumb-placeholder svg { width: 26px; height: 26px; }
         .content-item__body { min-width: 0; }
@@ -108,6 +110,15 @@
         .content-summary__meta { color: rgba(220,228,255,0.58); font-size: 0.8rem; margin-top: 4px; }
         .content-summary__value { color: #a5b4fc; font-size: 0.88rem; font-weight: 700; white-space: nowrap; }
         .content-empty { padding: 26px 16px; text-align: center; color: rgba(220,228,255,0.62); font-size: 0.92rem; background: rgba(255,255,255,0.03); border-radius: 14px; border: 1px dashed rgba(255,255,255,0.1); }
+        .content-modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(5,8,18,0.72); backdrop-filter: blur(10px); z-index: 40; }
+        .content-modal.is-open { display: flex; }
+        .content-modal__dialog { width: min(100%, 420px); background: rgba(22,22,42,0.94); border: 1px solid rgba(139,92,246,0.28); border-radius: 22px; padding: 22px; box-shadow: 0 24px 60px rgba(0,0,0,0.36); }
+        .content-modal__title { margin: 0 0 8px; color: #fff; font-size: 1.1rem; font-weight: 800; }
+        .content-modal__text { margin: 0; color: rgba(220,228,255,0.72); line-height: 1.6; font-size: 0.92rem; }
+        .content-modal__actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+        .content-modal__btn { border: none; border-radius: 12px; padding: 11px 16px; font: inherit; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+        .content-modal__btn--ghost { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+        .content-modal__btn--danger { background: linear-gradient(135deg, rgba(239,68,68,0.95), rgba(220,38,38,0.9)); color: #fff; box-shadow: 0 10px 24px rgba(239,68,68,0.24); }
         @media (max-width: 1180px) {
             .content-grid { grid-template-columns: 1fr; }
             .content-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -125,6 +136,7 @@
             .content-item { grid-template-columns: 1fr; }
             .content-item__main { align-items: flex-start; }
             .content-item__thumb { width: 96px; min-width: 96px; height: 56px; }
+            .content-item__thumb--short { width: 60px; min-width: 60px; height: 96px; }
             .content-item__actions { justify-content: flex-start; }
         }
     </style>
@@ -217,15 +229,14 @@
                                     <option value="public">Public</option>
                                     <option value="private">Private</option>
                                     <option value="unlisted">Unlisted</option>
-                                    <option value="deleted">Deleted</option>
-                            <option value="live">Live now</option>
+                                    <option value="live">Live now</option>
                                 </select>
                             </div>
                             <div class="content-actions">
                                 <button type="button" class="content-btn content-btn--primary" id="content-bulk-public">Set public</button>
                                 <button type="button" class="content-btn content-btn--secondary" id="content-bulk-private">Set private</button>
-                                <button type="button" class="content-btn content-btn--ghost" id="content-bulk-delete">Move to deleted</button>
-                                <button type="button" class="content-btn content-btn--ghost" id="content-select-all">Select all visible</button>
+                                <button type="button" class="content-btn content-btn--ghost" id="content-bulk-delete">Delete selected</button>
+                                <button type="button" class="content-btn content-btn--ghost" id="content-select-all">Select all</button>
                             </div>
                             <div class="content-status" id="content-status"></div>
                         </div>
@@ -356,6 +367,16 @@
             </nav>
         </div>
     </div>
+    <div class="content-modal" id="content-delete-modal" aria-hidden="true">
+        <div class="content-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="content-delete-title">
+            <h2 class="content-modal__title" id="content-delete-title">Delete selected content?</h2>
+            <p class="content-modal__text" id="content-delete-text">Selected items will be permanently deleted only after you confirm this action.</p>
+            <div class="content-modal__actions">
+                <button type="button" class="content-modal__btn content-modal__btn--ghost" id="content-delete-cancel">Cancel</button>
+                <button type="button" class="content-modal__btn content-modal__btn--danger" id="content-delete-confirm">Confirm delete</button>
+            </div>
+        </div>
+    </div>
 
     <nav class="home-bottom-nav">
         <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
@@ -369,6 +390,7 @@
         (function() {
             var filterType = 'all';
             var selectedIds = {};
+            var pendingDeleteKeys = [];
 
             function $(id) { return document.getElementById(id); }
             function getVideos() { try { return JSON.parse(localStorage.getItem('nokUserVideos') || '[]'); } catch (_) { return []; } }
@@ -557,7 +579,6 @@
                 if (type === 'live') return 'content-badge--live';
                 if (type === 'private') return 'content-badge--private';
                 if (type === 'unlisted') return 'content-badge--unlisted';
-                if (type === 'deleted') return 'content-badge--private';
                 return 'content-badge--public';
             }
             function thumbPlaceholderIcon(type) {
@@ -570,15 +591,20 @@
                 return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>';
             }
             function renderThumb(item) {
+                var className = 'content-item__thumb' + (item.type === 'short' ? ' content-item__thumb--short' : '');
                 if (item.thumbSrc) {
-                    return '<div class="content-item__thumb"><img src="' + escapeHtml(item.thumbSrc) + '" alt=""></div>';
+                    if (item.type === 'short') {
+                        return '<div class="' + className + '" style="background-image:url(' + escapeHtml(item.thumbSrc) + ')"></div>';
+                    }
+                    return '<div class="' + className + '"><img src="' + escapeHtml(item.thumbSrc) + '" alt=""></div>';
                 }
-                return '<div class="content-item__thumb"><div class="content-item__thumb-placeholder">' + thumbPlaceholderIcon(item.type) + '</div></div>';
+                return '<div class="' + className + '"><div class="content-item__thumb-placeholder">' + thumbPlaceholderIcon(item.type) + '</div></div>';
             }
             function renderList() {
                 var list = getVisibleList();
                 updateCards(list);
                 var wrap = $('content-list');
+                updateSelectAllButton();
                 if (!list.length) {
                     wrap.innerHTML = '<div class="content-empty">No content matched the current filters. Try changing the type filter or clear the search.</div>';
                     return;
@@ -603,7 +629,6 @@
                         '<option value="public"' + (item.visibility === 'public' ? ' selected' : '') + '>Public</option>' +
                         '<option value="private"' + (item.visibility === 'private' ? ' selected' : '') + '>Private</option>' +
                         '<option value="unlisted"' + (item.visibility === 'unlisted' ? ' selected' : '') + '>Unlisted</option>' +
-                        '<option value="deleted"' + (item.visibility === 'deleted' ? ' selected' : '') + '>Deleted</option>' +
                         '</select>' +
                         '<a class="content-link" href="' + item.editUrl + '">Edit</a>' +
                         '<a class="content-link" href="' + item.viewUrl + '">Open</a>' +
@@ -615,6 +640,7 @@
                     input.addEventListener('change', function() {
                         selectedIds[this.getAttribute('data-select-key')] = this.checked;
                         updateCards(list);
+                        updateSelectAllButton();
                     });
                 });
                 wrap.querySelectorAll('[data-visibility-key]').forEach(function(select) {
@@ -660,8 +686,58 @@
                 renderList();
                 if (bulk) setStatus('Updated ' + changed + ' content items to ' + value + '.', 'success');
             }
+            function permanentlyDelete(keys) {
+                var videos = getVideos();
+                var shorts = getShorts();
+                var captions = getCaptions();
+                var lives = getLives();
+                var changed = 0;
+
+                keys.forEach(function(key) {
+                    var parts = key.split(':');
+                    var type = parts[0];
+                    var id = parts.slice(1).join(':');
+                    if (type === 'video') {
+                        var videoIndex = videos.findIndex(function(item, index) { return String(item.id || ('video-' + index)) === id; });
+                        if (videoIndex >= 0) { videos.splice(videoIndex, 1); changed++; }
+                    } else if (type === 'short') {
+                        var shortIndex = shorts.findIndex(function(item, index) { return String(item.id || ('short-' + index)) === id; });
+                        if (shortIndex >= 0) { shorts.splice(shortIndex, 1); changed++; }
+                    } else if (type === 'caption') {
+                        var captionIndex = captions.findIndex(function(item, index) { return String(item.id || ('caption-' + (item.createdAt || index))) === id; });
+                        if (captionIndex >= 0) { captions.splice(captionIndex, 1); changed++; }
+                    } else if (type === 'live') {
+                        var liveIndex = lives.findIndex(function(item, index) { return String(item.id || ('live-' + (item.startedAt || index))) === id; });
+                        if (liveIndex >= 0) { lives.splice(liveIndex, 1); changed++; }
+                    }
+                    delete selectedIds[key];
+                });
+
+                saveVideos(videos);
+                saveShorts(shorts);
+                saveCaptions(captions);
+                saveLives(lives);
+                renderList();
+                setStatus('Permanently deleted ' + changed + ' content item' + (changed === 1 ? '' : 's') + '.', 'success');
+            }
             function selectedVisibleKeys() {
                 return getVisibleList().filter(function(item) { return selectedIds[item.key]; }).map(function(item) { return item.key; });
+            }
+            function updateSelectAllButton() {
+                var button = $('content-select-all');
+                if (!button) return;
+                var visibleItems = getVisibleList();
+                var allSelected = visibleItems.length > 0 && visibleItems.every(function(item) { return !!selectedIds[item.key]; });
+                button.textContent = allSelected ? 'Unselect all' : 'Select all';
+            }
+            function toggleDeleteModal(open, count) {
+                var modal = $('content-delete-modal');
+                if (!modal) return;
+                modal.classList.toggle('is-open', !!open);
+                modal.setAttribute('aria-hidden', open ? 'false' : 'true');
+                $('content-delete-text').textContent = open
+                    ? ('You selected ' + count + ' content item' + (count === 1 ? '' : 's') + '. Press confirm to permanently delete ' + (count === 1 ? 'it' : 'them') + '. This cannot be undone.')
+                    : 'Selected items will be permanently deleted only after you confirm this action.';
             }
 
             updateUserMeta();
@@ -677,9 +753,11 @@
             $('content-search').addEventListener('input', renderList);
             $('content-visibility-filter').addEventListener('change', renderList);
             $('content-select-all').addEventListener('click', function() {
-                getVisibleList().forEach(function(item) { selectedIds[item.key] = true; });
+                var visibleItems = getVisibleList();
+                var allSelected = visibleItems.length > 0 && visibleItems.every(function(item) { return !!selectedIds[item.key]; });
+                visibleItems.forEach(function(item) { selectedIds[item.key] = !allSelected; });
                 renderList();
-                setStatus('Selected all visible items.', 'success');
+                setStatus(allSelected ? 'Unselected all visible items.' : 'Selected all visible items.', 'success');
             });
             $('content-bulk-public').addEventListener('click', function() {
                 var keys = selectedVisibleKeys();
@@ -694,7 +772,27 @@
             $('content-bulk-delete').addEventListener('click', function() {
                 var keys = selectedVisibleKeys();
                 if (!keys.length) { setStatus('Select content first.', 'error'); return; }
-                applyVisibility(keys, 'deleted', true);
+                pendingDeleteKeys = keys.slice();
+                toggleDeleteModal(true, pendingDeleteKeys.length);
+            });
+            $('content-delete-cancel').addEventListener('click', function() {
+                pendingDeleteKeys = [];
+                toggleDeleteModal(false, 0);
+            });
+            $('content-delete-confirm').addEventListener('click', function() {
+                if (!pendingDeleteKeys.length) {
+                    toggleDeleteModal(false, 0);
+                    return;
+                }
+                permanentlyDelete(pendingDeleteKeys);
+                pendingDeleteKeys = [];
+                toggleDeleteModal(false, 0);
+            });
+            $('content-delete-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    pendingDeleteKeys = [];
+                    toggleDeleteModal(false, 0);
+                }
             });
 
             renderList();

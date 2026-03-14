@@ -14,7 +14,6 @@
             'studio-videos.html': true,
             'studio-shorts.html': true,
             'studio-captions.html': true,
-            'studio-short-edit.html': true,
             'studio-video-analytics.html': true,
             'studio-short-analytics.html': true,
             'studio-promotion.html': true,
