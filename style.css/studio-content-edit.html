@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Editor - Studio - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <style>
+        body.studio-body { min-height: 100vh; }
+        .studio-layout { display: flex; min-height: 100vh; }
+        .studio-sidebar { width: 240px; background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%); flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .studio-sidebar__logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+        .studio-sidebar__logo-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .studio-sidebar__logo-icon svg { width: 20px; height: 20px; color: #fff; }
+        .studio-sidebar__logo-text { font-size: 1.25rem; font-weight: 700; color: #fff; }
+        .studio-sidebar__nav { display: flex; flex-direction: column; gap: 4px; }
+        .studio-sidebar__item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.95rem; font-weight: 500; }
+        .studio-sidebar__item svg { width: 22px; height: 22px; flex-shrink: 0; }
+        .studio-main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 24px 32px 100px; }
+        .editor-back { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; background: rgba(139,92,246,0.25); color: #e9d5ff; font-size: 0.9rem; font-weight: 600; text-decoration: none; margin-bottom: 18px; width: fit-content; transition: all 0.2s; }
+        .editor-back:hover { background: rgba(139,92,246,0.4); color: #fff; }
+        .editor-topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+        .editor-title { margin: 0 0 8px; font-size: 1.95rem; font-weight: 800; color: #fff; letter-spacing: -0.03em; }
+        .editor-subtitle { margin: 0; max-width: 760px; color: rgba(220,228,255,0.74); line-height: 1.6; }
+        .editor-user { display: flex; align-items: center; gap: 12px; }
+        .editor-user__meta { display: grid; gap: 2px; text-align: right; }
+        .editor-user__label { color: rgba(220,228,255,0.56); font-size: 0.8rem; }
+        .editor-user__name { color: #fff; font-size: 0.95rem; font-weight: 700; }
+        .editor-user__avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; overflow: hidden; }
+        .editor-user__avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .editor-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 22px; }
+        .editor-card, .editor-panel { background: rgba(22,22,42,0.62); backdrop-filter: blur(12px); border: 1px solid rgba(139,92,246,0.24); border-radius: 18px; box-shadow: 0 0 24px rgba(139,92,246,0.08); }
+        .editor-card { padding: 18px; }
+        .editor-card__label { color: rgba(220,228,255,0.62); font-size: 0.82rem; font-weight: 600; margin-bottom: 10px; }
+        .editor-card__value { color: #fff; font-size: 1.65rem; font-weight: 800; letter-spacing: -0.03em; }
+        .editor-card__sub { margin-top: 6px; color: rgba(220,228,255,0.64); font-size: 0.82rem; }
+        .editor-grid { display: grid; grid-template-columns: minmax(0, 1.52fr) minmax(320px, 0.92fr); gap: 24px; align-items: start; }
+        .editor-column { display: grid; gap: 18px; }
+        .editor-panel { padding: 20px; }
+        .editor-panel__title { margin: 0 0 8px; color: #fff; font-size: 1rem; font-weight: 700; }
+        .editor-panel__text { margin: 0 0 16px; color: rgba(220,228,255,0.68); font-size: 0.9rem; line-height: 1.55; }
+        .editor-form { display: grid; gap: 14px; }
+        .editor-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+        .editor-field { display: grid; gap: 8px; }
+        .editor-label { color: rgba(235,239,255,0.86); font-size: 0.85rem; font-weight: 700; }
+        .editor-input, .editor-select, .editor-textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(139,92,246,0.28);
+            background: rgba(10,12,24,0.55);
+            color: #fff;
+            font: inherit;
+        }
+        .editor-textarea { min-height: 96px; resize: vertical; }
+        .editor-input:focus, .editor-select:focus, .editor-textarea:focus { outline: none; border-color: rgba(167,139,250,0.7); box-shadow: 0 0 0 3px rgba(139,92,246,0.16); }
+        .editor-switches { display: grid; gap: 12px; }
+        .editor-switch { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); }
+        .editor-switch__meta { display: grid; gap: 4px; }
+        .editor-switch__title { color: #fff; font-size: 0.92rem; font-weight: 700; }
+        .editor-switch__hint { color: rgba(220,228,255,0.6); font-size: 0.8rem; line-height: 1.45; }
+        .editor-switch__toggle { position: relative; width: 54px; height: 31px; border-radius: 999px; background: rgba(148,163,184,0.34); border: 1px solid rgba(255,255,255,0.12); cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+        .editor-switch__toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 23px; height: 23px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+        .editor-switch__toggle.is-on { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+        .editor-switch__toggle.is-on::after { transform: translateX(23px); }
+        .editor-upload-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+        .editor-upload { padding: 14px; border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); }
+        .editor-upload__label { color: rgba(235,239,255,0.86); font-size: 0.82rem; font-weight: 700; margin-bottom: 10px; display: block; }
+        .editor-upload__preview { width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; background: linear-gradient(135deg, rgba(99,102,241,0.24), rgba(139,92,246,0.22)); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 10px; }
+        .editor-upload__preview img { width: 100%; height: 100%; object-fit: cover; }
+        .editor-upload__preview svg { width: 34px; height: 34px; color: rgba(255,255,255,0.48); }
+        .editor-upload__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .editor-upload__file { display: none; }
+        .editor-btn { border: none; border-radius: 12px; padding: 11px 16px; font: inherit; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: transform 0.18s, box-shadow 0.18s, background 0.18s; }
+        .editor-btn:hover { transform: translateY(-1px); }
+        .editor-btn--primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; box-shadow: 0 10px 24px rgba(99,102,241,0.24); }
+        .editor-btn--secondary { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); color: #fff; }
+        .editor-btn--ghost { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: rgba(235,239,255,0.78); }
+        .editor-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+        .editor-status { min-height: 20px; color: rgba(220,228,255,0.72); font-size: 0.88rem; font-weight: 600; }
+        .editor-status.is-success { color: #86efac; }
+        .editor-status.is-error { color: #fca5a5; }
+        .editor-preview { display: grid; gap: 14px; }
+        .editor-preview__hero { min-height: 200px; border-radius: 18px; padding: 18px; background: linear-gradient(135deg, rgba(99,102,241,0.36), rgba(139,92,246,0.28)); position: relative; overflow: hidden; }
+        .editor-preview__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+        .editor-preview__overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,9,18,0.12), rgba(6,9,18,0.76)); }
+        .editor-preview__meta { position: relative; z-index: 1; display: grid; gap: 10px; height: 100%; align-content: end; }
+        .editor-pill { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 999px; background: rgba(255,255,255,0.14); color: #fff; font-size: 0.74rem; font-weight: 700; width: fit-content; }
+        .editor-preview__title { margin: 0; color: #fff; font-size: 1.2rem; font-weight: 800; line-height: 1.2; }
+        .editor-preview__desc { margin: 0; color: rgba(235,239,255,0.84); font-size: 0.87rem; line-height: 1.55; }
+        .editor-meta-list { display: grid; gap: 10px; }
+        .editor-meta-item { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+        .editor-meta-item:first-child { border-top: none; padding-top: 0; }
+        .editor-meta-item__label { color: #fff; font-size: 0.9rem; font-weight: 600; }
+        .editor-meta-item__value { color: #a5b4fc; font-size: 0.86rem; font-weight: 700; text-align: right; }
+        .editor-health { display: grid; gap: 12px; }
+        .editor-health__row { display: grid; gap: 8px; }
+        .editor-health__top { display: flex; justify-content: space-between; gap: 12px; color: rgba(235,239,255,0.88); font-size: 0.84rem; }
+        .editor-health__line { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+        .editor-health__fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #22c55e, #6366f1); }
+        .editor-empty { padding: 24px 16px; text-align: center; color: rgba(220,228,255,0.62); font-size: 0.92rem; background: rgba(255,255,255,0.03); border-radius: 14px; border: 1px dashed rgba(255,255,255,0.1); }
+        @media (max-width: 1180px) {
+            .editor-grid { grid-template-columns: 1fr; }
+            .editor-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 900px) {
+            .studio-layout { display: block; }
+            .studio-sidebar { width: 100%; padding-bottom: 12px; }
+            .studio-sidebar__nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 0 10px; }
+            .studio-main { padding: 20px 16px 100px; }
+            .editor-topbar { flex-direction: column; align-items: stretch; }
+            .editor-grid-2 { grid-template-columns: 1fr; }
+            .editor-upload-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 720px) {
+            .editor-cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="home-body has-bottom-nav studio-body">
+    <div class="bg"></div>
+    <div class="studio-layout">
+        <aside class="studio-sidebar">
+            <div class="studio-sidebar__logo">
+                <div class="studio-sidebar__logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+                <span class="studio-sidebar__logo-text">Studio</span>
+            </div>
+            <nav class="studio-sidebar__nav">
+                <a href="studio.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+                <a href="upload.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Upload</span></a>
+                <a href="studio-earning.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M15 9.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span>Earning</span></a>
+                <a href="studio-monetization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><path d="M12 15h6"/></svg><span>Monetization</span></a>
+                <a href="studio.html#analytics" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Analytics</span></a>
+                <a href="studio-content-detection.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Content Detection</span></a>
+                <a href="studio-customization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Customization</span></a>
+                <a href="studio-content.html" class="studio-sidebar__item studio-sidebar__item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg><span>Content</span></a>
+                <a href="channel.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span>Channel</span></a>
+                <a href="settings.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a>
+            </nav>
+        </aside>
+
+        <main class="studio-main">
+            <a href="studio-content.html" class="editor-back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                Back to Content Manager
+            </a>
+
+            <div class="editor-topbar">
+                <div>
+                    <h1 class="editor-title" id="editor-page-title">Advanced Content Editor</h1>
+                    <p class="editor-subtitle" id="editor-page-subtitle">Tune metadata, discovery settings, visuals, scheduling, and viewer controls from one advanced editing workspace.</p>
+                </div>
+                <div class="editor-user">
+                    <div class="editor-user__meta">
+                        <span class="editor-user__label">Studio creator</span>
+                        <span class="editor-user__name" id="editor-user-name">CREATOR</span>
+                    </div>
+                    <div class="editor-user__avatar" id="editor-user-avatar">C</div>
+                </div>
+            </div>
+
+            <div id="editor-not-found" class="editor-empty" style="display:none;">This content item could not be found.</div>
+
+            <div id="editor-shell" style="display:none;">
+                <div class="editor-cards">
+                    <div class="editor-card">
+                        <div class="editor-card__label">Content type</div>
+                        <div class="editor-card__value" id="editor-card-type">Video</div>
+                        <div class="editor-card__sub">Editing mode adapts to the selected format</div>
+                    </div>
+                    <div class="editor-card">
+                        <div class="editor-card__label">Visibility</div>
+                        <div class="editor-card__value" id="editor-card-visibility">Public</div>
+                        <div class="editor-card__sub">How this content appears to viewers</div>
+                    </div>
+                    <div class="editor-card">
+                        <div class="editor-card__label">Metadata score</div>
+                        <div class="editor-card__value" id="editor-card-score">0%</div>
+                        <div class="editor-card__sub">Title, description, tags, schedule and visuals</div>
+                    </div>
+                    <div class="editor-card">
+                        <div class="editor-card__label">Current reach</div>
+                        <div class="editor-card__value" id="editor-card-views">0</div>
+                        <div class="editor-card__sub">Views or peak viewers for this item</div>
+                    </div>
+                </div>
+
+                <div class="editor-grid">
+                    <div class="editor-column">
+                        <section class="editor-panel">
+                            <h2 class="editor-panel__title">Primary Details</h2>
+                            <p class="editor-panel__text">Update the title or caption body, add a richer description, and keep the main presentation consistent before viewers see it.</p>
+                            <div class="editor-form">
+                                <div class="editor-field">
+                                    <label class="editor-label" id="editor-title-label" for="editor-title">Title</label>
+                                    <input class="editor-input" id="editor-title" type="text" maxlength="160" placeholder="Enter a strong title">
+                                </div>
+                                <div class="editor-field">
+                                    <label class="editor-label" id="editor-description-label" for="editor-description">Description</label>
+                                    <textarea class="editor-textarea" id="editor-description" placeholder="Add supporting context, summary, links, or creator notes."></textarea>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="editor-panel">
+                            <h2 class="editor-panel__title">Discovery And Audience</h2>
+                            <p class="editor-panel__text">Improve how this content is categorized, discovered, and controlled for different viewer groups.</p>
+                            <div class="editor-form">
+                                <div class="editor-grid-2">
+                                    <div class="editor-field">
+                                        <label class="editor-label" for="editor-visibility">Visibility</label>
+                                        <select class="editor-select" id="editor-visibility">
+                                            <option value="public">Public</option>
+                                            <option value="private">Private</option>
+                                            <option value="unlisted">Unlisted</option>
+                                            <option value="deleted">Deleted</option>
+                                            <option value="live">Live now</option>
+                                        </select>
+                                    </div>
+                                    <div class="editor-field">
+                                        <label class="editor-label" for="editor-category">Category</label>
+                                        <select class="editor-select" id="editor-category">
+                                            <option value="general">General</option>
+                                            <option value="nature">Nature</option>
+                                            <option value="travel">Travel</option>
+                                            <option value="tech">Tech</option>
+                                            <option value="music">Music</option>
+                                            <option value="gaming">Gaming</option>
+                                            <option value="education">Education</option>
+                                            <option value="entertainment">Entertainment</option>
+                                            <option value="food">Food</option>
+                                            <option value="vlog">Vlog</option>
+                                            <option value="sports">Sports</option>
+                                            <option value="news">News</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="editor-grid-2">
+                                    <div class="editor-field">
+                                        <label class="editor-label" for="editor-language">Content language</label>
+                                        <select class="editor-select" id="editor-language">
+                                            <option value="en">English</option>
+                                            <option value="bn">Bangla</option>
+                                            <option value="hi">Hindi</option>
+                                            <option value="ar">Arabic</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="editor-field">
+                                        <label class="editor-label" for="editor-age-rating">Audience setting</label>
+                                        <select class="editor-select" id="editor-age-rating">
+                                            <option value="all">Suitable for everyone</option>
+                                            <option value="13+">13+</option>
+                                            <option value="18+">18+</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="editor-field">
+                                    <label class="editor-label" for="editor-tags">Hashtags / tags</label>
+                                    <input class="editor-input" id="editor-tags" type="text" maxlength="240" placeholder="e.g. #travel #music #creator">
+                                </div>
+                                <div class="editor-switches">
+                                    <div class="editor-switch">
+                                        <div class="editor-switch__meta">
+                                            <span class="editor-switch__title">Allow comments</span>
+                                            <span class="editor-switch__hint">Keep the discussion open for viewers on this content.</span>
+                                        </div>
+                                        <button type="button" class="editor-switch__toggle" data-key="allowComments"></button>
+                                    </div>
+                                    <div class="editor-switch">
+                                        <div class="editor-switch__meta">
+                                            <span class="editor-switch__title">Allow remix / reuse</span>
+                                            <span class="editor-switch__hint">Let other creators reuse this content in supported formats.</span>
+                                        </div>
+                                        <button type="button" class="editor-switch__toggle" data-key="allowRemix"></button>
+                                    </div>
+                                    <div class="editor-switch">
+                                        <div class="editor-switch__meta">
+                                            <span class="editor-switch__title">Subscribers only spotlight</span>
+                                            <span class="editor-switch__hint">Prioritize this content for subscribers and channel loyal viewers.</span>
+                                        </div>
+                                        <button type="button" class="editor-switch__toggle" data-key="subscriberOnly"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="editor-panel">
+                            <h2 class="editor-panel__title" id="editor-visual-title">Visual Assets</h2>
+                            <p class="editor-panel__text" id="editor-visual-text">Refresh the thumbnail or supporting artwork so the content looks polished in feeds and previews.</p>
+                            <div class="editor-upload-grid" id="editor-upload-grid"></div>
+                        </section>
+                    </div>
+
+                    <div class="editor-column">
+                        <section class="editor-panel">
+                            <h2 class="editor-panel__title">Live Preview</h2>
+                            <div class="editor-preview">
+                                <div class="editor-preview__hero">
+                                    <img id="editor-preview-image" class="editor-preview__image" alt="">
+                                    <div class="editor-preview__overlay"></div>
+                                    <div class="editor-preview__meta">
+                                        <span class="editor-pill" id="editor-preview-pill">VIDEO</span>
+                                        <h3 class="editor-preview__title" id="editor-preview-title">Untitled content</h3>
+                                        <p class="editor-preview__desc" id="editor-preview-description">Your preview summary will update as you edit.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="editor-panel">
+                            <h2 class="editor-panel__title">Publishing Controls</h2>
+                            <p class="editor-panel__text">Set a schedule, pin important content, and leave internal notes for your future workflow.</p>
+                            <div class="editor-form">
+                                <div class="editor-field">
+                                    <label class="editor-label" for="editor-schedule">Schedule publish time</label>
+                                    <input class="editor-input" id="editor-schedule" type="datetime-local">
+                                </div>
+                                <div class="editor-field">
+                                    <label class="editor-label" for="editor-notes">Internal creator notes</label>
+                                    <textarea class="editor-textarea" id="editor-notes" placeholder="Optional notes for promotion, revisions, or reminders."></textarea>
+                                </div>
+                                <div class="editor-switches">
+                                    <div class="editor-switch">
+                                        <div class="editor-switch__meta">
+                                            <span class="editor-switch__title">Pin to channel spotlight</span>
+                                            <span class="editor-switch__hint">Mark this content as a featured highlight for your audience.</span>
+                                        </div>
+                                        <button type="button" class="editor-switch__toggle" data-key="pinned"></button>
+                                    </div>
+                                    <div class="editor-switch">
+                                        <div class="editor-switch__meta">
+                                            <span class="editor-switch__title">Mark as priority content</span>
+                                            <span class="editor-switch__hint">Use this to keep the content in your creator workflow focus list.</span>
+                                        </div>
+                                        <button type="button" class="editor-switch__toggle" data-key="spotlight"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="editor-panel">
+                            <h2 class="editor-panel__title">Editor Health</h2>
+                            <div class="editor-health" id="editor-health"></div>
+                        </section>
+
+                        <section class="editor-panel">
+                            <h2 class="editor-panel__title">Quick Summary</h2>
+                            <div class="editor-meta-list" id="editor-meta-list"></div>
+                            <div class="editor-actions" style="margin-top:16px;">
+                                <button type="button" class="editor-btn editor-btn--primary" id="editor-save-btn">Save changes</button>
+                                <a href="studio-content.html" class="editor-btn editor-btn--secondary" style="text-decoration:none;">Cancel</a>
+                                <button type="button" class="editor-btn editor-btn--ghost" id="editor-reset-btn">Reset form</button>
+                            </div>
+                            <div class="editor-status" id="editor-status"></div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+        <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+        <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+        <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+        <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+    </nav>
+
+    <script>
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var requestedType = (params.get('type') || '').toLowerCase();
+            var requestedId = params.get('id') || '';
+            var shell = document.getElementById('editor-shell');
+            var notFound = document.getElementById('editor-not-found');
+            var statusEl = document.getElementById('editor-status');
+            var currentItem = null;
+            var currentType = '';
+            var uploadSlots = [];
+
+            function $(id) { return document.getElementById(id); }
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+            function compact(value) {
+                value = Number(value) || 0;
+                if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                if (value >= 1000) return (value / 1000).toFixed(1) + 'K';
+                return String(Math.round(value));
+            }
+            function parseCount(value) {
+                var raw = String(value || '0').trim().toUpperCase();
+                var match = raw.match(/^([\d.]+)\s*([KM]?)$/);
+                if (!match) return parseInt(raw, 10) || 0;
+                var amount = parseFloat(match[1]) || 0;
+                if (match[2] === 'M') return Math.round(amount * 1000000);
+                if (match[2] === 'K') return Math.round(amount * 1000);
+                return Math.round(amount);
+            }
+            function readJson(key, fallback) {
+                try {
+                    var raw = localStorage.getItem(key);
+                    if (raw) return JSON.parse(raw);
+                } catch (_) {}
+                return fallback;
+            }
+            function writeJson(key, value) {
+                try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
+            }
+            function setStatus(message, type) {
+                statusEl.textContent = message || '';
+                statusEl.className = 'editor-status' + (type ? ' is-' + type : '');
+            }
+            function typeLabel(type) {
+                if (type === 'video') return 'Video';
+                if (type === 'short') return 'Short';
+                if (type === 'caption') return 'Caption';
+                if (type === 'live') return 'Live';
+                return 'Content';
+            }
+            function updateUserMeta() {
+                var name = (localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'Creator').toString().trim();
+                $('editor-user-name').textContent = name.toUpperCase().slice(0, 18);
+                var avatar = $('editor-user-avatar');
+                var photo = localStorage.getItem('nokUserPhotoUrl') || '';
+                if (!photo) {
+                    try {
+                        var channelData = JSON.parse(localStorage.getItem('nokChannelData') || '{}');
+                        if (channelData.photoUrl) photo = channelData.photoUrl;
+                    } catch (_) {}
+                }
+                if (photo) avatar.innerHTML = '<img src="' + photo.replace(/"/g, '&quot;') + '" alt="">';
+                else {
+                    avatar.innerHTML = '';
+                    avatar.textContent = name ? name.charAt(0).toUpperCase() : 'C';
+                }
+            }
+            function getStores() {
+                return {
+                    video: { key: 'nokUserVideos', list: readJson('nokUserVideos', []) },
+                    short: { key: 'nokShortsVideos', list: readJson('nokShortsVideos', []) },
+                    caption: { key: 'nokCaptionPosts', list: readJson('nokCaptionPosts', []) },
+                    live: { key: 'nokLiveSessions', list: readJson('nokLiveSessions', []) }
+                };
+            }
+            function locateItem() {
+                var stores = getStores();
+                var types = requestedType ? [requestedType] : ['video', 'short', 'caption', 'live'];
+                for (var t = 0; t < types.length; t++) {
+                    var type = types[t];
+                    var store = stores[type];
+                    if (!store) continue;
+                    for (var i = 0; i < store.list.length; i++) {
+                        var item = store.list[i];
+                        var itemId = String(item.id || ((type === 'caption' ? 'caption-' : type + '-') + (item.createdAt || item.startedAt || i)));
+                        if (!requestedId || itemId === String(requestedId)) {
+                            return { type: type, index: i, item: item, storeKey: store.key, id: itemId };
+                        }
+                    }
+                }
+                return null;
+            }
+            function buildState(found) {
+                var item = found.item;
+                var type = found.type;
+                var title = '';
+                var description = '';
+                var views = 0;
+                var tags = item.hashtags || item.tags || '';
+                var imageSet = [];
+
+                if (type === 'video') {
+                    title = item.title || '';
+                    description = item.desc || item.description || '';
+                    views = parseCount(item.views || 0);
+                    imageSet = Array.isArray(item.customThumbs) && item.customThumbs.length ? item.customThumbs.slice(0, 3) : (item.thumbData ? [item.thumbData] : []);
+                } else if (type === 'short') {
+                    title = item.title || '';
+                    description = item.desc || item.description || '';
+                    views = parseCount(item.views || item.viewCount || 0);
+                    imageSet = item.thumbData ? [item.thumbData] : [];
+                } else if (type === 'caption') {
+                    title = item.caption || '';
+                    description = item.desc || item.description || '';
+                    views = 0;
+                    imageSet = item.photoData ? [item.photoData] : [];
+                } else {
+                    title = item.title || '';
+                    description = item.description || item.desc || '';
+                    views = parseCount(item.peakViewers || item.totalViewers || item.viewers || 0);
+                    imageSet = item.posterData ? [item.posterData] : [];
+                }
+
+                return {
+                    type: type,
+                    id: found.id,
+                    index: found.index,
+                    storeKey: found.storeKey,
+                    item: item,
+                    title: title,
+                    description: description,
+                    visibility: item.visibility || (item.status === 'live' ? 'live' : 'public'),
+                    category: item.category || 'general',
+                    tags: tags,
+                    language: item.language || 'en',
+                    ageRating: item.ageRating || 'all',
+                    allowComments: item.allowComments !== false,
+                    allowRemix: item.allowRemix !== false,
+                    subscriberOnly: !!item.subscriberOnly,
+                    pinned: !!item.pinned,
+                    spotlight: !!item.spotlight,
+                    scheduleAt: item.scheduleAt || '',
+                    notes: item.creatorNotes || item.notes || '',
+                    imageSet: imageSet,
+                    views: views
+                };
+            }
+            function renderUploadSlots(type, state) {
+                var wrap = $('editor-upload-grid');
+                var count = type === 'video' ? 3 : 1;
+                uploadSlots = [];
+                wrap.innerHTML = '';
+                for (var i = 0; i < count; i++) {
+                    var slot = document.createElement('div');
+                    slot.className = 'editor-upload';
+                    slot.innerHTML =
+                        '<span class="editor-upload__label">' + (count === 1 ? 'Main artwork' : 'Thumbnail ' + (i + 1)) + '</span>' +
+                        '<div class="editor-upload__preview" id="editor-upload-preview-' + i + '">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>' +
+                        '</div>' +
+                        '<div class="editor-upload__actions">' +
+                        '<label class="editor-btn editor-btn--secondary" for="editor-upload-file-' + i + '">Upload</label>' +
+                        '<input class="editor-upload__file" type="file" id="editor-upload-file-' + i + '" accept="image/*">' +
+                        '<button type="button" class="editor-btn editor-btn--ghost" id="editor-upload-clear-' + i + '">Remove</button>' +
+                        '</div>';
+                    wrap.appendChild(slot);
+
+                    var preview = $('editor-upload-preview-' + i);
+                    var fileInput = $('editor-upload-file-' + i);
+                    var clearBtn = $('editor-upload-clear-' + i);
+                    var src = state.imageSet[i] || '';
+                    uploadSlots.push({ preview: preview, fileInput: fileInput, clearBtn: clearBtn, src: src });
+
+                    if (src && src.indexOf('data:') === 0) preview.innerHTML = '<img src="' + src.replace(/"/g, '&quot;') + '" alt="">';
+
+                    fileInput.addEventListener('change', (function(slotRef) {
+                        return function() {
+                            var file = this.files && this.files[0];
+                            if (!file || !/^image\//.test(file.type)) return;
+                            var reader = new FileReader();
+                            reader.onload = function() {
+                                slotRef.src = String(reader.result || '');
+                                slotRef.preview.innerHTML = '<img src="' + slotRef.src.replace(/"/g, '&quot;') + '" alt="">';
+                                updateDerivedUI();
+                            };
+                            reader.readAsDataURL(file);
+                        };
+                    })(uploadSlots[i]));
+
+                    clearBtn.addEventListener('click', (function(slotRef) {
+                        return function() {
+                            slotRef.src = '';
+                            slotRef.preview.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>';
+                            updateDerivedUI();
+                        };
+                    })(uploadSlots[i]));
+                }
+            }
+            function syncForm(state) {
+                $('editor-page-title').textContent = 'Advanced ' + typeLabel(state.type) + ' Editor';
+                $('editor-card-type').textContent = typeLabel(state.type);
+                $('editor-title').value = state.title;
+                $('editor-description').value = state.description;
+                $('editor-visibility').value = state.visibility === 'live' ? 'live' : state.visibility;
+                $('editor-category').value = state.category;
+                $('editor-tags').value = state.tags;
+                $('editor-language').value = state.language;
+                $('editor-age-rating').value = state.ageRating;
+                $('editor-schedule').value = state.scheduleAt;
+                $('editor-notes').value = state.notes;
+                $('editor-title-label').textContent = state.type === 'caption' ? 'Caption text' : 'Title';
+                $('editor-description-label').textContent = state.type === 'live' ? 'Stream description' : 'Description';
+                $('editor-visual-title').textContent = state.type === 'caption' ? 'Caption Artwork' : 'Visual Assets';
+                $('editor-visual-text').textContent = state.type === 'caption'
+                    ? 'Update the supporting image for this caption post and keep feed presentation consistent.'
+                    : 'Refresh thumbnails or artwork so the content looks polished in feeds and previews.';
+                document.querySelectorAll('.editor-switch__toggle[data-key]').forEach(function(toggle) {
+                    var key = toggle.getAttribute('data-key');
+                    var on = !!state[key];
+                    toggle.classList.toggle('is-on', on);
+                    toggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+                });
+                renderUploadSlots(state.type, state);
+                updateDerivedUI();
+            }
+            function collectFormState() {
+                var state = currentItem;
+                state.title = $('editor-title').value.trim();
+                state.description = $('editor-description').value.trim();
+                state.visibility = $('editor-visibility').value;
+                state.category = $('editor-category').value;
+                state.tags = $('editor-tags').value.trim();
+                state.language = $('editor-language').value;
+                state.ageRating = $('editor-age-rating').value;
+                state.scheduleAt = $('editor-schedule').value;
+                state.notes = $('editor-notes').value.trim();
+                document.querySelectorAll('.editor-switch__toggle[data-key]').forEach(function(toggle) {
+                    state[toggle.getAttribute('data-key')] = toggle.classList.contains('is-on');
+                });
+                state.imageSet = uploadSlots.map(function(slot) { return slot.src; }).filter(function(src) { return !!src; });
+                return state;
+            }
+            function updateDerivedUI() {
+                var state = collectFormState();
+                var previewImage = $('editor-preview-image');
+                var primary = state.imageSet[0] || '';
+                if (primary && primary.indexOf('data:') === 0) {
+                    previewImage.src = primary;
+                    previewImage.style.display = 'block';
+                } else {
+                    previewImage.removeAttribute('src');
+                    previewImage.style.display = 'none';
+                }
+                $('editor-preview-pill').textContent = typeLabel(state.type).toUpperCase() + ' • ' + state.visibility.toUpperCase();
+                $('editor-preview-title').textContent = state.title || 'Untitled ' + typeLabel(state.type).toLowerCase();
+                $('editor-preview-description').textContent = state.description || 'Add supporting details, story context, or creator notes to improve this content.';
+
+                var score = 0;
+                if (state.title) score += 25;
+                if (state.description) score += 20;
+                if (state.tags) score += 15;
+                if (state.imageSet.length) score += 20;
+                if (state.scheduleAt) score += 10;
+                if (state.category && state.category !== 'general') score += 10;
+
+                $('editor-card-visibility').textContent = state.visibility.charAt(0).toUpperCase() + state.visibility.slice(1);
+                $('editor-card-score').textContent = score + '%';
+                $('editor-card-views').textContent = compact(state.views);
+
+                var healthRows = [
+                    { label: 'Metadata readiness', value: score },
+                    { label: 'Visual coverage', value: state.imageSet.length ? Math.min(100, state.imageSet.length * 34) : 0 },
+                    { label: 'Discovery strength', value: Math.min(100, (state.tags ? 35 : 0) + (state.category !== 'general' ? 25 : 0) + (state.language !== 'en' ? 15 : 10) + (state.description ? 25 : 0)) }
+                ];
+                $('editor-health').innerHTML = healthRows.map(function(row) {
+                    return '<div class="editor-health__row"><div class="editor-health__top"><span>' + row.label + '</span><strong>' + row.value + '%</strong></div><div class="editor-health__line"><div class="editor-health__fill" style="width:' + row.value + '%"></div></div></div>';
+                }).join('');
+
+                var metaRows = [
+                    { label: 'Item ID', value: state.id },
+                    { label: 'Category', value: state.category },
+                    { label: 'Scheduled', value: state.scheduleAt ? state.scheduleAt.replace('T', ' ') : 'Not scheduled' },
+                    { label: 'Comments', value: state.allowComments ? 'Enabled' : 'Disabled' },
+                    { label: 'Pinned', value: state.pinned ? 'Yes' : 'No' }
+                ];
+                $('editor-meta-list').innerHTML = metaRows.map(function(row) {
+                    return '<div class="editor-meta-item"><span class="editor-meta-item__label">' + escapeHtml(row.label) + '</span><span class="editor-meta-item__value">' + escapeHtml(row.value) + '</span></div>';
+                }).join('');
+            }
+            function saveCurrent() {
+                var state = collectFormState();
+                if (!state.title) {
+                    setStatus('Add a title or caption text before saving.', 'error');
+                    $('editor-title').focus();
+                    return;
+                }
+                var stores = getStores();
+                var store = stores[state.type];
+                if (!store || !store.list[state.index]) {
+                    setStatus('This content item could not be updated.', 'error');
+                    return;
+                }
+                var item = store.list[state.index];
+
+                if (state.type === 'video') {
+                    item.title = state.title;
+                    item.desc = state.description;
+                    item.visibility = state.visibility === 'live' ? 'public' : state.visibility;
+                    item.category = state.category;
+                    item.hashtags = state.tags;
+                    item.language = state.language;
+                    item.ageRating = state.ageRating;
+                    item.allowComments = state.allowComments;
+                    item.allowRemix = state.allowRemix;
+                    item.subscriberOnly = state.subscriberOnly;
+                    item.pinned = state.pinned;
+                    item.spotlight = state.spotlight;
+                    item.scheduleAt = state.scheduleAt;
+                    item.creatorNotes = state.notes;
+                    item.customThumbs = state.imageSet.slice(0, 3);
+                    item.thumbData = state.imageSet[0] || item.thumbData || '';
+                } else if (state.type === 'short') {
+                    item.title = state.title;
+                    item.desc = state.description;
+                    item.visibility = state.visibility === 'live' ? 'public' : state.visibility;
+                    item.category = state.category;
+                    item.hashtags = state.tags;
+                    item.language = state.language;
+                    item.ageRating = state.ageRating;
+                    item.allowComments = state.allowComments;
+                    item.allowRemix = state.allowRemix;
+                    item.subscriberOnly = state.subscriberOnly;
+                    item.pinned = state.pinned;
+                    item.spotlight = state.spotlight;
+                    item.scheduleAt = state.scheduleAt;
+                    item.creatorNotes = state.notes;
+                    item.thumbData = state.imageSet[0] || item.thumbData || '';
+                } else if (state.type === 'caption') {
+                    item.caption = state.title;
+                    item.desc = state.description;
+                    item.visibility = state.visibility === 'live' ? 'public' : state.visibility;
+                    item.category = state.category;
+                    item.hashtags = state.tags;
+                    item.language = state.language;
+                    item.ageRating = state.ageRating;
+                    item.allowComments = state.allowComments;
+                    item.allowRemix = state.allowRemix;
+                    item.subscriberOnly = state.subscriberOnly;
+                    item.pinned = state.pinned;
+                    item.spotlight = state.spotlight;
+                    item.scheduleAt = state.scheduleAt;
+                    item.creatorNotes = state.notes;
+                    item.photoData = state.imageSet[0] || item.photoData || '';
+                } else {
+                    item.title = state.title;
+                    item.description = state.description;
+                    item.visibility = state.visibility;
+                    item.status = state.visibility === 'live' ? 'live' : 'ended';
+                    item.category = state.category;
+                    item.hashtags = state.tags;
+                    item.language = state.language;
+                    item.ageRating = state.ageRating;
+                    item.allowComments = state.allowComments;
+                    item.allowRemix = state.allowRemix;
+                    item.subscriberOnly = state.subscriberOnly;
+                    item.pinned = state.pinned;
+                    item.spotlight = state.spotlight;
+                    item.scheduleAt = state.scheduleAt;
+                    item.creatorNotes = state.notes;
+                    item.posterData = state.imageSet[0] || item.posterData || '';
+                }
+
+                writeJson(store.key, store.list);
+                setStatus(typeLabel(state.type) + ' updated successfully.', 'success');
+                updateDerivedUI();
+            }
+            function resetForm() {
+                currentItem = buildState(locateItem());
+                syncForm(currentItem);
+                setStatus('Form reset to saved values.', 'success');
+            }
+
+            updateUserMeta();
+            var found = locateItem();
+            if (!found || !requestedId) {
+                notFound.style.display = 'block';
+                return;
+            }
+
+            currentType = found.type;
+            currentItem = buildState(found);
+            shell.style.display = 'block';
+            syncForm(currentItem);
+
+            ['editor-title', 'editor-description', 'editor-visibility', 'editor-category', 'editor-tags', 'editor-language', 'editor-age-rating', 'editor-schedule', 'editor-notes'].forEach(function(id) {
+                var node = $(id);
+                if (!node) return;
+                node.addEventListener('input', updateDerivedUI);
+                node.addEventListener('change', updateDerivedUI);
+            });
+            document.querySelectorAll('.editor-switch__toggle[data-key]').forEach(function(toggle) {
+                toggle.addEventListener('click', function() {
+                    this.classList.toggle('is-on');
+                    this.setAttribute('aria-pressed', this.classList.contains('is-on') ? 'true' : 'false');
+                    updateDerivedUI();
+                });
+            });
+            $('editor-save-btn').addEventListener('click', saveCurrent);
+            $('editor-reset-btn').addEventListener('click', resetForm);
+        })();
+    </script>
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

@@ -69,6 +69,12 @@
         .content-list { display: grid; gap: 12px; }
         .content-item { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); }
         .content-item__select { width: 18px; height: 18px; accent-color: #8b5cf6; }
+        .content-item__main { display: flex; align-items: center; gap: 14px; min-width: 0; }
+        .content-item__thumb { width: 112px; min-width: 112px; height: 64px; border-radius: 12px; overflow: hidden; background: rgba(99,102,241,0.14); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; }
+        .content-item__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .content-item__thumb-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(99,102,241,0.26), rgba(139,92,246,0.3)); color: rgba(255,255,255,0.7); }
+        .content-item__thumb-placeholder svg { width: 26px; height: 26px; }
+        .content-item__body { min-width: 0; }
         .content-item__top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
         .content-item__title { color: #fff; font-size: 0.96rem; font-weight: 700; margin: 0; }
         .content-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; font-size: 0.74rem; font-weight: 700; }
@@ -117,6 +123,8 @@
             .content-cards { grid-template-columns: 1fr; }
             .content-controls { grid-template-columns: 1fr; }
             .content-item { grid-template-columns: 1fr; }
+            .content-item__main { align-items: flex-start; }
+            .content-item__thumb { width: 96px; min-width: 96px; height: 56px; }
             .content-item__actions { justify-content: flex-start; }
         }
     </style>
@@ -406,12 +414,13 @@
                         id: String(v.id || ('video-' + index)),
                         type: 'video',
                         title: v.title || 'Untitled video',
+                        thumbSrc: v.thumbData || '',
                         visibility: v.visibility || 'public',
                         views: parseInt(v.views || 0, 10) || 0,
                         likes: parseInt(v.likes || 0, 10) || 0,
                         comments: parseInt(v.comments || 0, 10) || 0,
                         createdAt: Number(v.createdAt || Date.now() - index * 1000),
-                        editUrl: 'studio-video-edit.html?id=' + encodeURIComponent(v.id || ('video-' + index)),
+                        editUrl: 'studio-content-edit.html?type=video&id=' + encodeURIComponent(v.id || ('video-' + index)),
                         viewUrl: 'video.html?id=' + encodeURIComponent(v.id || ('video-' + index))
                     };
                 });
@@ -421,12 +430,13 @@
                         id: String(s.id || ('short-' + index)),
                         type: 'short',
                         title: s.title || 'Untitled short',
+                        thumbSrc: s.thumbData || s.videoData || '',
                         visibility: s.visibility || 'public',
                         views: parseShortCount(s.views || s.viewCount || 0),
                         likes: parseShortCount(s.likes || 0),
                         comments: parseInt(s.comments || 0, 10) || 0,
                         createdAt: Number(s.createdAt || Date.now() - index * 1200),
-                        editUrl: 'studio-short-edit.html?id=' + encodeURIComponent(s.id || ('short-' + index)),
+                        editUrl: 'studio-content-edit.html?type=short&id=' + encodeURIComponent(s.id || ('short-' + index)),
                         viewUrl: 'shorts.html?id=' + encodeURIComponent(s.id || ('short-' + index))
                     };
                 });
@@ -437,12 +447,13 @@
                         id: cid,
                         type: 'caption',
                         title: (c.caption || 'Caption post').slice(0, 72),
+                        thumbSrc: c.photoData || '',
                         visibility: c.visibility || 'public',
                         views: 0,
                         likes: parseInt(c.likes || 0, 10) || 0,
                         comments: parseInt(c.comments || 0, 10) || 0,
                         createdAt: Number(c.createdAt || Date.now() - index * 1400),
-                        editUrl: 'studio-captions.html',
+                        editUrl: 'studio-content-edit.html?type=caption&id=' + encodeURIComponent(cid),
                         viewUrl: 'captions.html'
                     };
                 });
@@ -453,12 +464,13 @@
                         id: lid,
                         type: 'live',
                         title: live.title || 'Untitled live stream',
+                        thumbSrc: live.thumbnailData || live.thumbData || '',
                         visibility: live.status === 'live' ? 'live' : (live.visibility || 'public'),
                         views: parseInt(live.peakViewers || live.totalViewers || live.viewers || 0, 10) || 0,
                         likes: parseInt(live.likes || 0, 10) || 0,
                         comments: parseInt(live.comments || 0, 10) || 0,
                         createdAt: Number(live.startedAt || live.createdAt || Date.now() - index * 1600),
-                        editUrl: 'live.html',
+                        editUrl: 'studio-content-edit.html?type=live&id=' + encodeURIComponent(lid),
                         viewUrl: 'live.html'
                     };
                 });
@@ -548,6 +560,21 @@
                 if (type === 'deleted') return 'content-badge--private';
                 return 'content-badge--public';
             }
+            function thumbPlaceholderIcon(type) {
+                if (type === 'caption') {
+                    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>';
+                }
+                if (type === 'live') {
+                    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="15" height="10" rx="2"/><path d="M17 10l5-3v10l-5-3z"/><circle cx="7" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>';
+                }
+                return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>';
+            }
+            function renderThumb(item) {
+                if (item.thumbSrc) {
+                    return '<div class="content-item__thumb"><img src="' + escapeHtml(item.thumbSrc) + '" alt=""></div>';
+                }
+                return '<div class="content-item__thumb"><div class="content-item__thumb-placeholder">' + thumbPlaceholderIcon(item.type) + '</div></div>';
+            }
             function renderList() {
                 var list = getVisibleList();
                 updateCards(list);
@@ -560,13 +587,16 @@
                     var checked = selectedIds[item.key] ? 'checked' : '';
                     return '<div class="content-item">' +
                         '<input type="checkbox" class="content-item__select" data-select-key="' + item.key + '" ' + checked + '>' +
-                        '<div>' +
+                        '<div class="content-item__main">' +
+                        renderThumb(item) +
+                        '<div class="content-item__body">' +
                         '<div class="content-item__top">' +
                         '<h3 class="content-item__title">' + escapeHtml(item.title) + '</h3>' +
                         '<span class="content-badge ' + typeBadge(item.type) + '">' + typeLabel(item.type) + '</span>' +
                         '<span class="content-badge ' + visibilityBadge(item.visibility) + '">' + item.visibility + '</span>' +
                         '</div>' +
                         '<div class="content-item__meta"><span>ID: ' + escapeHtml(item.id) + '</span><span>Views: ' + compact(item.views) + '</span><span>Likes: ' + compact(item.likes) + '</span><span>Comments: ' + compact(item.comments) + '</span></div>' +
+                        '</div>' +
                         '</div>' +
                         '<div class="content-item__actions">' +
                         '<select class="content-inline-select" data-visibility-key="' + item.key + '">' +

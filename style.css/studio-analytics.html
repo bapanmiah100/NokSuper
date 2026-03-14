@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Studio - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <style>
+        body.studio-body { min-height: 100vh; }
+        .studio-layout { display: flex; min-height: 100vh; }
+        .studio-sidebar { width: 240px; background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%); flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .studio-sidebar__logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+        .studio-sidebar__logo-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .studio-sidebar__logo-icon svg { width: 20px; height: 20px; color: #fff; }
+        .studio-sidebar__logo-text { font-size: 1.25rem; font-weight: 700; color: #fff; }
+        .studio-sidebar__nav { display: flex; flex-direction: column; gap: 4px; }
+        .studio-sidebar__item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.95rem; font-weight: 500; }
+        .studio-sidebar__item svg { width: 22px; height: 22px; flex-shrink: 0; }
+        .studio-main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 24px 32px 100px; }
+        .analytics-back { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; background: rgba(139,92,246,0.25); color: #e9d5ff; font-size: 0.9rem; font-weight: 600; text-decoration: none; margin-bottom: 18px; width: fit-content; transition: all 0.2s; }
+        .analytics-back:hover { background: rgba(139,92,246,0.4); color: #fff; }
+        .analytics-topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; margin-bottom: 24px; }
+        .analytics-title { margin: 0 0 8px; font-size: 1.95rem; font-weight: 800; color: #fff; letter-spacing: -0.03em; }
+        .analytics-subtitle { margin: 0; max-width: 760px; color: rgba(220,228,255,0.74); line-height: 1.6; }
+        .analytics-user { display: flex; align-items: center; gap: 12px; }
+        .analytics-user__meta { display: grid; gap: 2px; text-align: right; }
+        .analytics-user__label { color: rgba(220,228,255,0.56); font-size: 0.8rem; }
+        .analytics-user__name { color: #fff; font-size: 0.95rem; font-weight: 700; }
+        .analytics-user__avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; overflow: hidden; }
+        .analytics-user__avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .analytics-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 22px; }
+        .analytics-card, .analytics-panel { background: rgba(22,22,42,0.62); backdrop-filter: blur(12px); border: 1px solid rgba(139,92,246,0.24); border-radius: 18px; box-shadow: 0 0 24px rgba(139,92,246,0.08); }
+        .analytics-card { padding: 18px; }
+        .analytics-card__label { color: rgba(220,228,255,0.62); font-size: 0.82rem; font-weight: 600; margin-bottom: 10px; }
+        .analytics-card__value { color: #fff; font-size: 1.68rem; font-weight: 800; letter-spacing: -0.03em; }
+        .analytics-card__sub { margin-top: 6px; color: rgba(220,228,255,0.64); font-size: 0.82rem; }
+        .analytics-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.92fr); gap: 24px; align-items: start; }
+        .analytics-column { display: grid; gap: 18px; }
+        .analytics-panel { padding: 20px; }
+        .analytics-panel__title { margin: 0 0 8px; color: #fff; font-size: 1rem; font-weight: 700; }
+        .analytics-panel__text { margin: 0 0 16px; color: rgba(220,228,255,0.68); font-size: 0.9rem; line-height: 1.55; }
+        .analytics-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+        .analytics-pill { display: inline-flex; align-items: center; gap: 8px; padding: 10px 13px; border-radius: 999px; background: rgba(255,255,255,0.06); color: rgba(235,239,255,0.88); font-size: 0.82rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.08); }
+        .analytics-chart { background: rgba(8,10,22,0.34); border-radius: 16px; padding: 16px; }
+        .analytics-chart svg { width: 100%; height: 280px; display: block; }
+        .analytics-chart__legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; }
+        .analytics-chart__legend-item { display: inline-flex; align-items: center; gap: 8px; color: rgba(235,239,255,0.86); font-size: 0.82rem; font-weight: 600; }
+        .analytics-chart__legend-dot { width: 12px; height: 4px; border-radius: 999px; }
+        .analytics-chart__legend-dot--views { background: #8b5cf6; }
+        .analytics-chart__legend-dot--engagement { background: #22c55e; }
+        .analytics-chart__legend-dot--uploads { background: #f59e0b; }
+        .analytics-mix { display: grid; gap: 12px; }
+        .analytics-mix__row { display: grid; gap: 8px; }
+        .analytics-mix__top { display: flex; justify-content: space-between; gap: 12px; color: rgba(235,239,255,0.88); font-size: 0.84rem; }
+        .analytics-mix__line { height: 10px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+        .analytics-mix__fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+        .analytics-list { display: grid; gap: 12px; }
+        .analytics-item { padding: 14px; border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); }
+        .analytics-item__top { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+        .analytics-item__title { color: #fff; font-size: 0.92rem; font-weight: 700; margin: 0; }
+        .analytics-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; font-size: 0.74rem; font-weight: 700; }
+        .analytics-badge--video { background: rgba(59,130,246,0.16); color: #93c5fd; }
+        .analytics-badge--short { background: rgba(249,115,22,0.16); color: #fdba74; }
+        .analytics-badge--caption { background: rgba(20,184,166,0.16); color: #99f6e4; }
+        .analytics-badge--live { background: rgba(239,68,68,0.16); color: #fca5a5; }
+        .analytics-meta { display: flex; flex-wrap: wrap; gap: 12px; color: rgba(220,228,255,0.6); font-size: 0.8rem; }
+        .analytics-table { width: 100%; border-collapse: collapse; }
+        .analytics-table th { text-align: left; padding: 12px 14px; color: rgba(220,228,255,0.54); font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .analytics-table td { padding: 14px; color: rgba(240,244,255,0.9); font-size: 0.88rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .analytics-table tr:last-child td { border-bottom: none; }
+        .analytics-table__wrap { overflow: auto; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); }
+        .analytics-table__title { color: #fff; font-weight: 700; }
+        .analytics-empty { padding: 26px 16px; text-align: center; color: rgba(220,228,255,0.62); font-size: 0.92rem; background: rgba(255,255,255,0.03); border-radius: 14px; border: 1px dashed rgba(255,255,255,0.1); }
+        .analytics-summary { display: grid; gap: 12px; }
+        .analytics-summary__item { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+        .analytics-summary__item:first-child { border-top: none; padding-top: 0; }
+        .analytics-summary__title { color: #fff; font-size: 0.92rem; font-weight: 600; }
+        .analytics-summary__meta { color: rgba(220,228,255,0.58); font-size: 0.8rem; margin-top: 4px; }
+        .analytics-summary__value { color: #a5b4fc; font-size: 0.88rem; font-weight: 700; white-space: nowrap; text-align: right; }
+        .analytics-actions { display: grid; gap: 10px; }
+        .analytics-action { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 14px; text-decoration: none; color: #fff; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.06); font-weight: 600; }
+        .analytics-action:hover { background: rgba(255,255,255,0.08); }
+        @media (max-width: 1180px) {
+            .analytics-grid { grid-template-columns: 1fr; }
+            .analytics-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 900px) {
+            .studio-layout { display: block; }
+            .studio-sidebar { width: 100%; padding-bottom: 12px; }
+            .studio-sidebar__nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 0 10px; }
+            .studio-main { padding: 20px 16px 100px; }
+            .analytics-topbar { flex-direction: column; align-items: stretch; }
+        }
+        @media (max-width: 720px) {
+            .analytics-cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="home-body has-bottom-nav studio-body">
+    <div class="bg"></div>
+    <div class="studio-layout">
+        <aside class="studio-sidebar">
+            <div class="studio-sidebar__logo">
+                <div class="studio-sidebar__logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+                <span class="studio-sidebar__logo-text">Studio</span>
+            </div>
+            <nav class="studio-sidebar__nav">
+                <a href="studio.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+                <a href="upload.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Upload</span></a>
+                <a href="studio-earning.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M15 9.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span>Earning</span></a>
+                <a href="studio-monetization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><path d="M12 15h6"/></svg><span>Monetization</span></a>
+                <a href="studio-analytics.html" class="studio-sidebar__item studio-sidebar__item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Analytics</span></a>
+                <a href="studio-content-detection.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Content Detection</span></a>
+                <a href="studio-customization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Customization</span></a>
+                <a href="studio-content.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg><span>Content</span></a>
+                <a href="channel.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span>Channel</span></a>
+                <a href="settings.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a>
+            </nav>
+        </aside>
+
+        <main class="studio-main">
+            <a href="studio.html" class="analytics-back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                Back to Dashboard
+            </a>
+
+            <div class="analytics-topbar">
+                <div>
+                    <h1 class="analytics-title">Advanced Analytics Center</h1>
+                    <p class="analytics-subtitle">Track long-form videos, shorts, captions, and live sessions from one latest analytics dashboard with performance trend signals, format mix, top content, and audience health snapshots.</p>
+                </div>
+                <div class="analytics-user">
+                    <div class="analytics-user__meta">
+                        <span class="analytics-user__label">Studio creator</span>
+                        <span class="analytics-user__name" id="analytics-user-name">CREATOR</span>
+                    </div>
+                    <div class="analytics-user__avatar" id="analytics-user-avatar">C</div>
+                </div>
+            </div>
+
+            <div class="analytics-cards">
+                <div class="analytics-card">
+                    <div class="analytics-card__label">Total views</div>
+                    <div class="analytics-card__value" id="analytics-total-views">0</div>
+                    <div class="analytics-card__sub" id="analytics-total-views-sub">Across all visible content formats</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-card__label">Engagement rate</div>
+                    <div class="analytics-card__value" id="analytics-engagement-rate">0%</div>
+                    <div class="analytics-card__sub">Likes, comments and super comments vs views</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-card__label">Active content</div>
+                    <div class="analytics-card__value" id="analytics-active-content">0</div>
+                    <div class="analytics-card__sub">Public, unlisted, and live items being tracked</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-card__label">Avg. views per item</div>
+                    <div class="analytics-card__value" id="analytics-avg-views">0</div>
+                    <div class="analytics-card__sub">Average reach across active content</div>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="analytics-column">
+                    <section class="analytics-panel">
+                        <h2 class="analytics-panel__title">Performance Trend</h2>
+                        <p class="analytics-panel__text">A rolling 7-day view of total views, engagement signals, and recent upload activity from your studio content.</p>
+                        <div class="analytics-pills" id="analytics-trend-pills"></div>
+                        <div class="analytics-chart" id="analytics-trend-chart"></div>
+                    </section>
+
+                    <section class="analytics-panel">
+                        <h2 class="analytics-panel__title">Top Performing Content</h2>
+                        <p class="analytics-panel__text">Your strongest current content based on reach, engagement, and content type performance.</p>
+                        <div class="analytics-list" id="analytics-top-list"></div>
+                    </section>
+
+                    <section class="analytics-panel">
+                        <h2 class="analytics-panel__title">Recent Performance Table</h2>
+                        <p class="analytics-panel__text">A latest view of content performance across each published format.</p>
+                        <div class="analytics-table__wrap" id="analytics-table-wrap"></div>
+                    </section>
+                </div>
+
+                <div class="analytics-column">
+                    <section class="analytics-panel">
+                        <h2 class="analytics-panel__title">Format Mix</h2>
+                        <p class="analytics-panel__text">See how videos, shorts, captions, and live sessions are contributing to total studio reach.</p>
+                        <div class="analytics-mix" id="analytics-format-mix"></div>
+                    </section>
+
+                    <section class="analytics-panel">
+                        <h2 class="analytics-panel__title">Audience Snapshot</h2>
+                        <div class="analytics-summary" id="analytics-audience-summary"></div>
+                    </section>
+
+                    <section class="analytics-panel">
+                        <h2 class="analytics-panel__title">Quick Actions</h2>
+                        <div class="analytics-actions">
+                            <a href="studio-videos.html" class="analytics-action"><span>Open video analytics</span><span>Open</span></a>
+                            <a href="studio-shorts.html" class="analytics-action"><span>Open short analytics</span><span>Open</span></a>
+                            <a href="studio-content.html" class="analytics-action"><span>Open content manager</span><span>Open</span></a>
+                            <a href="studio-earning.html" class="analytics-action"><span>Check earnings impact</span><span>Open</span></a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+        <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+        <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+        <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+        <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+    </nav>
+
+    <script>
+        (function() {
+            function readJson(key, fallback) {
+                try {
+                    var raw = localStorage.getItem(key);
+                    if (raw) return JSON.parse(raw);
+                } catch (_) {}
+                return fallback;
+            }
+            function compact(value) {
+                value = Number(value) || 0;
+                if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                if (value >= 1000) return (value / 1000).toFixed(1) + 'K';
+                return String(Math.round(value));
+            }
+            function parseCount(value) {
+                var raw = String(value || '0').trim().toUpperCase();
+                var match = raw.match(/^([\d.]+)\s*([KM]?)$/);
+                if (!match) return parseInt(raw, 10) || 0;
+                var amount = parseFloat(match[1]) || 0;
+                if (match[2] === 'M') return Math.round(amount * 1000000);
+                if (match[2] === 'K') return Math.round(amount * 1000);
+                return Math.round(amount);
+            }
+            function formatPercent(value) {
+                return (Math.round((Number(value) || 0) * 10) / 10) + '%';
+            }
+            function formatDateLabel(date) {
+                return String(date.getDate()).padStart(2, '0') + '/' + String(date.getMonth() + 1).padStart(2, '0');
+            }
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+            function getTypeLabel(type) {
+                if (type === 'video') return 'Video';
+                if (type === 'short') return 'Short';
+                if (type === 'caption') return 'Caption';
+                if (type === 'live') return 'Live';
+                return 'Content';
+            }
+            function getBadgeClass(type) {
+                if (type === 'video') return 'analytics-badge--video';
+                if (type === 'short') return 'analytics-badge--short';
+                if (type === 'caption') return 'analytics-badge--caption';
+                if (type === 'live') return 'analytics-badge--live';
+                return 'analytics-badge--video';
+            }
+            function sumSuperComments() {
+                var raw = localStorage.getItem('nokSuperComments') || '0';
+                var total = 0;
+                try {
+                    var parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                        Object.keys(parsed).forEach(function(key) {
+                            total += Array.isArray(parsed[key]) ? parsed[key].length : 0;
+                        });
+                    } else {
+                        total = parseInt(parsed, 10) || 0;
+                    }
+                } catch (_) {
+                    total = parseInt(raw, 10) || 0;
+                }
+                return total;
+            }
+            function getTrendBuckets() {
+                var buckets = [];
+                var today = new Date();
+                today.setHours(0, 0, 0, 0);
+                for (var i = 6; i >= 0; i--) {
+                    var day = new Date(today);
+                    day.setDate(today.getDate() - i);
+                    var key = day.getFullYear() + '-' + String(day.getMonth() + 1).padStart(2, '0') + '-' + String(day.getDate()).padStart(2, '0');
+                    buckets.push({ key: key, label: formatDateLabel(day), views: 0, engagement: 0, uploads: 0 });
+                }
+                return buckets;
+            }
+            function mapByDate(buckets) {
+                var map = {};
+                buckets.forEach(function(bucket) { map[bucket.key] = bucket; });
+                return map;
+            }
+            function updateUserMeta() {
+                var name = (localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'Creator').toString().trim();
+                document.getElementById('analytics-user-name').textContent = name.toUpperCase().slice(0, 18);
+                var avatar = document.getElementById('analytics-user-avatar');
+                var photo = localStorage.getItem('nokUserPhotoUrl') || '';
+                if (!photo) {
+                    try {
+                        var ch = JSON.parse(localStorage.getItem('nokChannelData') || '{}');
+                        if (ch.photoUrl) photo = ch.photoUrl;
+                    } catch (_) {}
+                }
+                if (photo) avatar.innerHTML = '<img src="' + photo.replace(/"/g, '&quot;') + '" alt="">';
+                else {
+                    avatar.innerHTML = '';
+                    avatar.textContent = name ? name.charAt(0).toUpperCase() : 'C';
+                }
+            }
+
+            updateUserMeta();
+
+            var videos = readJson('nokUserVideos', []);
+            var shorts = readJson('nokShortsVideos', []);
+            var captions = readJson('nokCaptionPosts', []);
+            var lives = readJson('nokLiveSessions', []);
+            var totalSubscribers = parseInt(localStorage.getItem('nokTotalSubscribers') || '0', 10) || 0;
+            var totalSuperComments = sumSuperComments();
+            var videoDailyHistory = readJson('nokVideoDailyHistory', {});
+            var shortDailyHistory = readJson('nokShortDailyHistory', {});
+            var trendBuckets = getTrendBuckets();
+            var trendMap = mapByDate(trendBuckets);
+            var items = [];
+
+            videos.forEach(function(v, index) {
+                var views = parseCount(v.views || 0);
+                var likes = parseCount(v.likes || 0);
+                var comments = parseCount(v.comments || 0);
+                var createdAt = Number(v.createdAt || Date.now() - index * 1000);
+                items.push({
+                    type: 'video',
+                    id: String(v.id || ('video-' + index)),
+                    title: v.title || 'Untitled video',
+                    views: views,
+                    likes: likes,
+                    comments: comments,
+                    engagement: likes + comments,
+                    visibility: v.visibility || 'public',
+                    createdAt: createdAt
+                });
+                var history = videoDailyHistory[String(v.id || '')] || [];
+                history.forEach(function(day) {
+                    if (!trendMap[day.date]) return;
+                    trendMap[day.date].views += parseCount(day.views || 0);
+                    trendMap[day.date].engagement += parseCount(day.subscribers || 0) + parseCount(day.superComment || 0);
+                });
+                var createdKey = new Date(createdAt);
+                createdKey.setHours(0, 0, 0, 0);
+                var key = createdKey.getFullYear() + '-' + String(createdKey.getMonth() + 1).padStart(2, '0') + '-' + String(createdKey.getDate()).padStart(2, '0');
+                if (trendMap[key]) trendMap[key].uploads += 1;
+            });
+
+            shorts.forEach(function(s, index) {
+                var views = parseCount(s.views || s.viewCount || 0);
+                var likes = parseCount(s.likes || 0);
+                var comments = parseCount(s.comments || 0);
+                var createdAt = Number(s.createdAt || Date.now() - index * 1200);
+                items.push({
+                    type: 'short',
+                    id: String(s.id || ('short-' + index)),
+                    title: s.title || 'Untitled short',
+                    views: views,
+                    likes: likes,
+                    comments: comments,
+                    engagement: likes + comments,
+                    visibility: s.visibility || 'public',
+                    createdAt: createdAt
+                });
+                var history = shortDailyHistory[String(s.id || '')] || [];
+                history.forEach(function(day) {
+                    if (!trendMap[day.date]) return;
+                    trendMap[day.date].views += parseCount(day.views || 0);
+                    trendMap[day.date].engagement += parseCount(day.likes || 0) + parseCount(day.comments || 0);
+                });
+                var createdKey = new Date(createdAt);
+                createdKey.setHours(0, 0, 0, 0);
+                var key = createdKey.getFullYear() + '-' + String(createdKey.getMonth() + 1).padStart(2, '0') + '-' + String(createdKey.getDate()).padStart(2, '0');
+                if (trendMap[key]) trendMap[key].uploads += 1;
+            });
+
+            captions.forEach(function(c, index) {
+                var likes = parseCount(c.likes || 0);
+                var comments = Array.isArray(c.comments) ? c.comments.length : parseCount(c.comments || 0);
+                var createdAt = Number(c.createdAt || Date.now() - index * 1600);
+                items.push({
+                    type: 'caption',
+                    id: String(c.id || ('caption-' + index)),
+                    title: (c.caption || 'Caption post').slice(0, 72),
+                    views: 0,
+                    likes: likes,
+                    comments: comments,
+                    engagement: likes + comments,
+                    visibility: c.visibility || 'public',
+                    createdAt: createdAt
+                });
+                var createdKey = new Date(createdAt);
+                createdKey.setHours(0, 0, 0, 0);
+                var key = createdKey.getFullYear() + '-' + String(createdKey.getMonth() + 1).padStart(2, '0') + '-' + String(createdKey.getDate()).padStart(2, '0');
+                if (trendMap[key]) {
+                    trendMap[key].engagement += likes + comments;
+                    trendMap[key].uploads += 1;
+                }
+            });
+
+            lives.forEach(function(live, index) {
+                var views = parseCount(live.totalViewers || live.peakViewers || live.viewers || 0);
+                var likes = parseCount(live.likes || 0);
+                var comments = parseCount(live.comments || 0);
+                var createdAt = Number(live.startedAt || live.createdAt || Date.now() - index * 1800);
+                items.push({
+                    type: 'live',
+                    id: String(live.id || ('live-' + index)),
+                    title: live.title || 'Untitled live stream',
+                    views: views,
+                    likes: likes,
+                    comments: comments,
+                    engagement: likes + comments,
+                    visibility: live.visibility || (live.status === 'live' ? 'live' : 'public'),
+                    createdAt: createdAt
+                });
+                var createdKey = new Date(createdAt);
+                createdKey.setHours(0, 0, 0, 0);
+                var key = createdKey.getFullYear() + '-' + String(createdKey.getMonth() + 1).padStart(2, '0') + '-' + String(createdKey.getDate()).padStart(2, '0');
+                if (trendMap[key]) {
+                    trendMap[key].views += views;
+                    trendMap[key].engagement += likes + comments;
+                    trendMap[key].uploads += 1;
+                }
+            });
+
+            items.sort(function(a, b) { return b.views - a.views; });
+
+            var activeItems = items.filter(function(item) { return item.visibility !== 'deleted' && item.visibility !== 'private'; });
+            var totalViews = activeItems.reduce(function(sum, item) { return sum + item.views; }, 0);
+            var totalLikes = activeItems.reduce(function(sum, item) { return sum + item.likes; }, 0);
+            var totalComments = activeItems.reduce(function(sum, item) { return sum + item.comments; }, 0);
+            var totalEngagement = totalLikes + totalComments + totalSuperComments;
+            var engagementRate = totalViews ? (totalEngagement / totalViews) * 100 : 0;
+            var avgViews = activeItems.length ? totalViews / activeItems.length : 0;
+            var totalUploads = videos.length + shorts.length + captions.length + lives.length;
+
+            document.getElementById('analytics-total-views').textContent = compact(totalViews);
+            document.getElementById('analytics-engagement-rate').textContent = formatPercent(engagementRate);
+            document.getElementById('analytics-active-content').textContent = String(activeItems.length);
+            document.getElementById('analytics-avg-views').textContent = compact(avgViews);
+            document.getElementById('analytics-total-views-sub').textContent = totalUploads + ' total items tracked across all formats';
+
+            var trendViews = trendBuckets.map(function(bucket) { return bucket.views; });
+            var trendEngagement = trendBuckets.map(function(bucket) { return bucket.engagement; });
+            var trendUploads = trendBuckets.map(function(bucket) { return bucket.uploads; });
+            var maxValue = Math.max.apply(null, [1].concat(trendViews, trendEngagement, trendUploads.map(function(value) { return value * 100; })));
+            var svgWidth = 640;
+            var svgHeight = 280;
+            var pad = { left: 42, right: 18, top: 14, bottom: 38 };
+            var plotWidth = svgWidth - pad.left - pad.right;
+            var plotHeight = svgHeight - pad.top - pad.bottom;
+            function xPos(index) { return trendBuckets.length <= 1 ? pad.left + plotWidth / 2 : pad.left + (plotWidth * index) / (trendBuckets.length - 1); }
+            function yPos(value) { return pad.top + plotHeight * (1 - value / maxValue); }
+            function buildPath(values, multiplier) {
+                var points = values.map(function(value, index) {
+                    return xPos(index) + ',' + yPos((Number(value) || 0) * (multiplier || 1));
+                });
+                return points.join(' ');
+            }
+            var grid = '';
+            for (var i = 1; i <= 4; i++) {
+                var y = pad.top + (plotHeight * (4 - i)) / 4;
+                grid += '<line x1="' + pad.left + '" y1="' + y + '" x2="' + (svgWidth - pad.right) + '" y2="' + y + '" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="4"/>';
+            }
+            var xLabels = trendBuckets.map(function(bucket, index) {
+                return '<text x="' + xPos(index) + '" y="' + (svgHeight - 10) + '" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10">' + bucket.label + '</text>';
+            }).join('');
+            var svg = '<svg viewBox="0 0 ' + svgWidth + ' ' + svgHeight + '" preserveAspectRatio="xMidYMid meet">' +
+                '<line x1="' + pad.left + '" y1="' + (svgHeight - pad.bottom) + '" x2="' + (svgWidth - pad.right) + '" y2="' + (svgHeight - pad.bottom) + '" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>' +
+                '<line x1="' + pad.left + '" y1="' + pad.top + '" x2="' + pad.left + '" y2="' + (svgHeight - pad.bottom) + '" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>' +
+                grid +
+                '<polyline fill="none" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="' + buildPath(trendViews, 1) + '"/>' +
+                '<polyline fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="' + buildPath(trendEngagement, 1) + '"/>' +
+                '<polyline fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="' + buildPath(trendUploads, 100) + '"/>' +
+                xLabels +
+                '<text x="' + (pad.left - 4) + '" y="' + (pad.top + 2) + '" text-anchor="end" fill="rgba(255,255,255,0.5)" font-size="9">' + compact(maxValue) + '</text>' +
+                '<text x="' + (pad.left - 4) + '" y="' + (svgHeight - pad.bottom + 3) + '" text-anchor="end" fill="rgba(255,255,255,0.5)" font-size="9">0</text>' +
+                '</svg>';
+            document.getElementById('analytics-trend-chart').innerHTML =
+                svg +
+                '<div class="analytics-chart__legend">' +
+                '<span class="analytics-chart__legend-item"><span class="analytics-chart__legend-dot analytics-chart__legend-dot--views"></span>Views</span>' +
+                '<span class="analytics-chart__legend-item"><span class="analytics-chart__legend-dot analytics-chart__legend-dot--engagement"></span>Engagement</span>' +
+                '<span class="analytics-chart__legend-item"><span class="analytics-chart__legend-dot analytics-chart__legend-dot--uploads"></span>Uploads (scaled)</span>' +
+                '</div>';
+
+            var bestDayViews = Math.max.apply(null, [0].concat(trendViews));
+            var bestDayEngagement = Math.max.apply(null, [0].concat(trendEngagement));
+            var bestUploads = Math.max.apply(null, [0].concat(trendUploads));
+            document.getElementById('analytics-trend-pills').innerHTML =
+                '<span class="analytics-pill">Best day reach: <strong>' + compact(bestDayViews) + '</strong></span>' +
+                '<span class="analytics-pill">Best day engagement: <strong>' + compact(bestDayEngagement) + '</strong></span>' +
+                '<span class="analytics-pill">Most uploads in one day: <strong>' + compact(bestUploads) + '</strong></span>';
+
+            var mixDefinitions = [
+                { type: 'video', label: 'Videos' },
+                { type: 'short', label: 'Shorts' },
+                { type: 'caption', label: 'Captions' },
+                { type: 'live', label: 'Live' }
+            ];
+            var mixHtml = mixDefinitions.map(function(def) {
+                var subset = activeItems.filter(function(item) { return item.type === def.type; });
+                var views = subset.reduce(function(sum, item) { return sum + item.views; }, 0);
+                var ratio = totalViews ? Math.round((views / totalViews) * 100) : 0;
+                return '<div class="analytics-mix__row">' +
+                    '<div class="analytics-mix__top"><span>' + def.label + '</span><strong>' + compact(views) + ' views • ' + ratio + '%</strong></div>' +
+                    '<div class="analytics-mix__line"><div class="analytics-mix__fill" style="width:' + ratio + '%"></div></div>' +
+                    '</div>';
+            }).join('');
+            document.getElementById('analytics-format-mix').innerHTML = mixHtml || '<div class="analytics-empty">No content available yet.</div>';
+
+            var topList = items.slice(0, 5);
+            document.getElementById('analytics-top-list').innerHTML = topList.length ? topList.map(function(item) {
+                return '<div class="analytics-item">' +
+                    '<div class="analytics-item__top">' +
+                    '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;"><h3 class="analytics-item__title">' + escapeHtml(item.title) + '</h3><span class="analytics-badge ' + getBadgeClass(item.type) + '">' + getTypeLabel(item.type) + '</span></div>' +
+                    '<strong style="color:#fff;">' + compact(item.views) + '</strong>' +
+                    '</div>' +
+                    '<div class="analytics-meta"><span>Likes: ' + compact(item.likes) + '</span><span>Comments: ' + compact(item.comments) + '</span><span>Engagement: ' + compact(item.engagement) + '</span><span>' + escapeHtml(item.visibility) + '</span></div>' +
+                    '</div>';
+            }).join('') : '<div class="analytics-empty">Upload content to unlock top performer insights.</div>';
+
+            document.getElementById('analytics-table-wrap').innerHTML = items.length ? (
+                '<table class="analytics-table">' +
+                '<thead><tr><th>Content</th><th>Type</th><th>Views</th><th>Likes</th><th>Comments</th><th>Visibility</th></tr></thead>' +
+                '<tbody>' +
+                items.slice(0, 10).map(function(item) {
+                    return '<tr><td><span class="analytics-table__title">' + escapeHtml(item.title) + '</span></td><td>' + getTypeLabel(item.type) + '</td><td>' + compact(item.views) + '</td><td>' + compact(item.likes) + '</td><td>' + compact(item.comments) + '</td><td>' + escapeHtml(item.visibility) + '</td></tr>';
+                }).join('') +
+                '</tbody></table>'
+            ) : '<div class="analytics-empty">No content data is available yet.</div>';
+
+            var totalLiveItems = activeItems.filter(function(item) { return item.type === 'live'; }).length;
+            var summaryRows = [
+                { title: 'Subscribers', meta: 'Total audience connected to your studio', value: compact(totalSubscribers) },
+                { title: 'Total likes', meta: 'Combined likes across videos, shorts, captions and live', value: compact(totalLikes) },
+                { title: 'Total comments', meta: 'All comment activity currently stored', value: compact(totalComments) },
+                { title: 'Super comments', meta: 'Premium support comments recorded in studio', value: compact(totalSuperComments) },
+                { title: 'Live sessions', meta: 'Tracked live items in your analytics set', value: compact(totalLiveItems) }
+            ];
+            document.getElementById('analytics-audience-summary').innerHTML = summaryRows.map(function(row) {
+                return '<div class="analytics-summary__item"><div><div class="analytics-summary__title">' + escapeHtml(row.title) + '</div><div class="analytics-summary__meta">' + escapeHtml(row.meta) + '</div></div><div class="analytics-summary__value">' + escapeHtml(row.value) + '</div></div>';
+            }).join('');
+        })();
+    </script>
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

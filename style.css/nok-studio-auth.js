@@ -14,7 +14,6 @@
             'studio-videos.html': true,
             'studio-shorts.html': true,
             'studio-captions.html': true,
-            'studio-video-edit.html': true,
             'studio-short-edit.html': true,
             'studio-video-analytics.html': true,
             'studio-short-analytics.html': true,
@@ -27,6 +26,7 @@
         if (currentBase === 'studio.html') activeKey = 'dashboard';
         else if (currentBase === 'studio-earning.html') activeKey = 'earning';
         else if (currentBase === 'studio-monetization.html') activeKey = 'monetization';
+        else if (currentBase === 'studio-analytics.html') activeKey = 'analytics';
         else if (currentBase === 'studio-content-detection.html') activeKey = 'content-detection';
         else if (currentBase === 'studio-customization.html') activeKey = 'customization';
         else if (currentBase === 'studio-content.html') activeKey = 'content';
@@ -61,7 +61,7 @@
             },
             {
                 key: 'analytics',
-                href: 'studio.html#analytics',
+                href: 'studio-analytics.html',
                 label: 'Analytics',
                 icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>'
             },
