@@ -80,34 +80,18 @@
     if (queryLabel) queryLabel.textContent = q ? "Results for \"" + 'Results for “‘ + (params.get('q') || '').replace(/</g, '&lt;') + '”' : 'Enter a search term above';
     document.getElementById('header-back-btn').addEventListener('click', function() { window.history.back(); });
     function match(s, term) { return term && s && String(s).toLowerCase().indexOf(term) !== -1; }
-    var sampleLong = [
-        { id: 'mountains', thumb: 'mountains', title: 'Dreamy Expedition', channel: 'A22n', meta: '146K views' },
-        { id: 'waterfall', thumb: 'waterfall', title: 'Hidden Waterfalls', channel: 'Sneha', meta: '82K views' },
-        { id: 'city', thumb: 'city', title: 'Post-Apocalyptic', channel: 'A22n', meta: '12K views' },
-        { id: 'wild', thumb: 'wild', title: 'Into the Wilderness', channel: 'A22n', meta: '3.2K views' },
-        { id: 'portrait', thumb: 'portrait', title: '872IK', channel: 'A22n', meta: '892 views' },
-        { id: 'vlog', thumb: 'portrait', title: 'Day in My Life', channel: 'NOK Demo', meta: '45K views' }
-    ];
-    var sampleShorts = [
-        { id: 'night', thumb: 'night', title: 'Night Out Vibes', likes: '149K' },
-        { id: 'hike', thumb: 'hike', title: 'Epic Mountain Hike', likes: '148K' },
-        { id: 'beach', thumb: 'beach', title: 'Beach Sunrise Yoga', likes: '1755K' },
-        { id: 'citywalk', thumb: 'citywalk', title: 'Night City Walk', likes: '92K' },
-        { id: 'dance', thumb: 'dance', title: 'Street Dance Moves', likes: '256K' },
-        { id: 'lights', thumb: 'lights', title: 'Gazing at the Lights', likes: '89K' },
-        { id: 'portrait', thumb: 'short-portrait', title: '892KK', likes: '822K' }
-    ];
+    /* No demo: only uploaded videos/shorts. Card = when user uploads, then show. */
     var userVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
     var shortsIds = {};
     (JSON.parse(localStorage.getItem('nokShortsVideos') || '[]')).forEach(function(s) { shortsIds[s.id] = true; });
-    var userLong = userVideos.filter(function(v) { return !v.isShorts && !shortsIds[v.id]; }).map(function(v) {
+    var userLong = userVideos.filter(function(v) { return !v.isShorts && !shortsIds[v.id] && v.visibility !== 'private'; }).map(function(v) {
         return { id: v.id, thumb: v.thumb || 'mountains', title: v.title || 'Video', channel: v.channel || 'You', meta: (v.views || '0 views'), thumbData: v.thumbData };
     });
-    var userShorts = JSON.parse(localStorage.getItem('nokShortsVideos') || '[]').map(function(s) {
+    var userShorts = JSON.parse(localStorage.getItem('nokShortsVideos') || '[]').filter(function(s) { return s.visibility !== 'private'; }).map(function(s) {
         return { id: s.id, thumb: s.thumb || 'night', title: s.title || 'Shorts', likes: s.likes || '0', thumbData: s.thumbData };
     });
-    var allLong = userLong.concat(sampleLong);
-    var allShorts = userShorts.concat(sampleShorts);
+    var allLong = userLong;
+    var allShorts = userShorts;
     var thumbToClass = { mountains: 'mountains', waterfall: 'ocean', city: 'city', wild: 'forest', portrait: 'desert', night: 'night', hike: 'hike', beach: 'beach', citywalk: 'citywalk', dance: 'dance', lights: 'lights', 'short-portrait': 'short-portrait' };
     function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
     function render() {

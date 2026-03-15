@@ -1142,25 +1142,25 @@
                 var notifOn = localStorage.getItem('nokNotificationOn') !== '0';
                 toggleNotif.classList.toggle('settings-toggle--on', notifOn);
                 toggleNotif.addEventListener('click', function() {
-                    this.classList.toggle('settings-toggle--on');
-                    localStorage.setItem('nokNotificationOn', this.classList.contains('settings-toggle--on') ? '1' : '0');
-                    if (notifBtn) {
-                        var on = localStorage.getItem('nokNotificationOn') !== '0';
-                        var ow = notifBtn.querySelector('.long-video__icon-bell-wrap');
-                        var ofw = notifBtn.querySelector('.long-video__icon-bell-off-wrap');
-                        if (ow) ow.style.display = on ? '' : 'none';
-                        if (ofw) ofw.style.display = on ? 'none' : '';
-                    }
-                });
+                this.classList.toggle('settings-toggle--on');
+                localStorage.setItem('nokNotificationOn', this.classList.contains('settings-toggle--on') ? '1' : '0');
+                if (notifBtn) {
+                    var on = localStorage.getItem('nokNotificationOn') !== '0';
+                    var ow = notifBtn.querySelector('.long-video__icon-bell-wrap');
+                    var ofw = notifBtn.querySelector('.long-video__icon-bell-off-wrap');
+                    if (ow) ow.style.display = on ? '' : 'none';
+                    if (ofw) ofw.style.display = on ? 'none' : '';
+                }
+            });
             }
             var toggleAutoplay = document.getElementById('toggle-autoplay');
             if (toggleAutoplay) {
                 var apOn = localStorage.getItem('nokAutoplay') !== '0';
                 toggleAutoplay.classList.toggle('settings-toggle--on', apOn);
                 toggleAutoplay.addEventListener('click', function() {
-                    this.classList.toggle('settings-toggle--on');
+                this.classList.toggle('settings-toggle--on');
                     localStorage.setItem('nokAutoplay', this.classList.contains('settings-toggle--on') ? '1' : '0');
-                });
+            });
             }
 
             // Chat overlay: handled by nok-chat-overlay.js (same card on all pages)

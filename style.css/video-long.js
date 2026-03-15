@@ -129,16 +129,7 @@
             { user: 'Viewer', avatar: 'V', text: 'Demo content for testing.' }
         ]}
     };
-    var videoOrder = ['mountains', 'waterfall', 'city', 'wild', 'portrait', 'sunset', 'river', 'tech', 'food', 'vlog'];
-
-    var sampleUrls = [
-        'https://lorem.video/720p',
-        'https://lorem.video/720p_h264_10s',
-        'https://lorem.video/cat_720p',
-        'https://lorem.video/corgi_720p',
-        'https://lorem.video/test_720p'
-    ];
-
+    /* No demo: only user + library videos in list (related / next / prev). */
     var userVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
     var userMap = {};
     userVideos.forEach(function(v) {
@@ -151,7 +142,8 @@
     });
     var userLongIds = userVideos.filter(function(v) { return !shortsIdSet[v.id]; }).map(function(v) { return v.id; });
     var libraryIds = libraryFiles.map(function(f) { return f.id || f.name; }).filter(Boolean);
-    var fullVideoList = videoOrder.concat(userLongIds).concat(libraryIds);
+    var fullVideoList = userLongIds.concat(libraryIds);
+    var defaultVideoInfo = { title: 'Video', channel: 'User', category: 'general', likeCount: 0, hashtags: '', desc: '', thumb: 'mountains', thumbData: null, maxQuality: 1080, comments: [] };
     var playMode = (function() {
         try {
             var s = localStorage.getItem('nokPlayMode');
@@ -160,7 +152,16 @@
         return 'off';
     })();
 
-    var info = userMap[id] || data[id] || data.mountains;
+    /* No demo: only show uploaded/user videos. Unknown id = video not found. */
+    if (!userMap[id]) {
+        document.title = 'Video not found - NOK Super';
+        var featuredWrap = document.getElementById('featured-wrap');
+        if (featuredWrap) {
+            featuredWrap.innerHTML = '<div class="home-feed-empty" style="min-height:50vh;display:flex;align-items:center;justify-content:center;padding:24px"><div class="home-feed-empty__box"><h2 class="home-feed-empty__title">Video not found</h2><p class="home-feed-empty__text">Upload videos to see them here.</p><a href="upload.html" class="home-feed-empty__btn">Upload</a> <a href="home.html" class="home-feed-empty__btn" style="margin-left:8px;background:#374151">Home</a></div></div>';
+        }
+        return;
+    }
+    var info = userMap[id];
 
     function escapeHtml(s) {
         if (!s) return '';
@@ -349,11 +350,11 @@
         return ' style="background-image:url(' + url + ');background-size:cover;background-position:center"';
     }
     function getSameCategoryVideoIds() {
-        var currentInfo = userMap[id] || data[id] || data.mountains;
+        var currentInfo = userMap[id] || defaultVideoInfo;
         var cat = currentInfo.category || 'general';
         var same = fullVideoList.filter(function(vid) {
             if (vid === id) return false;
-            var inf = userMap[vid] || data[vid];
+            var inf = userMap[vid] || defaultVideoInfo;
             return inf && (inf.category || 'general') === cat;
         });
         if (same.length === 0) same = fullVideoList.filter(function(vid) { return vid !== id; });
@@ -363,7 +364,7 @@
         if (!moreGridEl) return;
         var ids = getSameCategoryVideoIds();
         var html = ids.map(function(vidId) {
-            var inf = userMap[vidId] || data[vidId] || data.mountains;
+            var inf = userMap[vidId] || defaultVideoInfo;
             var thumbClass = 'long-video__more-thumb';
             var title = escapeHtml(inf.title || vidId);
             var views = (inf.views != null ? inf.views : '18 views') + '';
@@ -381,7 +382,7 @@
         var channel = (info && info.channel) ? info.channel : 'A2Zzen';
         var fromChannel = fullVideoList.filter(function(vid) {
             if (vid === id) return false;
-            var inf = userMap[vid] || data[vid];
+            var inf = userMap[vid] || defaultVideoInfo;
             return inf && (inf.channel || 'A2Zzen') === channel;
         });
         var shortsFromChannel = (nokShortsVideos || []).filter(function(s) {
@@ -398,7 +399,7 @@
         if (creatorUploadsTitleEl) creatorUploadsTitleEl.textContent = 'From this creator';
         var parts = [];
         creatorInfo.long.forEach(function(vidId) {
-            var inf = userMap[vidId] || data[vidId] || data.mountains;
+            var inf = userMap[vidId] || defaultVideoInfo;
             var thumbClass = 'long-video__creator-upload-thumb';
             var title = escapeHtml(inf.title || vidId);
             var views = (inf.views != null ? inf.views : '18 views') + '';
@@ -436,7 +437,7 @@
         }
         if (relatedSectionEl) relatedSectionEl.style.display = 'block';
         var html = ids.map(function(vidId) {
-            var inf = userMap[vidId] || data[vidId] || data.mountains;
+            var inf = userMap[vidId] || defaultVideoInfo;
             var thumbClass = 'long-video__more-thumb';
             var title = escapeHtml(inf.title || vidId);
             var views = (inf.views != null ? inf.views : '18 views') + '';
@@ -448,7 +449,7 @@
     }
 
     function updatePageForVideo() {
-        info = userMap[id] || data[id] || data.mountains;
+        info = userMap[id] || defaultVideoInfo;
     if (titleEl) titleEl.textContent = info.title;
     document.title = info.title + ' - NOK Super';
         if (channelNameEl) channelNameEl.textContent = info.channel || 'A2Zzen';
@@ -762,7 +763,7 @@
         updatePageForVideo();
         if (window.history && window.history.replaceState) history.replaceState({}, '', 'video.html?id=' + encodeURIComponent(id));
         var isUser = userMap[id];
-        var sampleInfo = data[id] || data.mountains;
+        var sampleInfo = userMap[id] || defaultVideoInfo;
         if (isUser && window.nokVideoDB) {
             nokVideoDB.get(id).then(function(blob) {
                 if (blob) {
@@ -771,31 +772,15 @@
                     videoEl.play();
                     playBtn.style.display = 'none';
                     if (controlPlayPause) { var iconPlay = controlPlayPause.querySelector('.long-video__icon-play'); var iconPause = controlPlayPause.querySelector('.long-video__icon-pause'); if (iconPlay) iconPlay.style.display = 'none'; if (iconPause) iconPause.style.display = 'block'; }
-                } else if (sampleUrls[0]) {
-                    videoEl.src = sampleUrls[0];
-                    videoEl.play();
-                    playBtn.style.display = 'none';
-                    if (controlPlayPause) { var iconPlay = controlPlayPause.querySelector('.long-video__icon-play'); var iconPause = controlPlayPause.querySelector('.long-video__icon-pause'); if (iconPlay) iconPlay.style.display = 'none'; if (iconPause) iconPause.style.display = 'block'; }
                 }
-            }).catch(function() {
-                if (sampleUrls[0]) { videoEl.src = sampleUrls[0]; videoEl.play(); playBtn.style.display = 'none'; }
-            });
-        } else if (sampleInfo.sampleUrl !== undefined && sampleUrls[sampleInfo.sampleUrl]) {
-            videoEl.src = sampleUrls[sampleInfo.sampleUrl];
-            videoEl.play();
-            playBtn.style.display = 'none';
-            if (controlPlayPause) { var iconPlay = controlPlayPause.querySelector('.long-video__icon-play'); var iconPause = controlPlayPause.querySelector('.long-video__icon-pause'); if (iconPlay) iconPlay.style.display = 'none'; if (iconPause) iconPause.style.display = 'block'; }
-        } else if (sampleUrls[0]) {
-            videoEl.src = sampleUrls[0];
-            videoEl.play();
-            playBtn.style.display = 'none';
+            }).catch(function() {});
         }
     }
 
     function setupVideo() {
         if (!videoEl || !playBtn) return;
         var isUser = userMap[id];
-        var sampleInfo = data[id] || data.mountains;
+        var sampleInfo = userMap[id] || defaultVideoInfo;
         var bindPlaybackDone = false;
 
         function bindPlayback() {
@@ -1012,7 +997,7 @@
                     var ids = getDropUpVideoIds();
                     var html = '<div class="long-video__drop-up-grid">';
                     ids.forEach(function(vidId) {
-                        var inf = userMap[vidId] || data[vidId] || data.mountains;
+                        var inf = userMap[vidId] || defaultVideoInfo;
                         if (!inf) return;
                         var title = escapeHtml(inf.title || vidId);
                         var views = (inf.views != null ? inf.views : inf.likeCount != null ? formatCount(inf.likeCount) : '18') + '';
@@ -1438,16 +1423,7 @@
         }
         /* Always bind play button and controls so video can play once src is set */
         bindPlayback();
-        /* Fallback URL when user video missing or external URL fails */
-        function setFallbackSrc() {
-            if (sampleUrls[0]) {
-                videoEl.src = sampleUrls[0];
-                videoEl.load();
-            }
-        }
-        videoEl.addEventListener('error', function onVideoError() {
-            if (videoEl.src && videoEl.src.indexOf('blob:') !== 0 && !videoEl.src.includes(sampleUrls[0])) setFallbackSrc();
-        }, { once: true });
+        /* No demo: only user blob. No fallback URL. */
         if (isUser && window.nokVideoDB) {
             nokVideoDB.get(id).then(function(blob) {
                 if (blob) {
@@ -1455,22 +1431,11 @@
                     videoEl.src = currentBlobUrl;
                     scheduleAutoplayWhenReady();
                 } else {
-                    setFallbackSrc();
                     scheduleAutoplayWhenReady();
                 }
             }).catch(function() {
-                setFallbackSrc();
                 scheduleAutoplayWhenReady();
             });
-        } else if (sampleInfo.sampleUrl !== undefined && sampleUrls[sampleInfo.sampleUrl]) {
-            videoEl.setAttribute('preload', 'auto');
-            videoEl.src = sampleUrls[sampleInfo.sampleUrl];
-            videoEl.addEventListener('error', function() { setFallbackSrc(); }, { once: true });
-            scheduleAutoplayWhenReady();
-        } else {
-            /* Unknown id: use default sample so something plays */
-            setFallbackSrc();
-            scheduleAutoplayWhenReady();
         }
     }
 

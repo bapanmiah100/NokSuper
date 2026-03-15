@@ -363,15 +363,8 @@
             var userVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
             var isLongVideo = userVideos.some(function(v) { return v.id === id && !shortsIds[v.id]; });
             if (isLongVideo) { window.location.replace('video.html?id=' + encodeURIComponent(id) + '&autoplay=1'); return; }
-            var sampleShortsUrls = [];
-            var data = {
-                demo1: { title: 'Demo – Night Vibes', likes: '48K', comments: '2.1K', shares: '190', saves: '320', channel: 'NOK Super', handle: '@NOKSuper', hashtags: '#demo #vibes', thumb: 'night', commentsPreview: ['Nice!', 'Cool 🔥'] },
-                demo2: { title: 'Demo – Cute Cat', likes: '95K', comments: '5.8K', shares: '420', saves: '780', channel: 'NOK Super', handle: '@NOKSuper', hashtags: '#cat #cute', thumb: 'hike', commentsPreview: ['Cute!', 'Love it'] },
-                demo3: { title: 'Demo – Corgi', likes: '62K', comments: '3.2K', shares: '280', saves: '450', channel: 'NOK Super', handle: '@NOKSuper', hashtags: '#dog #corgi', thumb: 'beach', commentsPreview: ['Adorable!', 'So cute'] },
-                demo4: { title: 'Demo – Blazes', likes: '112K', comments: '6.2K', shares: '520', saves: '890', channel: 'NOK Super', handle: '@NOKSuper', hashtags: '#demo #shorts', thumb: 'lights', commentsPreview: ['Fire!', 'Amazing'] }
-            };
-            var sampleIds = ['demo1', 'demo2', 'demo3', 'demo4'];
-            var sampleShorts = sampleIds.map(function(sid){ return { id: sid, isSample: true }; });
+            /* No demo: only uploaded shorts. Card show korbe when user upload kore. */
+            var data = {};
             var thumbMap = { mountains: 'hike', waterfall: 'beach', city: 'citywalk', wild: 'hike', portrait: 'short-portrait', night: 'night', hike: 'hike', beach: 'beach' };
             var userMap = {};
             userShorts.forEach(function(s) {
@@ -388,7 +381,7 @@
                     commentsPreview: s.commentsPreview || ['Nice!', 'Love it 🔥']
                 };
             });
-            var shortsList = userShorts.concat(sampleShorts);
+            var shortsList = userShorts;
             window.shortsList = shortsList;
             var defaultInfo = { title: '', likes: '0', comments: '0', shares: '0', saves: '0', channel: 'NOK Super', handle: '@NOKSuper', hashtags: '#shorts', thumb: 'night', commentsPreview: [] };
             function parseCountStr(s) { if (!s) return 0; var m = (s + '').match(/^([\d.]+)\s*K?$/i); if (!m) return parseInt(s, 10) || 0; var n = parseFloat(m[1]); return (s.toUpperCase().indexOf('K') >= 0) ? Math.round(n * 1000) : n; }
@@ -956,26 +949,6 @@
                         };
                         videoEl.addEventListener('canplay', playWhenReady, { once: true });
                     }).catch(function(){});
-                } else if (s.isSample && data[s.id] && data[s.id].sampleUrl !== undefined && sampleShortsUrls[data[s.id].sampleUrl]) {
-                    videoEl.style.display = '';
-                    var soundOn = sessionStorage.getItem('nokShortsSound') !== '0';
-                    if (soundOn) {
-                        videoEl.muted = false;
-                        videoEl.removeAttribute('muted');
-                        videoEl.volume = 1;
-                        if (muteBtn) { var mi = muteBtn.querySelector('.shorts-mute-btn__icon--muted'); var ui = muteBtn.querySelector('.shorts-mute-btn__icon--unmuted'); if (mi) mi.style.display = 'none'; if (ui) ui.style.display = ''; muteBtn.style.display = 'flex'; }
-                    } else {
-                        videoEl.muted = true;
-                        videoEl.setAttribute('muted', '');
-                        if (muteBtn) { var mi = muteBtn.querySelector('.shorts-mute-btn__icon--muted'); var ui = muteBtn.querySelector('.shorts-mute-btn__icon--unmuted'); if (mi) mi.style.display = ''; if (ui) ui.style.display = 'none'; muteBtn.style.display = 'flex'; }
-                    }
-                    videoEl.src = sampleShortsUrls[data[s.id].sampleUrl];
-                    var playWhenReady = function() {
-                        if (currentIdx === idx) {
-                            videoEl.play().then(function() { if (playBtn) playBtn.style.display = 'none'; }).catch(function() { if (playBtn) playBtn.style.display = 'flex'; });
-                        }
-                    };
-                    videoEl.addEventListener('canplay', playWhenReady, { once: true });
                 } else {
                     videoEl.style.display = 'none';
                     if (playBtn) playBtn.style.display = 'flex';
