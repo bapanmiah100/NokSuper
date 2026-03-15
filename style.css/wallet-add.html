@@ -138,6 +138,21 @@
                     <input type="email" id="add-paypal-email" placeholder="your@email.com" autocomplete="email">
                     <p class="add-wallet-msg" style="margin-top:12px;">You’ll be redirected to PayPal to complete payment with this account.</p>
                 </div>
+                <div class="add-payment-form" id="add-upi-form">
+                    <label class="add-label" for="add-upi-id">UPI ID</label>
+                    <input type="text" id="add-upi-id" placeholder="yourname@upi" autocomplete="off">
+                    <p class="add-wallet-msg" style="margin-top:12px;">Pay via GPay, PhonePe or Paytm using this UPI ID.</p>
+                </div>
+                <div class="add-payment-form" id="add-paytm-form">
+                    <label class="add-label" for="add-paytm-mobile">Paytm mobile number</label>
+                    <input type="tel" id="add-paytm-mobile" placeholder="10-digit number" maxlength="10" inputmode="numeric" autocomplete="tel">
+                    <p class="add-wallet-msg" style="margin-top:12px;">Enter the mobile number linked to your Paytm wallet.</p>
+                </div>
+                <div class="add-payment-form" id="add-phonepe-form">
+                    <label class="add-label" for="add-phonepe-mobile">PhonePe mobile number</label>
+                    <input type="tel" id="add-phonepe-mobile" placeholder="10-digit number" maxlength="10" inputmode="numeric" autocomplete="tel">
+                    <p class="add-wallet-msg" style="margin-top:12px;">Enter the mobile number linked to your PhonePe wallet.</p>
+                </div>
                 <button type="button" class="add-submit" id="add-submit-btn" disabled>Pay</button>
             </div>
         </main>
@@ -205,10 +220,16 @@
                         var bankForm = document.getElementById('add-bank-form');
                         var appleForm = document.getElementById('add-applepay-form');
                         var paypalForm = document.getElementById('add-paypal-form');
+                        var upiForm = document.getElementById('add-upi-form');
+                        var paytmForm = document.getElementById('add-paytm-form');
+                        var phonepeForm = document.getElementById('add-phonepe-form');
                         if (cardForm) { cardForm.classList.toggle('add-card-form--show', selectedMethod === 'card'); }
                         if (bankForm) { bankForm.classList.toggle('add-payment-form--show', selectedMethod === 'bank'); }
                         if (appleForm) { appleForm.classList.toggle('add-payment-form--show', selectedMethod === 'applepay'); }
                         if (paypalForm) { paypalForm.classList.toggle('add-payment-form--show', selectedMethod === 'paypal'); }
+                        if (upiForm) { upiForm.classList.toggle('add-payment-form--show', selectedMethod === 'upi'); }
+                        if (paytmForm) { paytmForm.classList.toggle('add-payment-form--show', selectedMethod === 'paytm'); }
+                        if (phonepeForm) { phonepeForm.classList.toggle('add-payment-form--show', selectedMethod === 'phonepe'); }
                         updateSubmitState();
                     });
                     bankList.appendChild(div);
@@ -275,6 +296,27 @@
                 var e = (paypalEmailInput.value || '').trim();
                 return e.length >= 5 && e.indexOf('@') > 0 && e.indexOf('.') > e.indexOf('@');
             }
+            var upiIdInput = document.getElementById('add-upi-id');
+            var paytmMobileInput = document.getElementById('add-paytm-mobile');
+            var phonepeMobileInput = document.getElementById('add-phonepe-mobile');
+            function isUpiFormValid() {
+                if (!upiIdInput) return false;
+                var v = (upiIdInput.value || '').trim();
+                return v.length >= 5 && v.indexOf('@') > 0;
+            }
+            function isPaytmFormValid() {
+                if (!paytmMobileInput) return false;
+                var v = (paytmMobileInput.value || '').replace(/\D/g, '');
+                return v.length === 10;
+            }
+            function isPhonepeFormValid() {
+                if (!phonepeMobileInput) return false;
+                var v = (phonepeMobileInput.value || '').replace(/\D/g, '');
+                return v.length === 10;
+            }
+            if (upiIdInput) upiIdInput.addEventListener('input', updateSubmitState);
+            if (paytmMobileInput) paytmMobileInput.addEventListener('input', function() { this.value = (this.value || '').replace(/\D/g, '').slice(0, 10); updateSubmitState(); });
+            if (phonepeMobileInput) phonepeMobileInput.addEventListener('input', function() { this.value = (this.value || '').replace(/\D/g, '').slice(0, 10); updateSubmitState(); });
             if (bankNameInput) bankNameInput.addEventListener('input', updateSubmitState);
             if (bankBankInput) bankBankInput.addEventListener('input', updateSubmitState);
             if (bankAccountInput) bankAccountInput.addEventListener('input', updateSubmitState);
@@ -290,7 +332,13 @@
                     methodOk = isBankFormValid();
                 else if (selectedMethod === 'paypal' && document.getElementById('add-paypal-form') && document.getElementById('add-paypal-form').classList.contains('add-payment-form--show'))
                     methodOk = isPaypalFormValid();
-                else if (selectedMethod === 'applepay')
+                else if (selectedMethod === 'upi' && document.getElementById('add-upi-form') && document.getElementById('add-upi-form').classList.contains('add-payment-form--show'))
+                    methodOk = isUpiFormValid();
+                else if (selectedMethod === 'paytm' && document.getElementById('add-paytm-form') && document.getElementById('add-paytm-form').classList.contains('add-payment-form--show'))
+                    methodOk = isPaytmFormValid();
+                else if (selectedMethod === 'phonepe' && document.getElementById('add-phonepe-form') && document.getElementById('add-phonepe-form').classList.contains('add-payment-form--show'))
+                    methodOk = isPhonepeFormValid();
+                else if (selectedMethod === 'applepay' || selectedMethod === 'bkash' || selectedMethod === 'nagad' || selectedMethod === 'rocket')
                     methodOk = true;
                 if (submitBtn) {
                     submitBtn.disabled = !amountOk || !methodOk;
@@ -321,6 +369,7 @@
                 if (gatewayTitle) gatewayTitle.textContent = title;
                 if (gatewayText) gatewayText.textContent = text;
             }
+            // Demo: add money disabled until verification; shows verification message. Real money: use backend + gateway (see WALLET-PAYMENTS.md).
             if (submitBtn) submitBtn.addEventListener('click', function() {
                 var amtLocal = parseFloat(amountInput && amountInput.value ? amountInput.value : '', 10);
                 if (isNaN(amtLocal) || amtLocal < config.min) { alert('Please enter at least ' + config.currency + ' ' + config.min); return; }
@@ -328,32 +377,25 @@
                 if (selectedMethod === 'card' && !isCardFormValid()) { alert('Please enter valid card details.'); return; }
                 if (selectedMethod === 'bank' && !isBankFormValid()) { alert('Please enter valid bank details.'); return; }
                 if (selectedMethod === 'paypal' && !isPaypalFormValid()) { alert('Please enter a valid PayPal email.'); return; }
-                var amtBdt = localToBdt(amtLocal, config);
-                var usd = amtBdt / BDT_PER_USD;
-                var bonusCoins = Math.round(usd * COINS_PER_USD);
+                if (selectedMethod === 'upi' && !isUpiFormValid()) { alert('Please enter a valid UPI ID (e.g. name@upi).'); return; }
+                if (selectedMethod === 'paytm' && !isPaytmFormValid()) { alert('Please enter a valid 10-digit Paytm mobile number.'); return; }
+                if (selectedMethod === 'phonepe' && !isPhonepeFormValid()) { alert('Please enter a valid 10-digit PhonePe mobile number.'); return; }
 
+                // Demo: never add taka; always show verification required
                 if (gatewayOverlay) {
                     gatewayOverlay.classList.remove('add-gateway-overlay--success');
                     gatewayOverlay.classList.add('add-gateway-overlay--show');
                     gatewayOverlay.setAttribute('aria-hidden', 'false');
                 }
-                setGatewayStatus('Connecting to payment gateway', 'Please wait...');
-
-                setTimeout(function() {
-                    setGatewayStatus('Processing payment', 'Verifying with ' + (selectedMethod === 'card' ? 'card' : selectedMethod) + '...');
-                }, 1500);
-
-                setTimeout(function() {
-                    setGatewayStatus('Payment successful!', 'Adding to wallet balance...');
-                    if (gatewayOverlay) gatewayOverlay.classList.add('add-gateway-overlay--success');
-                }, 3000);
-
-                setTimeout(function() {
-                    setTakaAdded(getTakaAdded() + amtBdt);
-                    setCoins(getCoins() + bonusCoins);
-                    setGatewayStatus('Done!', 'Redirecting to wallet. You can buy coins now.');
-                    window.location.href = 'wallet.html';
-                }, 4500);
+                setGatewayStatus('Verification required', 'Please verify your account first to add money.');
+                var successEl = gatewayOverlay ? gatewayOverlay.querySelector('.add-gateway-success') : null;
+                var spinnerEl = gatewayOverlay ? gatewayOverlay.querySelector('.add-gateway-spinner') : null;
+                if (spinnerEl) spinnerEl.style.display = 'none';
+                if (successEl) {
+                    successEl.style.display = 'flex';
+                    successEl.innerHTML = '<div style="text-align:center;"><p style="font-size:1rem;font-weight:600;margin:0 0 12px 0;">Verify account first</p><p style="font-size:0.9rem;color:rgba(200,210,255,0.85);margin:0 0 20px 0;">Add money is available after you verify your account in Wallet.</p><a href="wallet.html" class="add-submit" style="display:inline-block;text-decoration:none;margin-top:8px;">Go to Wallet</a></div>';
+                }
+                if (gatewayOverlay) gatewayOverlay.classList.add('add-gateway-overlay--success');
             });
 
             updateBonusHint();
