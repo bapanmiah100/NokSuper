@@ -339,7 +339,12 @@
                     { id: 'lights', thumb: 'lights', title: 'Gazing at the Lights', likes: '89K' },
                     { id: 'portrait', thumb: 'short-portrait', title: '892KK', likes: '822K' }
                 ];
-                var LONG_PER_BLOCK = 160;
+                /* Pattern: every 4–5 lines long video, then 1 line shorts (repeat) */
+                var LONG_VIDEO_LINES = 5;
+                var CARDS_PER_LINE = 4;
+                var VIDEOS_PER_BLOCK = LONG_VIDEO_LINES * CARDS_PER_LINE;
+                var NUM_BLOCKS = 3;
+                var SHORTS_PER_ROW = 6;
                 var thumbToMoreClass = { mountains: 'mountains', waterfall: 'ocean', city: 'city', wild: 'forest', portrait: 'desert', channel1: 'city', channel2: 'city', channel3: 'city', channel4: 'desert' };
                 function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
                 function getThumbStyle(v) { if (v.thumbData) return ' style="background-image:url(' + escapeHtml(v.thumbData) + ');background-size:cover;background-position:center"'; return ''; }
@@ -347,22 +352,29 @@
                 function getViewsText(v) { var x = v.views || v.meta || '0 views'; if (typeof x === 'number' || (typeof x === 'string' && /^\d+$/.test(x))) return x + ' views'; return x; }
                 var blocksEl = document.getElementById('home-feed-blocks');
                 if (blocksEl) {
-                    var longVideos = userVideos.filter(function(v) { return !v.isShorts && !shortsIdsHome[v.id]; }).slice(0, 10);
-                    for (var i = 0; i < LONG_PER_BLOCK * 2; i++) longVideos.push(sampleLong[i % sampleLong.length]);
-                    for (var b = 0; b < 2; b++) {
-                        var sec = document.createElement('section');
-                        sec.className = 'long-video__card long-video__more home-video-section';
+                    var longVideos = userVideos.filter(function(v) { return !v.isShorts && !shortsIdsHome[v.id]; });
+                    for (var i = 0; i < NUM_BLOCKS * VIDEOS_PER_BLOCK; i++) longVideos.push(sampleLong[i % sampleLong.length]);
+                    longVideos = longVideos.slice(0, NUM_BLOCKS * VIDEOS_PER_BLOCK);
+                    var combinedShorts = userShorts.slice(0, SHORTS_PER_ROW);
+                    for (var si = combinedShorts.length; si < SHORTS_PER_ROW; si++) combinedShorts.push(sampleShorts[si % sampleShorts.length]);
+                    var thumbMap = { mountains: 'hike', waterfall: 'beach', city: 'citywalk', wild: 'hike', portrait: 'short-portrait', night: 'night', hike: 'hike', beach: 'beach', citywalk: 'citywalk', dance: 'dance', lights: 'lights' };
+                    function shortCardHtml(s) {
+                        var thumbClass = s.thumbData ? '' : ' home-short-card__thumb--' + (thumbMap[s.thumb] || 'night');
+                        var thumbStyle = s.thumbData ? ' style="background-image:url(' + (s.thumbData || '').replace(/"/g, '&quot;') + ');background-size:cover;background-position:center;background-repeat:no-repeat"' : '';
+                        return '<a href="shorts.html?id=' + encodeURIComponent(s.id) + '" class="home-short-card"><div class="home-short-card__thumb' + thumbClass + '"' + thumbStyle + '></div><div class="home-short-card__content"><p class="home-short-card__likes"><span class="home-short-card__heart">❤</span> ' + (s.likes || '0') + '</p><h4 class="home-short-card__title">' + (s.title || 'Shorts') + '</h4></div></a>';
+                    }
+                    for (var b = 0; b < NUM_BLOCKS; b++) {
+                        var chunk = longVideos.slice(b * VIDEOS_PER_BLOCK, (b + 1) * VIDEOS_PER_BLOCK);
+                        var longSec = document.createElement('section');
+                        longSec.className = 'long-video__card long-video__more home-video-section';
                         var titleEl = document.createElement('h2');
                         titleEl.className = 'long-video__section-title';
-                        titleEl.textContent = b === 0 ? 'Trending' : 'More like this';
-                        sec.appendChild(titleEl);
+                        titleEl.textContent = b === 0 ? 'Videos' : 'More videos';
+                        longSec.appendChild(titleEl);
                         var grid = document.createElement('div');
                         grid.className = 'long-video__creator-grid';
-                        grid.id = b === 0 ? 'home-video-row' : 'home-video-row-' + (b + 1);
-                        var start = b * LONG_PER_BLOCK;
-                        var end = Math.min(start + LONG_PER_BLOCK, longVideos.length);
-                        for (var j = start; j < end; j++) {
-                            var v = longVideos[j];
+                        grid.id = 'home-video-row' + (b > 0 ? '-' + (b + 1) : '');
+                        chunk.forEach(function(v) {
                             var card = document.createElement('a');
                             card.href = 'video.html?id=' + encodeURIComponent(v.id) + '&autoplay=1';
                             card.className = 'long-video__creator-item';
@@ -372,29 +384,14 @@
                             var views = escapeHtml(getViewsText(v));
                             card.innerHTML = '<div class="' + thumbClass + '"' + thumbStyle + '></div><span class="long-video__more-title">' + title + '</span><span class="long-video__more-views">' + views + '</span>';
                             grid.appendChild(card);
-                        }
-                        sec.appendChild(grid);
-                        blocksEl.appendChild(sec);
+                        });
+                        longSec.appendChild(grid);
+                        blocksEl.appendChild(longSec);
                         var shortsSec = document.createElement('section');
                         shortsSec.className = 'home-shorts-section';
-                        shortsSec.innerHTML = '<div class="home-shorts__header"><h3 class="home-shorts__title">Shorts</h3></div><div class="home-shorts-row">' + sampleShorts.map(function(s) { return '<a href="shorts.html?id=' + encodeURIComponent(s.id) + '" class="home-short-card"><div class="home-short-card__thumb home-short-card__thumb--' + s.thumb + '"></div><div class="home-short-card__content"><p class="home-short-card__likes"><span class="home-short-card__heart">❤</span> ' + s.likes + '</p><h4 class="home-short-card__title">' + s.title + '</h4></div></a>'; }).join('') + '</div>';
+                        shortsSec.innerHTML = '<div class="home-shorts__header"><h3 class="home-shorts__title">Shorts</h3></div><div class="home-shorts-row">' + combinedShorts.map(shortCardHtml).join('') + '</div>';
                         blocksEl.appendChild(shortsSec);
                     }
-                }
-                var shortsRow = document.querySelector('.home-shorts-row');
-                if (shortsRow && userShorts.length) {
-                    var frag = document.createDocumentFragment();
-                    var thumbMap = { mountains: 'hike', waterfall: 'beach', city: 'citywalk', wild: 'hike', portrait: 'short-portrait', night: 'night', hike: 'hike', beach: 'beach', citywalk: 'citywalk', dance: 'dance', lights: 'lights' };
-                    userShorts.slice(0, 12).forEach(function(s) {
-                        var card = document.createElement('a');
-                        card.href = 'shorts.html?id=' + encodeURIComponent(s.id);
-                        card.className = 'home-short-card';
-                        var thumbClass = s.thumbData ? '' : ' home-short-card__thumb--' + (thumbMap[s.thumb] || 'night');
-                        var thumbStyle = s.thumbData ? 'background-image:url(' + (s.thumbData || '').replace(/"/g, '&quot;') + ');background-size:cover;background-position:center;background-repeat:no-repeat' : '';
-                        card.innerHTML = '<div class="home-short-card__thumb' + thumbClass + '"' + (thumbStyle ? ' style="' + thumbStyle + '"' : '') + '></div><div class="home-short-card__content"><p class="home-short-card__likes"><span class="home-short-card__heart">❤</span> ' + (s.likes || '0') + '</p><h4 class="home-short-card__title">' + (s.title || 'Shorts') + '</h4></div>';
-                        frag.appendChild(card);
-                    });
-                    shortsRow.insertBefore(frag, shortsRow.firstChild);
                 }
                 document.querySelectorAll('.home-trending-btn').forEach(function(btn) {
                     btn.addEventListener('click', function() {

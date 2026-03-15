@@ -154,7 +154,7 @@
                         '<option value="unlisted"' + (vis === 'unlisted' ? ' selected' : '') + '>Unlisted</option>' +
                         '<option value="deleted"' + (vis === 'deleted' ? ' selected' : '') + '>Deleted</option>' +
                         '</select>';
-                    var watchUrl = 'video.html?id=' + encodeURIComponent(v.id || '');
+                    var watchUrl = 'video.html?id=' + encodeURIComponent(v.id || '') + '&autoplay=1';
                     return '<tr><td><div class="studio-table__video-cell"><a href="' + analyticsUrl + '" class="studio-table__video-thumb-link">' + thumbHtml + '</a><a href="' + analyticsUrl + '" class="studio-table__link studio-table__video-title">' + title + '</a></div></td><td><a href="' + editUrl + '" class="studio-table__link studio-table__edit-link" title="Edit details or thumbnail">Edit</a></td><td>' + promoteCell + '</td><td>' + views + '</td><td>' + likes + '</td><td>' + comments + '</td><td>' + superCount + '</td><td>' + subs + '</td><td>' + statusSelect + '</td><td><a href="' + watchUrl + '" class="studio-table__play-link" title="Watch" aria-label="Watch"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></a></td></tr>';
                 }).join('');
             }

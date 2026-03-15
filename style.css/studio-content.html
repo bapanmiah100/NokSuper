@@ -496,7 +496,7 @@
                         comments: parseInt(v.comments || 0, 10) || 0,
                         createdAt: Number(v.createdAt || Date.now() - index * 1000),
                         editUrl: 'studio-content-edit.html?type=video&id=' + encodeURIComponent(v.id || ('video-' + index)),
-                        viewUrl: 'video.html?id=' + encodeURIComponent(v.id || ('video-' + index))
+                        viewUrl: 'video.html?id=' + encodeURIComponent(v.id || ('video-' + index)) + '&autoplay=1'
                     };
                 });
                 var shorts = getShorts().map(function(s, index) {

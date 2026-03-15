@@ -425,7 +425,7 @@
                 var likes = fmtNum(parseInt(v.likes || 0, 10));
                 var comments = fmtNum(parseInt(v.comments || 0, 10));
                 var id = (v.id || '').toString().replace(/"/g, '&quot;');
-                var url = 'video.html?id=' + encodeURIComponent(v.id || '');
+                var url = 'video.html?id=' + encodeURIComponent(v.id || '') + '&autoplay=1';
                 return '<tr><td><a href="' + url + '" class="studio-table__link">' + title + '</a></td><td>' + views + '</td><td>' + likes + '</td><td>' + comments + '</td><td>Published</td><td><a href="' + url + '" class="studio-table__link">Watch</a></td></tr>';
             }).join('');
         }

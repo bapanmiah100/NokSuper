@@ -2366,20 +2366,14 @@ html:has(.home-body) .home-feed {
 .home-shorts-row {
     display: flex;
     gap: 12px;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: hidden;
     padding-bottom: 12px;
-    scrollbar-width: thin;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x proximity;
 }
 
 .home-shorts-row .home-short-card {
     flex: 0 0 calc((100% - 60px) / 6);
     min-width: calc((100% - 60px) / 6);
     max-width: calc((100% - 60px) / 6);
-    scroll-snap-align: start;
 }
 
 .home-short-card {

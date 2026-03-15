@@ -362,7 +362,7 @@
             userShorts.forEach(function(s) { shortsIds[s.id] = true; });
             var userVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
             var isLongVideo = userVideos.some(function(v) { return v.id === id && !shortsIds[v.id]; });
-            if (isLongVideo) { window.location.replace('video.html?id=' + encodeURIComponent(id)); return; }
+            if (isLongVideo) { window.location.replace('video.html?id=' + encodeURIComponent(id) + '&autoplay=1'); return; }
             var sampleShortsUrls = [];
             var data = {
                 demo1: { title: 'Demo – Night Vibes', likes: '48K', comments: '2.1K', shares: '190', saves: '320', channel: 'NOK Super', handle: '@NOKSuper', hashtags: '#demo #vibes', thumb: 'night', commentsPreview: ['Nice!', 'Cool 🔥'] },

@@ -158,7 +158,7 @@
                     var subs = (item.subscribers != null && item.subscribers !== '') ? fmtNum(parseInt(item.subscribers, 10)) : subsDisplay;
                     var obj = (item.objective || 'more_views').toLowerCase();
                     var goalLabel = obj === 'more_subscribers' ? 'Subscribers' : obj === 'more_likes' ? 'Likes' : 'Views';
-                    var watchUrl = type === 'video' ? 'video.html?id=' + encodeURIComponent(item.id || '') : type === 'short' ? 'shorts.html?id=' + encodeURIComponent(item.id || '') : 'home.html';
+                    var watchUrl = type === 'video' ? 'video.html?id=' + encodeURIComponent(item.id || '') + '&autoplay=1' : type === 'short' ? 'shorts.html?id=' + encodeURIComponent(item.id || '') : 'home.html';
                     var setupUrl = type === 'video' ? 'studio-promotion-setup.html?id=' + encodeURIComponent(item.id || '') : type === 'short' ? 'studio-promotion-setup.html?type=short&id=' + encodeURIComponent(item.id || '') : type === 'caption' ? 'studio-promotion-setup.html?type=caption&id=' + encodeURIComponent(item.id || '') : 'studio-promotion-setup.html?type=shop&id=' + encodeURIComponent(item.id || '');
                     var safeId = (item.id || '').toString().replace(/"/g, '&quot;');
                     var isPaused = (item.status || 'promoting') === 'paused';

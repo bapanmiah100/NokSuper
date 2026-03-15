@@ -1152,7 +1152,7 @@
                 sorted.slice(0, 20).forEach(function(item) {
                     var v = item.v;
                     var isShorts = item.isShorts;
-                    var href = isShorts ? ('shorts.html?id=' + encodeURIComponent(v.id)) : ('video.html?id=' + encodeURIComponent(v.id));
+                    var href = isShorts ? ('shorts.html?id=' + encodeURIComponent(v.id)) : ('video.html?id=' + encodeURIComponent(v.id) + '&autoplay=1');
                     var card = document.createElement('a');
                     card.href = href;
                     card.className = 'upload-uploads__card';
@@ -1229,7 +1229,7 @@
                     localStorage.setItem('nokUserChannel', channel);
                     successOverlay.classList.add('upload-success--show');
                     document.querySelector('.upload-success__text').textContent = asShorts ? 'Your Short is now live on NOK Super' : 'Your video is now live on NOK Super';
-                    var redirectUrl = asShorts ? ('shorts.html?id=' + encodeURIComponent(id)) : ('video.html?id=' + encodeURIComponent(id));
+                    var redirectUrl = asShorts ? ('shorts.html?id=' + encodeURIComponent(id)) : ('video.html?id=' + encodeURIComponent(id) + '&autoplay=1');
                     var doRedirect = function() { setTimeout(function() { window.location.href = redirectUrl; }, 1500); };
                     /* Short video file lokano: blob IndexedDB te (nok-video-db.js) */
                     if (vfile && window.nokVideoDB) nokVideoDB.save(id, vfile).then(doRedirect).catch(doRedirect);

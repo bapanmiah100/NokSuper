@@ -307,7 +307,7 @@
                 var html = '<div class="library-video-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;">';
                 ids.forEach(function(vidId) {
                     var title = getVideoTitle(vidId);
-                    var url = 'video.html?id=' + encodeURIComponent(vidId);
+                    var url = 'video.html?id=' + encodeURIComponent(vidId) + '&autoplay=1';
                     html += '<a href="' + url + '" class="library-video-item" style="display:block;text-decoration:none;color:inherit;border-radius:8px;overflow:hidden;background:rgba(0,0,0,0.2);">' +
                         '<div class="library-video-thumb" style="aspect-ratio:16/9;background:linear-gradient(135deg,rgba(80,100,180,0.4),rgba(40,60,120,0.5));"></div>' +
                         '<p class="library-video-title" style="margin:8px 10px 10px;font-size:0.9rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(title) + '</p></a>';
@@ -333,7 +333,7 @@
                     filesList.forEach(function(f) {
                         var vid = f.id || f.name;
                         var name = f.name || vid;
-                        var url = 'video.html?id=' + encodeURIComponent(vid);
+                        var url = 'video.html?id=' + encodeURIComponent(vid) + '&autoplay=1';
                         html += '<a href="' + url + '" class="library-video-item" style="display:block;text-decoration:none;color:inherit;border-radius:8px;overflow:hidden;background:rgba(0,0,0,0.2);">' +
                             '<div class="library-video-thumb" style="aspect-ratio:16/9;background:linear-gradient(135deg,rgba(80,100,180,0.4),rgba(40,60,120,0.5));"></div>' +
                             '<p class="library-video-title" style="margin:8px 10px 10px;font-size:0.9rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(name) + '</p></a>';

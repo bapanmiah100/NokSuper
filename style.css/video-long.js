@@ -369,7 +369,7 @@
             var views = (inf.views != null ? inf.views : '18 views') + '';
             if (views && /^\d+$/.test(views)) views = views + ' views';
             var thumbStyle = getThumbStyle(inf, vidId, 320, 180);
-            return '<a href="video.html?id=' + encodeURIComponent(vidId) + '" class="long-video__more-item"><div class="long-video__more-thumb ' + thumbClass + '"' + thumbStyle + '></div><span class="long-video__more-title">' + title + '</span><span class="long-video__more-views">' + escapeHtml(views) + '</span></a>';
+            return '<a href="video.html?id=' + encodeURIComponent(vidId) + '&autoplay=1" class="long-video__more-item"><div class="long-video__more-thumb ' + thumbClass + '"' + thumbStyle + '></div><span class="long-video__more-title">' + title + '</span><span class="long-video__more-views">' + escapeHtml(views) + '</span></a>';
         }).join('');
         moreGridEl.innerHTML = html || '<span class="long-video__more-views">No other videos in this category.</span>';
     }
@@ -404,7 +404,7 @@
             var views = (inf.views != null ? inf.views : '18 views') + '';
             if (views && /^\d+$/.test(views)) views = views + ' views';
             var thumbStyle = getThumbStyle(inf, vidId, 320, 180);
-            parts.push('<a href="video.html?id=' + encodeURIComponent(vidId) + '" class="long-video__creator-upload-card"><div class="long-video__creator-upload-thumb ' + thumbClass + '"' + thumbStyle + '></div><span class="long-video__creator-upload-title">' + title + '</span><span class="long-video__creator-upload-views">' + escapeHtml(views) + '</span></a>');
+            parts.push('<a href="video.html?id=' + encodeURIComponent(vidId) + '&autoplay=1" class="long-video__creator-upload-card"><div class="long-video__creator-upload-thumb ' + thumbClass + '"' + thumbStyle + '></div><span class="long-video__creator-upload-title">' + title + '</span><span class="long-video__creator-upload-views">' + escapeHtml(views) + '</span></a>');
         });
         creatorInfo.shorts.forEach(function(s) {
             var thumbClass = 'long-video__creator-upload-thumb long-video__more-thumb';
@@ -442,7 +442,7 @@
             var views = (inf.views != null ? inf.views : '18 views') + '';
             if (views && /^\d+$/.test(views)) views = views + ' views';
             var thumbStyle = getThumbStyle(inf, vidId, 320, 180);
-            return '<a href="video.html?id=' + encodeURIComponent(vidId) + '" class="long-video__creator-item"><div class="long-video__more-thumb ' + thumbClass + '"' + thumbStyle + '></div><span class="long-video__more-title">' + title + '</span><span class="long-video__more-views">' + escapeHtml(views) + '</span></a>';
+            return '<a href="video.html?id=' + encodeURIComponent(vidId) + '&autoplay=1" class="long-video__creator-item"><div class="long-video__more-thumb ' + thumbClass + '"' + thumbStyle + '></div><span class="long-video__more-title">' + title + '</span><span class="long-video__more-views">' + escapeHtml(views) + '</span></a>';
         }).join('');
         relatedGridEl.innerHTML = html;
     }
@@ -587,7 +587,7 @@
     function getVideoPageUrl() {
         var p = new URLSearchParams(window.location.search);
         var idParam = p.get('id');
-        return idParam ? 'video.html?id=' + encodeURIComponent(idParam) : 'video.html';
+        return idParam ? 'video.html?id=' + encodeURIComponent(idParam) + '&autoplay=1' : 'video.html';
     }
     function requireLoginForAction() {
         if (sessionStorage.getItem('nokAuth') !== 'loggedIn' && localStorage.getItem('nokAuth') !== 'loggedIn') {
@@ -1018,7 +1018,7 @@
                         var views = (inf.views != null ? inf.views : inf.likeCount != null ? formatCount(inf.likeCount) : '18') + '';
                         if (views && /^\d+$/.test(views)) views = views + ' views';
                         var thumbStyle = getThumbStyle(inf, vidId, 160, 90);
-                        html += '<a href="video.html?id=' + encodeURIComponent(vidId) + '" class="long-video__drop-up-card" data-video-id="' + escapeHtml(vidId) + '"><div class="long-video__drop-up-card-thumb"' + thumbStyle + '></div><span class="long-video__drop-up-card-title">' + title + '</span></a>';
+                        html += '<a href="video.html?id=' + encodeURIComponent(vidId) + '&autoplay=1" class="long-video__drop-up-card" data-video-id="' + escapeHtml(vidId) + '"><div class="long-video__drop-up-card-thumb"' + thumbStyle + '></div><span class="long-video__drop-up-card-title">' + title + '</span></a>';
                     });
                     html += '</div>';
                     dropUpList.innerHTML = html;
@@ -1417,6 +1417,7 @@
         }
 
         var wantAutoplay = params.get('autoplay') === '1';
+        if (wantAutoplay) videoEl.setAttribute('autoplay', '');
         function tryAutoplay() {
             if (!wantAutoplay) return;
             videoEl.play().then(function() {
