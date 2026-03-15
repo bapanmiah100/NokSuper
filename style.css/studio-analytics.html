@@ -360,14 +360,19 @@
                 } catch (_) {}
                 return 0;
             }
+            function getTotalEarningFormatted() {
+                var total = parseFloat(localStorage.getItem('nokTotalEarning') || '0') || 0;
+                return '$' + (Math.round(total * 100) / 100).toFixed(2);
+            }
             function buildItemEarningRow(item) {
                 var parts = [];
+                var earningStr = getTotalEarningFormatted();
                 if (item.type === 'video') {
-                    parts.push('<a href="studio-earning.html" class="analytics-item__earn-btn">Earning</a>');
+                    parts.push('<span class="analytics-item__earn-btn">Earning: ' + escapeHtml(earningStr) + '</span>');
                     var sc = getSuperCommentCount(item.id);
                     parts.push('<span class="analytics-item__super">Super comment: ' + compact(sc) + '</span>');
                 } else if (item.type === 'short') {
-                    parts.push('<a href="studio-earning.html" class="analytics-item__earn-btn">Earning</a>');
+                    parts.push('<span class="analytics-item__earn-btn">Earning: ' + escapeHtml(earningStr) + '</span>');
                     var gc = getGiftCoinForItem(item.id, 'short');
                     parts.push('<span class="analytics-item__gift">Gift coin: ' + compact(gc) + '</span>');
                 } else if (item.type === 'caption') {

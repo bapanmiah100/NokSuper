@@ -14,7 +14,7 @@
         /* Upload page - colourful gradients, glow, matching home/channel */
         .upload-layout { min-height: 100vh; font-family: 'Outfit', -apple-system, sans-serif; display: flex; flex-direction: column; position: relative; z-index: 1; background: linear-gradient(160deg, rgba(30,27,75,0.95) 0%, rgba(49,46,129,0.4) 35%, rgba(79,70,229,0.2) 70%, transparent 100%), radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.2) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(99,102,241,0.15) 0%, transparent 45%); }
         .upload-layout::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(rgba(139,92,246,0.08) 1px, transparent 1px); background-size: 24px 24px; pointer-events: none; z-index: 0; }
-        .upload-main { position: relative; z-index: 1; flex: 1; display: flex; gap: 24px; padding: 24px; padding-top: calc(24px + 56px); overflow: auto; }
+        .upload-main { position: relative; z-index: 1; flex: 1; display: flex; flex-wrap: wrap; gap: 24px; padding: 24px; padding-top: calc(24px + 56px); overflow: auto; }
         .upload-main__left { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
         .upload-main__right { width: 360px; flex-shrink: 0; }
         .upload-card { background: linear-gradient(145deg, rgba(30,27,60,0.75) 0%, rgba(49,46,129,0.35) 100%); border: 1px solid rgba(139,92,246,0.5); border-radius: 16px; padding: 24px; box-shadow: 0 0 32px rgba(139,92,246,0.12), 0 4px 24px rgba(0,0,0,0.15); transition: box-shadow 0.25s, border-color 0.25s; }
@@ -183,6 +183,10 @@
         .upload-photo-preview { display: none; margin-top: 16px; border-radius: 12px; overflow: hidden; max-height: 320px; }
         .upload-photo-preview.upload-photo-preview--show { display: block; }
         .upload-photo-preview img { width: 100%; height: auto; display: block; }
+        .upload-top-bar { width: 100%; flex-basis: 100%; display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-bottom: 4px; flex-wrap: wrap; order: -1; }
+        .upload-go-live { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 12px; background: linear-gradient(135deg, rgba(239,68,68,0.25), rgba(220,38,38,0.2)); border: 2px solid rgba(239,68,68,0.5); color: #fca5a5; font-size: 0.95rem; font-weight: 700; text-decoration: none; font-family: inherit; transition: all 0.2s; box-shadow: 0 0 20px rgba(239,68,68,0.15); }
+        .upload-go-live:hover { background: linear-gradient(135deg, rgba(239,68,68,0.4), rgba(220,38,38,0.35)); border-color: #ef4444; color: #fff; box-shadow: 0 0 28px rgba(239,68,68,0.35); transform: translateY(-1px); }
+        .upload-go-live svg { width: 22px; height: 22px; flex-shrink: 0; }
     </style>
 </head>
 <body class="video-body has-bottom-nav">
@@ -230,8 +234,6 @@
                 <button type="button" class="header-drawer__close" id="header-drawer-close" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
             <nav class="header-drawer__nav">
-                <a href="home.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
-                <a href="shorts.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
                 <a href="studio.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span><span>Studio</span></a>
                 <a href="library.html#watch-later" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Watch later</span></a>
                 <a href="library.html#saved" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span><span>Saved videos</span></a>
@@ -243,6 +245,12 @@
         </aside>
 
         <div class="upload-main" id="upload-main">
+            <div class="upload-top-bar">
+                <a href="live-stream.html" class="upload-go-live" title="Start a live stream">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
+                    Go live
+                </a>
+            </div>
             <div class="upload-main__left">
                 <!-- Rating post (type=rating) -->
                 <div class="upload-rating-wrap upload-card" id="upload-rating-wrap">
