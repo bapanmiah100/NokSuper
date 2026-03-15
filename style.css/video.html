@@ -437,6 +437,43 @@
         </div>
     </div>
 
+    <div class="caption-comment-dropup" id="caption-comment-dropup" aria-hidden="true">
+        <div class="caption-comment-dropup__backdrop" id="caption-comment-backdrop"></div>
+        <div class="caption-comment-dropup__panel">
+            <div class="caption-comment-dropup__handle" id="caption-comment-handle"></div>
+            <div class="caption-comment-dropup__head">
+                <h4 class="caption-comment-dropup__title">Comments</h4>
+                <span class="caption-comment-dropup__meta" id="caption-comment-meta">0 comments</span>
+                <button type="button" class="caption-comment-dropup__close" id="caption-comment-close" aria-label="Close">×</button>
+            </div>
+            <div class="caption-comment-dropup__list" id="caption-comment-list"></div>
+            <div class="caption-comment-dropup__foot">
+                <input type="text" class="caption-comment-dropup__input" id="caption-comment-input" placeholder="Add a comment..." maxlength="300" autocomplete="off">
+                <button type="button" class="caption-comment-dropup__post" id="caption-comment-submit">Send</button>
+            </div>
+        </div>
+    </div>
+    <div class="shorts-coin-modal caption-gift-modal" id="caption-gift-modal" aria-hidden="true">
+        <div class="shorts-coin-modal__backdrop" id="caption-gift-backdrop"></div>
+        <div class="shorts-coin-modal__panel">
+            <h3 class="shorts-coin-modal__title">Send coin gift</h3>
+            <p class="shorts-coin-modal__hint">Choose amount to support the creator</p>
+            <div class="shorts-coin-modal__options" id="caption-gift-options">
+                <button type="button" class="shorts-coin-modal__opt" data-amount="5">5</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="10">10</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="25">25</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="50">50</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="100">100</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="200">200</button>
+            </div>
+            <p class="shorts-coin-modal__selected" id="caption-gift-selected">0 coins</p>
+            <label class="shorts-coin-modal__label">Or enter amount</label>
+            <input type="number" class="shorts-coin-modal__input" id="caption-gift-input" placeholder="e.g. 75" min="1" max="99999" step="1" inputmode="numeric">
+            <button type="button" class="shorts-coin-modal__send" id="caption-gift-send">Send gift</button>
+            <button type="button" class="shorts-coin-modal__close" id="caption-gift-close" aria-label="Close">×</button>
+        </div>
+    </div>
+
     <script>
         (function() {
             var menuBtn = document.getElementById('header-menu-btn');
@@ -470,17 +507,25 @@
                 captionDropdown.setAttribute('aria-hidden', 'false');
             }
             function getCaptionPosts() { try { return JSON.parse(localStorage.getItem('nokCaptionPosts') || '[]'); } catch (e) { return []; } }
+            function saveCaptionPosts(posts) { try { localStorage.setItem('nokCaptionPosts', JSON.stringify(posts)); } catch (e) {} }
+            function getCaptionGifts() { try { return JSON.parse(localStorage.getItem('nokCaptionGifts') || '{}'); } catch (e) { return {}; } }
+            function saveCaptionGifts(map) { try { localStorage.setItem('nokCaptionGifts', JSON.stringify(map)); } catch (e) {} }
+            function getCaptionGiftCount(postId) { var m = getCaptionGifts(); return parseInt(m[postId] || 0, 10) || 0; }
+            function addCaptionGift(postId, amount) { var m = getCaptionGifts(); m[postId] = (parseInt(m[postId] || 0, 10) || 0) + (amount || 0); saveCaptionGifts(m); return m[postId]; }
+            function getCaptionLikedPosts() { try { return JSON.parse(localStorage.getItem('nokCaptionLikedPosts') || '{}'); } catch (e) { return {}; } }
+            function setCaptionLiked(postId) { var o = getCaptionLikedPosts(); o[postId] = true; try { localStorage.setItem('nokCaptionLikedPosts', JSON.stringify(o)); } catch (e) {} }
             function timeAgoCaption(ts) { var d = Date.now() - ts; if (d < 60000) return 'Just now'; if (d < 3600000) return Math.floor(d / 60000) + 'm ago'; if (d < 86400000) return Math.floor(d / 3600000) + 'h ago'; if (d < 604800000) return Math.floor(d / 86400000) + 'd ago'; return new Date(ts).toLocaleDateString(); }
             function capInitial(str) { return (str || '?').toString().trim().charAt(0).toUpperCase(); }
             function escapeCap(str) { if (!str) return ''; return String(str).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+            function isLoggedInCap() { return (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn'); }
             function renderVideoCaptionList() {
                 if (!captionListEl) return;
                 var posts = getCaptionPosts();
                 captionListEl.innerHTML = '';
                 posts.forEach(function(post) {
-                    var card = document.createElement('a');
+                    var card = document.createElement('div');
                     card.className = 'caption-mini-card';
-                    card.href = 'studio-content.html';
+                    card.dataset.postId = post.id;
                     var author = post.author || 'You';
                     var text = (post.caption || '').trim();
                     var textEsc = escapeCap(text).substring(0, 120);
@@ -489,9 +534,184 @@
                     var likes = post.likes || 0;
                     var commentsCount = (post.comments && post.comments.length) || 0;
                     var sharesCount = post.shares || 0;
-                    var actionsHtml = '<div class="caption-mini-card__actions"><span class="cap-like">❤ ' + likes + '</span><span class="cap-comment">💬 ' + commentsCount + '</span><span class="cap-share">🔗 ' + sharesCount + '</span></div>';
-                    card.innerHTML = '<div class="caption-mini-card__row"><div class="caption-mini-card__avatar">' + capInitial(author) + '</div><span class="caption-mini-card__author">' + escapeCap(author) + '</span></div>' + (textEsc ? '<div class="caption-mini-card__text">' + textEsc + '</div>' : '') + thumbHtml + '<div class="caption-mini-card__meta">' + timeAgoCaption(post.createdAt) + '</div>' + actionsHtml;
+                    var giftCount = getCaptionGiftCount(post.id);
+                    var actionsHtml = '<div class="caption-mini-card__actions"><span class="cap-like" role="button" data-action="like">❤ ' + likes + '</span><span class="cap-comment" role="button" data-action="comment">💬 ' + commentsCount + '</span><span class="cap-share" role="button" data-action="share">🔗 ' + sharesCount + '</span><span class="cap-gift" role="button" data-action="gift">🎁 ' + giftCount + '</span></div>';
+                    card.innerHTML = '<a href="captions.html" class="caption-mini-card__link">' + '<div class="caption-mini-card__row"><div class="caption-mini-card__avatar">' + capInitial(author) + '</div><span class="caption-mini-card__author">' + escapeCap(author) + '</span></div>' + (textEsc ? '<div class="caption-mini-card__text">' + textEsc + '</div>' : '') + thumbHtml + '<div class="caption-mini-card__meta">' + timeAgoCaption(post.createdAt) + '</div>' + '</a>' + actionsHtml;
                     captionListEl.appendChild(card);
+                });
+            }
+            var captionCommentDropup = document.getElementById('caption-comment-dropup');
+            var captionCommentInput = document.getElementById('caption-comment-input');
+            var captionCommentSubmit = document.getElementById('caption-comment-submit');
+            var captionCommentList = document.getElementById('caption-comment-list');
+            var captionCommentMeta = document.getElementById('caption-comment-meta');
+            var currentUserCap = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You';
+            var pendingCommentPostId = null, pendingCommentActionEl = null;
+            function countCommentsTotal(comments) { if (!comments || !comments.length) return 0; var n = comments.length; comments.forEach(function(c) { n += (c.replies && c.replies.length) || 0; }); return n; }
+            function renderDropupComment(c, isReply) {
+                var item = document.createElement('div');
+                item.className = 'caption-comment-dropup__item' + (isReply ? ' caption-comment-dropup__item--reply' : '');
+                item.dataset.commentId = c.id;
+                var author = (c.author || 'User').toString().trim();
+                var initial = author ? author.charAt(0).toUpperCase() : '?';
+                var text = (c.text || '').toString().replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                var line = '<strong>' + (author || 'User') + '</strong> ' + text;
+                var replyBtn = isReply ? '' : '<button type="button" class="caption-comment-dropup__reply-btn" data-reply-to="' + c.id + '">Reply</button>';
+                var replyForm = isReply ? '' : '<div class="caption-comment-dropup__reply-form" id="reply-form-' + c.id + '"><input type="text" class="caption-comment-dropup__reply-input" placeholder="Write a reply..." maxlength="300" data-reply-for="' + c.id + '"><button type="button" class="caption-comment-dropup__reply-send" data-send-reply="' + c.id + '">Send</button></div>';
+                item.innerHTML = '<div class="caption-comment-dropup__avatar">' + initial + '</div><div class="caption-comment-dropup__body"><div class="caption-comment-dropup__line">' + line + '</div>' + replyBtn + replyForm + '</div>';
+                return item;
+            }
+            function renderDropupComments(post) {
+                if (!captionCommentList) return;
+                captionCommentList.innerHTML = '';
+                var comments = post.comments || [];
+                comments.forEach(function(c) {
+                    var wrap = document.createElement('div');
+                    wrap.appendChild(renderDropupComment(c, false));
+                    if (c.replies && c.replies.length) { var repliesDiv = document.createElement('div'); repliesDiv.className = 'caption-comment-dropup__replies'; c.replies.forEach(function(r) { repliesDiv.appendChild(renderDropupComment(r, true)); }); wrap.querySelector('.caption-comment-dropup__body').appendChild(repliesDiv); }
+                    captionCommentList.appendChild(wrap);
+                });
+                if (captionCommentMeta) captionCommentMeta.textContent = countCommentsTotal(comments) + ' comment' + (countCommentsTotal(comments) !== 1 ? 's' : '');
+            }
+            function openCaptionCommentCard(postId, actionEl) {
+                pendingCommentPostId = postId; pendingCommentActionEl = actionEl;
+                if (captionCommentInput) captionCommentInput.value = '';
+                var posts = getCaptionPosts();
+                var p = posts.find(function(x) { return x.id === postId; });
+                if (p) {
+                    renderDropupComments(p);
+                    if (captionCommentDropup) { captionCommentDropup.classList.add('caption-comment-dropup--open'); captionCommentDropup.setAttribute('aria-hidden', 'false'); }
+                    setTimeout(function() { if (captionCommentInput) captionCommentInput.focus(); }, 150);
+                }
+            }
+            function closeCaptionCommentCard() {
+                pendingCommentPostId = null; pendingCommentActionEl = null;
+                if (captionCommentDropup) { captionCommentDropup.classList.remove('caption-comment-dropup--open'); captionCommentDropup.setAttribute('aria-hidden', 'true'); }
+            }
+            function openCaptionGiftModal(postId, actionEl) {
+                window._captionGiftPostId = postId; window._captionGiftActionEl = actionEl;
+                var sel = document.getElementById('caption-gift-selected'); var inp = document.getElementById('caption-gift-input'); var opt = document.getElementById('caption-gift-options');
+                if (sel) sel.textContent = '0 coins'; if (inp) inp.value = '';
+                if (opt) opt.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                var modal = document.getElementById('caption-gift-modal');
+                if (modal) { modal.classList.add('shorts-coin-modal--open'); modal.setAttribute('aria-hidden', 'false'); }
+            }
+            function closeCaptionGiftModal() {
+                window._captionGiftPostId = null; window._captionGiftActionEl = null;
+                var modal = document.getElementById('caption-gift-modal');
+                if (modal) modal.classList.remove('shorts-coin-modal--open');
+            }
+            if (captionCommentDropup) {
+                var cb = document.getElementById('caption-comment-backdrop'); if (cb) cb.addEventListener('click', closeCaptionCommentCard);
+                var ccl = document.getElementById('caption-comment-close'); if (ccl) ccl.addEventListener('click', closeCaptionCommentCard);
+                if (captionCommentSubmit) captionCommentSubmit.addEventListener('click', function() {
+                    if (!pendingCommentPostId || !captionCommentInput) return;
+                    var text = (captionCommentInput.value || '').trim();
+                    if (!text) return;
+                    if (!isLoggedInCap()) { window.location.href = 'login.html?next=' + encodeURIComponent('video.html'); return; }
+                    var posts = getCaptionPosts();
+                    var p = posts.find(function(x) { return x.id === pendingCommentPostId; });
+                    if (p) {
+                        p.comments = p.comments || [];
+                        p.comments.push({ id: 'c_' + Date.now(), text: text, author: currentUserCap, createdAt: Date.now(), replies: [] });
+                        saveCaptionPosts(posts);
+                        if (pendingCommentActionEl) pendingCommentActionEl.textContent = '💬 ' + p.comments.length;
+                        renderDropupComments(p);
+                        if (captionCommentMeta) captionCommentMeta.textContent = countCommentsTotal(p.comments) + ' comment' + (countCommentsTotal(p.comments) !== 1 ? 's' : '');
+                        if (captionCommentInput) captionCommentInput.value = '';
+                    }
+                });
+                if (captionCommentList) captionCommentList.addEventListener('click', function(e) {
+                    var replyBtn = e.target.closest('.caption-comment-dropup__reply-btn[data-reply-to]');
+                    var sendBtn = e.target.closest('.caption-comment-dropup__reply-send[data-send-reply]');
+                    if (replyBtn) {
+                        var cid = replyBtn.getAttribute('data-reply-to');
+                        var form = document.getElementById('reply-form-' + cid);
+                        document.querySelectorAll('.caption-comment-dropup__reply-form').forEach(function(f) { f.classList.remove('caption-comment-dropup__reply-form--show'); });
+                        if (form) { form.classList.add('caption-comment-dropup__reply-form--show'); form.querySelector('.caption-comment-dropup__reply-input').focus(); }
+                        return;
+                    }
+                    if (sendBtn && pendingCommentPostId) {
+                        var commentId = sendBtn.getAttribute('data-send-reply');
+                        var form = document.getElementById('reply-form-' + commentId);
+                        var inp = form ? form.querySelector('.caption-comment-dropup__reply-input') : null;
+                        var text = inp ? (inp.value || '').trim() : '';
+                        if (!text) return;
+                        if (!isLoggedInCap()) { window.location.href = 'login.html?next=' + encodeURIComponent('video.html'); return; }
+                        var posts = getCaptionPosts();
+                        var p = posts.find(function(x) { return x.id === pendingCommentPostId; });
+                        var comment = p && p.comments ? p.comments.find(function(c) { return c.id === commentId; }) : null;
+                        if (comment) {
+                            comment.replies = comment.replies || [];
+                            comment.replies.push({ id: 'r_' + Date.now(), text: text, author: currentUserCap, createdAt: Date.now() });
+                            saveCaptionPosts(posts);
+                            if (pendingCommentActionEl) pendingCommentActionEl.textContent = '💬 ' + p.comments.length;
+                            renderDropupComments(p);
+                            if (captionCommentMeta) captionCommentMeta.textContent = countCommentsTotal(p.comments) + ' comment' + (countCommentsTotal(p.comments) !== 1 ? 's' : '');
+                            if (form) { form.classList.remove('caption-comment-dropup__reply-form--show'); if (inp) inp.value = ''; }
+                        }
+                    }
+                });
+            }
+            (function initVideoCaptionGiftModal() {
+                var backdrop = document.getElementById('caption-gift-backdrop');
+                var options = document.getElementById('caption-gift-options');
+                var selectedEl = document.getElementById('caption-gift-selected');
+                var inputEl = document.getElementById('caption-gift-input');
+                var sendBtn = document.getElementById('caption-gift-send');
+                var closeBtn = document.getElementById('caption-gift-close');
+                var selectedAmount = 0;
+                function getEff() { var v = inputEl ? parseInt(inputEl.value, 10) : NaN; if (!isNaN(v) && v > 0) return v; return selectedAmount; }
+                if (backdrop) backdrop.addEventListener('click', closeCaptionGiftModal);
+                if (closeBtn) closeBtn.addEventListener('click', closeCaptionGiftModal);
+                if (options) options.addEventListener('click', function(e) {
+                    var opt = e.target.closest('.shorts-coin-modal__opt');
+                    if (!opt) return;
+                    options.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                    opt.classList.add('shorts-coin-modal__opt--active');
+                    selectedAmount = parseInt(opt.getAttribute('data-amount'), 10) || 0;
+                    if (selectedEl) selectedEl.textContent = selectedAmount + ' coins';
+                    if (inputEl) inputEl.value = selectedAmount > 0 ? selectedAmount : '';
+                });
+                if (inputEl) inputEl.addEventListener('input', function() { var v = parseInt(inputEl.value, 10); if (!isNaN(v) && v > 0) { selectedAmount = v; if (selectedEl) selectedEl.textContent = v + ' coins'; } });
+                if (sendBtn) sendBtn.addEventListener('click', function() {
+                    var postId = window._captionGiftPostId; var actionEl = window._captionGiftActionEl; var amount = getEff();
+                    if (!postId || amount <= 0) return;
+                    if (!isLoggedInCap()) { window.location.href = 'login.html?next=' + encodeURIComponent('video.html'); return; }
+                    var n = addCaptionGift(postId, amount);
+                    if (actionEl) actionEl.textContent = '🎁 ' + n;
+                    closeCaptionGiftModal();
+                });
+            })();
+            if (captionListEl) {
+                captionListEl.addEventListener('click', function(e) {
+                    var actionEl = e.target.closest('[data-action]');
+                    if (!actionEl || !actionEl.dataset.action) return;
+                    var card = actionEl.closest('.caption-mini-card');
+                    if (!card) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var postId = card.dataset.postId;
+                    if (!postId) return;
+                    var action = actionEl.dataset.action;
+                    if (action === 'comment') {
+                        if (!isLoggedInCap()) { window.location.href = 'login.html?next=' + encodeURIComponent('video.html'); return; }
+                        openCaptionCommentCard(postId, actionEl);
+                        return;
+                    }
+                    if ((action === 'like' || action === 'gift') && !isLoggedInCap()) { window.location.href = 'login.html?next=' + encodeURIComponent('video.html'); return; }
+                    var posts = getCaptionPosts();
+                    var p = posts.find(function(x) { return x.id === postId; });
+                    var liked = getCaptionLikedPosts();
+                    if (action === 'like' && p && !liked[postId]) {
+                        p.likes = (p.likes || 0) + 1; saveCaptionPosts(posts); setCaptionLiked(postId);
+                        actionEl.textContent = '❤ ' + p.likes;
+                    } else if (action === 'share' && p) {
+                        p.shares = (p.shares || 0) + 1; saveCaptionPosts(posts);
+                        actionEl.textContent = '🔗 ' + p.shares;
+                    } else if (action === 'gift') {
+                        openCaptionGiftModal(postId, actionEl);
+                    }
                 });
             }
             if (captionToggle) {

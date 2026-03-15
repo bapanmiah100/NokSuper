@@ -89,6 +89,27 @@
         </nav>
     </div>
 
+    <div class="shorts-coin-modal caption-gift-modal" id="caption-gift-modal" aria-hidden="true">
+        <div class="shorts-coin-modal__backdrop" id="caption-gift-backdrop"></div>
+        <div class="shorts-coin-modal__panel">
+            <h3 class="shorts-coin-modal__title">Send coin gift</h3>
+            <p class="shorts-coin-modal__hint">Choose amount to support the creator</p>
+            <div class="shorts-coin-modal__options" id="caption-gift-options">
+                <button type="button" class="shorts-coin-modal__opt" data-amount="5">5</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="10">10</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="25">25</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="50">50</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="100">100</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="200">200</button>
+            </div>
+            <p class="shorts-coin-modal__selected" id="caption-gift-selected">0 coins</p>
+            <label class="shorts-coin-modal__label">Or enter amount</label>
+            <input type="number" class="shorts-coin-modal__input" id="caption-gift-input" placeholder="e.g. 75" min="1" max="99999" step="1" inputmode="numeric">
+            <button type="button" class="shorts-coin-modal__send" id="caption-gift-send">Send gift</button>
+            <button type="button" class="shorts-coin-modal__close" id="caption-gift-close" aria-label="Close">×</button>
+        </div>
+    </div>
+
     <script>
     (function() {
         var listEl = document.getElementById('captions-list');
@@ -123,10 +144,12 @@
         }
         function addCaptionGift(postId, amount) {
             var map = getCaptionGifts();
-            map[postId] = (parseInt(map[postId] || 0, 10) || 0) + (amount || 1);
+            map[postId] = (parseInt(map[postId] || 0, 10) || 0) + (amount || 0);
             saveCaptionGifts(map);
             return map[postId];
         }
+        function getCaptionLikedPosts() { try { return JSON.parse(localStorage.getItem('nokCaptionLikedPosts') || '{}'); } catch (e) { return {}; } }
+        function setCaptionLiked(postId) { var o = getCaptionLikedPosts(); o[postId] = true; try { localStorage.setItem('nokCaptionLikedPosts', JSON.stringify(o)); } catch (e) {} }
         function timeAgo(ts) {
             var d = Date.now() - ts;
             if (d < 60000) return 'Just now';
@@ -178,9 +201,11 @@
 
             card.querySelector('.caption-like-btn').addEventListener('click', function() {
                 if (!requireLoginForAction('like')) return;
+                var liked = getCaptionLikedPosts();
+                if (liked[post.id]) return;
                 var posts = getPosts();
                 var p = posts.find(function(x) { return x.id === post.id; });
-                if (p) { p.likes = (p.likes || 0) + 1; savePosts(posts); this.querySelector('.like-count').textContent = p.likes; }
+                if (p) { p.likes = (p.likes || 0) + 1; savePosts(posts); setCaptionLiked(post.id); this.querySelector('.like-count').textContent = p.likes; }
             });
             card.querySelector('.caption-share-btn').addEventListener('click', function() {
                 var posts = getPosts();
@@ -193,8 +218,16 @@
             });
             card.querySelector('.caption-gift-btn').addEventListener('click', function() {
                 if (!requireLoginForAction('gift')) return;
-                var count = addCaptionGift(post.id, 1);
-                this.querySelector('.gift-count').textContent = count;
+                window._captionGiftPostId = post.id;
+                window._captionGiftActionEl = this.querySelector('.gift-count');
+                var modal = document.getElementById('caption-gift-modal');
+                var sel = document.getElementById('caption-gift-selected');
+                var inp = document.getElementById('caption-gift-input');
+                var opt = document.getElementById('caption-gift-options');
+                if (sel) sel.textContent = '0 coins';
+                if (inp) inp.value = '';
+                if (opt) opt.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                if (modal) { modal.classList.add('shorts-coin-modal--open'); modal.setAttribute('aria-hidden', 'false'); }
             });
             var submitBtn = card.querySelector('.caption-comments__submit');
             if (submitBtn) {
@@ -265,6 +298,46 @@
         }
         render();
         window.addEventListener('pageshow', render);
+
+        (function initCaptionGiftModal() {
+            var modal = document.getElementById('caption-gift-modal');
+            var backdrop = document.getElementById('caption-gift-backdrop');
+            var options = document.getElementById('caption-gift-options');
+            var selectedEl = document.getElementById('caption-gift-selected');
+            var inputEl = document.getElementById('caption-gift-input');
+            var sendBtn = document.getElementById('caption-gift-send');
+            var closeBtn = document.getElementById('caption-gift-close');
+            var selectedAmount = 0;
+            function getEff() { var v = inputEl ? parseInt(inputEl.value, 10) : NaN; if (!isNaN(v) && v > 0) return v; return selectedAmount; }
+            function closeModal() {
+                window._captionGiftPostId = null; window._captionGiftActionEl = null;
+                if (modal) modal.classList.remove('shorts-coin-modal--open');
+                if (selectedEl) selectedEl.textContent = '0 coins';
+                if (inputEl) inputEl.value = '';
+                if (options) options.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+            }
+            if (backdrop) backdrop.addEventListener('click', closeModal);
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            if (options) options.addEventListener('click', function(e) {
+                var opt = e.target.closest('.shorts-coin-modal__opt');
+                if (!opt) return;
+                options.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                opt.classList.add('shorts-coin-modal__opt--active');
+                selectedAmount = parseInt(opt.getAttribute('data-amount'), 10) || 0;
+                if (selectedEl) selectedEl.textContent = selectedAmount + ' coins';
+                if (inputEl) inputEl.value = selectedAmount > 0 ? selectedAmount : '';
+            });
+            if (inputEl) inputEl.addEventListener('input', function() { var v = parseInt(inputEl.value, 10); if (!isNaN(v) && v > 0) { selectedAmount = v; if (selectedEl) selectedEl.textContent = v + ' coins'; } });
+            if (sendBtn) sendBtn.addEventListener('click', function() {
+                var postId = window._captionGiftPostId;
+                var actionEl = window._captionGiftActionEl;
+                var amount = getEff();
+                if (!postId || amount <= 0) return;
+                addCaptionGift(postId, amount);
+                if (actionEl) actionEl.textContent = getCaptionGiftCount(postId);
+                closeModal();
+            });
+        })();
     })();
     </script>
 </body>
