@@ -33,7 +33,7 @@
         .detect-user__name { color: #fff; font-size: 0.95rem; font-weight: 700; }
         .detect-user__avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; overflow: hidden; }
         .detect-user__avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .detect-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 22px; }
+        .detect-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 22px; }
         .detect-card, .detect-panel { background: rgba(22,22,42,0.62); backdrop-filter: blur(12px); border: 1px solid rgba(139,92,246,0.24); border-radius: 18px; box-shadow: 0 0 24px rgba(139,92,246,0.08); }
         .detect-card { padding: 18px; }
         .detect-card__label { color: rgba(220,228,255,0.62); font-size: 0.82rem; font-weight: 600; margin-bottom: 10px; }
@@ -128,14 +128,12 @@
             </div>
             <nav class="studio-sidebar__nav">
                 <a href="studio.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
-                <a href="upload.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Upload</span></a>
                 <a href="studio-earning.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M15 9.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span>Earning</span></a>
                 <a href="studio-monetization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><path d="M12 15h6"/></svg><span>Monetization</span></a>
-                <a href="studio.html#analytics" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Analytics</span></a>
+                <a href="studio-analytics.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Analytics</span></a>
                 <a href="studio-content-detection.html" class="studio-sidebar__item studio-sidebar__item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Content Detection</span></a>
                 <a href="studio-customization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Customization</span></a>
                 <a href="studio-content.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg><span>Content</span></a>
-                <a href="channel.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span>Channel</span></a>
                 <a href="settings.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a>
             </nav>
         </aside>
@@ -172,11 +170,6 @@
                     <div class="detect-card__sub">Active policy windows affecting monetization</div>
                 </div>
                 <div class="detect-card">
-                    <div class="detect-card__label">Needs review</div>
-                    <div class="detect-card__value detect-card__value--danger" id="detect-review-count">0</div>
-                    <div class="detect-card__sub">Flagged by policy, copyright or risk confidence</div>
-                </div>
-                <div class="detect-card">
                     <div class="detect-card__label">Auto blocked</div>
                     <div class="detect-card__value" id="detect-blocked-count">0</div>
                     <div class="detect-card__sub">Content blocked by strict rules</div>
@@ -185,77 +178,6 @@
 
             <div class="detect-grid">
                 <div class="detect-column">
-                    <section class="detect-panel">
-                        <h2 class="detect-panel__title">Detection Automation</h2>
-                        <p class="detect-panel__text">Control how strict the system should be before content goes public, gets reviewed, or is blocked automatically.</p>
-                        <div class="detect-form">
-                            <div class="detect-field">
-                                <label class="detect-label" for="detect-scan-mode">Scan strictness</label>
-                                <select class="detect-select" id="detect-scan-mode">
-                                    <option value="balanced">Balanced review mode</option>
-                                    <option value="strict">Strict safety mode</option>
-                                    <option value="lenient">Lenient creator-first mode</option>
-                                </select>
-                            </div>
-                            <div class="detect-field">
-                                <label class="detect-label" for="detect-confidence-threshold">Review confidence threshold (%)</label>
-                                <input class="detect-input" id="detect-confidence-threshold" type="number" min="30" max="99" step="1" placeholder="72">
-                            </div>
-                            <div class="detect-field">
-                                <label class="detect-label" for="detect-review-note">Reviewer note template</label>
-                                <textarea class="detect-textarea" id="detect-review-note" placeholder="Explain what to check when content lands in manual review."></textarea>
-                            </div>
-                            <div class="detect-switches">
-                                <div class="detect-switch">
-                                    <div class="detect-switch__meta">
-                                        <span class="detect-switch__title">Auto scan every upload</span>
-                                        <span class="detect-switch__hint">Run policy checks immediately after every video, short, caption, and live session update.</span>
-                                    </div>
-                                    <button type="button" class="detect-switch__toggle" data-key="autoScan" aria-label="Toggle auto scan"></button>
-                                </div>
-                                <div class="detect-switch">
-                                    <div class="detect-switch__meta">
-                                        <span class="detect-switch__title">Block sexual content automatically</span>
-                                        <span class="detect-switch__hint">Immediately block content matched as sexual or adult material.</span>
-                                    </div>
-                                    <button type="button" class="detect-switch__toggle" data-key="blockAdult" aria-label="Toggle adult block"></button>
-                                </div>
-                                <div class="detect-switch">
-                                    <div class="detect-switch__meta">
-                                        <span class="detect-switch__title">Block real violence automatically</span>
-                                        <span class="detect-switch__hint">Hard block content that suggests real violence, graphic injury, or active harm.</span>
-                                    </div>
-                                    <button type="button" class="detect-switch__toggle" data-key="blockViolence" aria-label="Toggle violence block"></button>
-                                </div>
-                                <div class="detect-switch">
-                                    <div class="detect-switch__meta">
-                                        <span class="detect-switch__title">Route borderline items to manual review</span>
-                                        <span class="detect-switch__hint">Keep medium-confidence content private until you review it.</span>
-                                    </div>
-                                    <button type="button" class="detect-switch__toggle" data-key="manualReview" aria-label="Toggle manual review"></button>
-                                </div>
-                                <div class="detect-switch">
-                                    <div class="detect-switch__meta">
-                                        <span class="detect-switch__title">Show attribution for reused creator media</span>
-                                        <span class="detect-switch__hint">For reused creator clips or audio, show original creator attribution instead of blocking.</span>
-                                    </div>
-                                    <button type="button" class="detect-switch__toggle" data-key="showAttribution" aria-label="Toggle attribution"></button>
-                                </div>
-                            </div>
-                            <div class="detect-actions">
-                                <button type="button" class="detect-btn detect-btn--primary" id="detect-save-btn">Save settings</button>
-                                <button type="button" class="detect-btn detect-btn--secondary" id="detect-rescan-btn">Run rescan now</button>
-                            </div>
-                            <div class="detect-status" id="detect-status"></div>
-                        </div>
-                    </section>
-
-                    <section class="detect-panel">
-                        <h2 class="detect-panel__title">Flagged Content Queue</h2>
-                        <p class="detect-panel__text">Everything that currently needs your attention, including strike history, blocked uploads, and borderline policy matches.</p>
-                        <div class="detect-flag-list" id="detect-flag-list"></div>
-                    </section>
-
                     <section class="detect-panel">
                         <h2 class="detect-panel__title">Strike Timeline And Policy Rules</h2>
                         <p class="detect-panel__text">Your current warning ladder and the key automated rules that affect visibility and monetization.</p>
@@ -270,12 +192,6 @@
                         <h2 class="detect-panel__title">Risk Breakdown</h2>
                         <p class="detect-panel__text">A quick view of the categories currently driving your channel safety score.</p>
                         <div class="detect-risk-bars" id="detect-risk-bars"></div>
-                    </section>
-
-                    <section class="detect-panel">
-                        <h2 class="detect-panel__title">Scan Queue</h2>
-                        <p class="detect-panel__text">The latest uploads ready for scanning or manual review.</p>
-                        <div class="detect-queue" id="detect-queue"></div>
                     </section>
 
                     <section class="detect-panel">
@@ -509,12 +425,10 @@
                 var total = Math.max(items.length, 1);
                 var copyrightCount = items.filter(function(item) { return item.status === 'copyright'; }).length;
                 var blockedCount = items.filter(function(item) { return item.status === 'blocked'; }).length;
-                var reviewCount = items.filter(function(item) { return item.status === 'review'; }).length;
                 return [
                     { label: 'Copyright', value: Math.round((copyrightCount / total) * 100) },
                     { label: 'Policy', value: Math.round((blockedCount / total) * 100) },
-                    { label: 'Review queue', value: Math.round((reviewCount / total) * 100) },
-                    { label: 'Safe clearance', value: Math.max(0, 100 - Math.round(((copyrightCount + blockedCount + reviewCount) / total) * 100)) }
+                    { label: 'Safe clearance', value: Math.max(0, 100 - Math.round(((copyrightCount + blockedCount) / total) * 100)) }
                 ];
             }
             function setStatus(message, kind) {
@@ -539,61 +453,21 @@
                     avatar.textContent = name ? name.charAt(0).toUpperCase() : 'C';
                 }
             }
-            function syncSettingsForm(settings) {
-                $('detect-scan-mode').value = settings.scanMode;
-                $('detect-confidence-threshold').value = settings.confidenceThreshold;
-                $('detect-review-note').value = settings.reviewNote;
-                document.querySelectorAll('.detect-switch__toggle[data-key]').forEach(function(toggle) {
-                    var key = toggle.getAttribute('data-key');
-                    var on = !!settings[key];
-                    toggle.classList.toggle('is-on', on);
-                    toggle.setAttribute('aria-pressed', on ? 'true' : 'false');
-                });
-            }
             function renderEverything() {
                 var settings = getSettings();
                 var monetization = getMonetizationState();
                 var items = deriveItems();
-                var reviewCount = items.filter(function(item) { return item.status === 'review' || item.status === 'copyright'; }).length;
                 var blockedCount = items.filter(function(item) { return item.status === 'blocked'; }).length;
                 var strikeCount = (monetization.copyrightStrikes || 0) + (monetization.blockVideoStrikes || 0);
-                var safetyScore = Math.max(5, 100 - strikeCount * 18 - blockedCount * 9 - reviewCount * 4);
+                var safetyScore = Math.max(5, 100 - strikeCount * 18 - blockedCount * 9);
 
                 $('detect-safety-score').textContent = String(safetyScore);
                 $('detect-strikes-count').textContent = String(monetization.copyrightStrikes || 0);
-                $('detect-review-count').textContent = String(reviewCount);
                 $('detect-blocked-count').textContent = String(blockedCount);
 
                 $('detect-risk-bars').innerHTML = riskMix(items).map(function(entry) {
                     return '<div class="detect-risk-row"><div class="detect-risk-top"><span>' + entry.label + '</span><strong>' + entry.value + '%</strong></div><div class="detect-risk-line"><div class="detect-risk-fill" style="width:' + entry.value + '%"></div></div></div>';
                 }).join('');
-
-                var queueItems = items.slice(0, 4);
-                $('detect-queue').innerHTML = queueItems.length ? queueItems.map(function(item) {
-                    return '<div class="detect-queue__item">' +
-                        '<div class="detect-queue__top">' +
-                        '<h3 class="detect-queue__title">' + escapeHtml(item.title) + '</h3>' +
-                        '<span class="detect-badge ' + typeBadgeClass(item.type) + '">' + typeLabel(item.type) + '</span>' +
-                        '</div>' +
-                        '<div class="detect-meta"><span>Confidence: ' + item.confidence + '%</span><span>' + escapeHtml(item.sourceLabel) + '</span><span>' + escapeHtml(formatDate(item.createdAt)) + '</span></div>' +
-                        '<div class="detect-progress"><div class="detect-progress__fill" style="width:' + item.confidence + '%"></div></div>' +
-                        '</div>';
-                }).join('') : '<div class="detect-empty">No recent content is waiting for a scan.</div>';
-
-                $('detect-flag-list').innerHTML = items.length ? items.filter(function(item) { return item.status !== 'safe'; }).map(function(item) {
-                    return '<div class="detect-flag">' +
-                        '<div class="detect-flag__top">' +
-                        '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">' +
-                        '<h3 class="detect-flag__title">' + escapeHtml(item.title) + '</h3>' +
-                        '<span class="detect-badge ' + typeBadgeClass(item.type) + '">' + typeLabel(item.type) + '</span>' +
-                        '<span class="detect-badge ' + statusBadgeClass(item.status) + '">' + escapeHtml(item.action) + '</span>' +
-                        '</div>' +
-                        '<strong style="color:#fff;">' + item.confidence + '%</strong>' +
-                        '</div>' +
-                        '<div class="detect-meta"><span>' + escapeHtml(formatDate(item.createdAt)) + '</span><span>' + escapeHtml(item.sourceLabel) + '</span></div>' +
-                        '<p style="margin:10px 0 0;color:rgba(235,239,255,0.78);font-size:0.86rem;line-height:1.55;">' + escapeHtml(item.reason) + '</p>' +
-                        '</div>';
-                }).join('') : '<div class="detect-empty">No flagged content right now. Your recent uploads look safe.</div>';
 
                 var strikeSteps = [
                     '1 strike: 7-day warning period',
@@ -617,9 +491,8 @@
                 }).join('');
 
                 var summaryRows = [
-                    { title: 'Current moderation mode', meta: 'Main scan strictness now applied to uploads', value: settings.scanMode },
-                    { title: 'Review threshold', meta: 'Confidence level required before manual review', value: settings.confidenceThreshold + '%' },
-                    { title: 'Latest queue size', meta: 'Recent items scanned from your content library', value: String(queueItems.length) }
+                    { title: 'Copyright strikes', meta: 'Active policy windows affecting monetization', value: String(monetization.copyrightStrikes || 0) },
+                    { title: 'Blocked count', meta: 'Content blocked by timeline and policy rules', value: String(blockedCount) }
                 ];
                 $('detect-summary-list').innerHTML = summaryRows.map(function(row) {
                     return '<div class="detect-summary__item"><div><div class="detect-summary__title">' + escapeHtml(row.title) + '</div><div class="detect-summary__meta">' + escapeHtml(row.meta) + '</div></div><div class="detect-summary__value">' + escapeHtml(row.value) + '</div></div>';
@@ -627,36 +500,7 @@
             }
 
             updateUserMeta();
-            syncSettingsForm(getSettings());
             renderEverything();
-
-            document.querySelectorAll('.detect-switch__toggle[data-key]').forEach(function(toggle) {
-                toggle.addEventListener('click', function() {
-                    this.classList.toggle('is-on');
-                    this.setAttribute('aria-pressed', this.classList.contains('is-on') ? 'true' : 'false');
-                });
-            });
-
-            $('detect-save-btn').addEventListener('click', function() {
-                var settings = {
-                    scanMode: $('detect-scan-mode').value,
-                    confidenceThreshold: Math.max(30, Math.min(99, parseInt($('detect-confidence-threshold').value || DEFAULT_SETTINGS.confidenceThreshold, 10) || DEFAULT_SETTINGS.confidenceThreshold)),
-                    reviewNote: ($('detect-review-note').value || '').trim() || DEFAULT_SETTINGS.reviewNote,
-                    autoScan: document.querySelector('.detect-switch__toggle[data-key="autoScan"]').classList.contains('is-on'),
-                    blockAdult: document.querySelector('.detect-switch__toggle[data-key="blockAdult"]').classList.contains('is-on'),
-                    blockViolence: document.querySelector('.detect-switch__toggle[data-key="blockViolence"]').classList.contains('is-on'),
-                    manualReview: document.querySelector('.detect-switch__toggle[data-key="manualReview"]').classList.contains('is-on'),
-                    showAttribution: document.querySelector('.detect-switch__toggle[data-key="showAttribution"]').classList.contains('is-on')
-                };
-                writeJson(SETTINGS_KEY, settings);
-                renderEverything();
-                setStatus('Detection settings saved successfully.', 'success');
-            });
-
-            $('detect-rescan-btn').addEventListener('click', function() {
-                renderEverything();
-                setStatus('Rescan complete. Queue and risk summaries refreshed.', 'success');
-            });
         })();
     </script>
 </body>

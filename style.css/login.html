@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Log In - NOK Super</title>
+    <script>
+        (function(){
+            if (sessionStorage.getItem('nokAuth') === 'loggedIn' || localStorage.getItem('nokAuth') === 'loggedIn') {
+                var next = (new URLSearchParams(location.search).get('next') || 'home.html');
+                if (/^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) window.location.replace(next);
+                else window.location.replace('home.html');
+            }
+        })();
+    </script>
     <script src="nok-theme.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="video-long.css">

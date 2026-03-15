@@ -87,6 +87,11 @@
         .content-badge--public { background: rgba(34,197,94,0.16); color: #86efac; }
         .content-badge--private { background: rgba(239,68,68,0.16); color: #fca5a5; }
         .content-badge--unlisted { background: rgba(251,191,36,0.16); color: #fde68a; }
+        .content-badge--copyright { background: rgba(245,158,11,0.2); color: #fbbf24; }
+        .content-badge--blocked { background: rgba(239,68,68,0.2); color: #fca5a5; }
+        .content-status-btn { display: inline-flex; align-items: center; padding: 8px 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 700; cursor: default; border: 1px solid; pointer-events: none; }
+        .content-status-btn--copyright { background: rgba(245,158,11,0.2); color: #fbbf24; border-color: rgba(245,158,11,0.4); }
+        .content-status-btn--blocked { background: rgba(239,68,68,0.2); color: #fca5a5; border-color: rgba(239,68,68,0.4); }
         .content-item__meta { display: flex; gap: 14px; flex-wrap: wrap; color: rgba(220,228,255,0.62); font-size: 0.82rem; }
         .content-item__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
         .content-link { display: inline-flex; align-items: center; justify-content: center; padding: 9px 12px; border-radius: 10px; font-size: 0.82rem; font-weight: 700; text-decoration: none; background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.08); }
@@ -151,7 +156,6 @@
             </div>
             <nav class="studio-sidebar__nav">
                 <a href="studio.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
-                <a href="upload.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Upload</span></a>
                 <a href="studio-earning.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M15 9.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span>Earning</span></a>
                 <a href="studio-monetization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><path d="M12 15h6"/></svg><span>Monetization</span></a>
                 <a href="studio-customization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Customization</span></a>
@@ -221,6 +225,8 @@
                                 <button type="button" class="content-pill" data-type="short">Shorts</button>
                                 <button type="button" class="content-pill" data-type="caption">Captions</button>
                                 <button type="button" class="content-pill" data-type="live">Live</button>
+                                <button type="button" class="content-pill" data-type="copyright">Copyright</button>
+                                <button type="button" class="content-pill" data-type="blocked">Blocked</button>
                             </div>
                             <div class="content-controls">
                                 <input class="content-input" id="content-search" type="text" placeholder="Search by title, caption or id">
@@ -397,6 +403,53 @@
             function getShorts() { try { return JSON.parse(localStorage.getItem('nokShortsVideos') || '[]'); } catch (_) { return []; } }
             function getCaptions() { try { return JSON.parse(localStorage.getItem('nokCaptionPosts') || '[]'); } catch (_) { return []; } }
             function getLives() { try { return JSON.parse(localStorage.getItem('nokLiveSessions') || '[]'); } catch (_) { return []; } }
+            function getMonetizationState() {
+                try {
+                    var raw = localStorage.getItem('nok_monetization_settings');
+                    if (!raw) return { copyrightVideos: [] };
+                    var data = JSON.parse(raw);
+                    return { copyrightVideos: Array.isArray(data.copyrightVideos) ? data.copyrightVideos : [] };
+                } catch (_) { return { copyrightVideos: [] }; }
+            }
+            function getDetectionSettings() {
+                try {
+                    var raw = localStorage.getItem('nokContentDetectionSettings');
+                    if (!raw) return { blockViolence: true, blockAdult: true, manualReview: true };
+                    var data = JSON.parse(raw);
+                    return {
+                        blockViolence: data.blockViolence !== false,
+                        blockAdult: data.blockAdult !== false,
+                        manualReview: data.manualReview !== false
+                    };
+                } catch (_) { return { blockViolence: true, blockAdult: true, manualReview: true }; }
+            }
+            function enrichWithDetectionStatus(items) {
+                var mono = getMonetizationState();
+                var settings = getDetectionSettings();
+                var copyrightTitles = {};
+                (mono.copyrightVideos || []).forEach(function(v) {
+                    var t = (v.title || '').trim().toLowerCase();
+                    if (t) copyrightTitles[t] = true;
+                    var id = v.videoId || v.id;
+                    if (id) copyrightTitles['id:' + String(id).toLowerCase()] = true;
+                });
+                return items.map(function(item) {
+                    var status = 'safe';
+                    var titleNorm = (item.title || '').trim().toLowerCase();
+                    var idKey = 'id:' + (item.id || '').toLowerCase();
+                    if (copyrightTitles[titleNorm] || copyrightTitles[idKey]) {
+                        status = 'copyright';
+                    } else if (item.type === 'video' || item.type === 'short') {
+                        var lowered = (item.title || '').toLowerCase();
+                        var isSensitive = /fight|blood|adult|18\+|gun|violence|nsfw|leak|copyright|movie|clip|reaction|cover|remix/.test(lowered);
+                        var isBorderline = /music|song|match|highlights|official|trailer|stream|clip|gameplay|news/.test(lowered);
+                        if (isSensitive && settings.blockViolence) status = 'blocked';
+                        else if ((isSensitive || isBorderline) && settings.manualReview) status = 'review';
+                    }
+                    item.contentStatus = status;
+                    return item;
+                });
+            }
             function saveVideos(list) { localStorage.setItem('nokUserVideos', JSON.stringify(list)); }
             function saveShorts(list) { localStorage.setItem('nokShortsVideos', JSON.stringify(list)); }
             function saveCaptions(list) { localStorage.setItem('nokCaptionPosts', JSON.stringify(list)); }
@@ -518,8 +571,12 @@
             function getVisibleList() {
                 var search = ($('content-search').value || '').trim().toLowerCase();
                 var visibility = $('content-visibility-filter').value;
-                return normalizeContent().filter(function(item) {
+                var list = enrichWithDetectionStatus(normalizeContent());
+                return list.filter(function(item) {
                     var typeOk = filterType === 'all' || item.type === filterType;
+                    if (filterType === 'copyright' || filterType === 'blocked') {
+                        typeOk = (item.contentStatus === filterType);
+                    }
                     var visibilityOk = visibility === 'all' || item.visibility === visibility;
                     var searchOk = !search || item.title.toLowerCase().indexOf(search) >= 0 || item.id.toLowerCase().indexOf(search) >= 0;
                     return typeOk && visibilityOk && searchOk;
@@ -620,6 +677,8 @@
                         '<h3 class="content-item__title">' + escapeHtml(item.title) + '</h3>' +
                         '<span class="content-badge ' + typeBadge(item.type) + '">' + typeLabel(item.type) + '</span>' +
                         '<span class="content-badge ' + visibilityBadge(item.visibility) + '">' + item.visibility + '</span>' +
+                        (item.contentStatus === 'copyright' ? '<span class="content-badge content-badge--copyright">Copyright</span>' : '') +
+                        (item.contentStatus === 'blocked' ? '<span class="content-badge content-badge--blocked">Blocked</span>' : '') +
                         '</div>' +
                         '<div class="content-item__meta"><span>ID: ' + escapeHtml(item.id) + '</span><span>Views: ' + compact(item.views) + '</span><span>Likes: ' + compact(item.likes) + '</span><span>Comments: ' + compact(item.comments) + '</span></div>' +
                         '</div>' +
@@ -630,6 +689,8 @@
                         '<option value="private"' + (item.visibility === 'private' ? ' selected' : '') + '>Private</option>' +
                         '<option value="unlisted"' + (item.visibility === 'unlisted' ? ' selected' : '') + '>Unlisted</option>' +
                         '</select>' +
+                        (item.contentStatus === 'copyright' ? '<span class="content-status-btn content-status-btn--copyright" title="This content has a copyright strike">Copyright</span>' : '') +
+                        (item.contentStatus === 'blocked' ? '<span class="content-status-btn content-status-btn--blocked" title="This content is blocked by policy">Blocked</span>' : '') +
                         '<a class="content-link" href="' + item.editUrl + '">Edit</a>' +
                         '<a class="content-link" href="' + item.viewUrl + '">Open</a>' +
                         '</div>' +

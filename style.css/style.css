@@ -820,6 +820,19 @@ body.main-page .bg { background-image: url("../mainbg.png"); }
 /* Studio page – default theme: show bg.png behind content */
 body.studio-body { background: transparent !important; }
 body.studio-body .studio-layout { position: relative; z-index: 1; }
+body.studio-body .studio-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 11;
+}
+body.studio-body .studio-main { margin-left: 240px; }
+@media (max-width: 900px) {
+    body.studio-body .studio-sidebar { position: static; height: auto; overflow: visible; }
+    body.studio-body .studio-main { margin-left: 0; }
+}
 html[data-theme="light"] body.studio-body .bg { display: none !important; }
 .bg {
     position: fixed;
