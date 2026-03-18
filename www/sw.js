@@ -1,5 +1,5 @@
 /* NOK Super - minimal service worker for PWA install on Android */
-const CACHE_NAME = 'nok-super-v1';
+const CACHE_NAME = 'nok-super-v3';
 
 self.addEventListener('install', function(event) {
   event.waitUntil(caches.open(CACHE_NAME).then(function() { return; }));

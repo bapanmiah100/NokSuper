@@ -26,10 +26,12 @@ html[data-theme="dark"] {
     --glass-bg: rgba(0, 0, 0, 0.6);
     --glass-border: rgba(255, 255, 255, 0.08);
 }
-html[data-theme="dark"] body,
-html[data-theme="dark"] .bg {
+html[data-theme="dark"] body {
     background: #000000 !important;
-    background-image: none !important;
+}
+/* Always keep background image visible (bg.png) */
+html[data-theme="dark"] .bg {
+    background-image: url("bg.png") !important;
 }
 html[data-theme="dark"] .long-video__header { background: rgba(0, 0, 0, 0.85); border-color: rgba(255,255,255,0.06); }
 html[data-theme="dark"] .settings-card,
@@ -38,9 +40,9 @@ html[data-theme="dark"] .wallet-balance-card,
 html[data-theme="dark"] .wallet-card,
 html[data-theme="dark"] .wallet-earning-card { background: rgba(15, 15, 15, 0.9); border-color: rgba(255,255,255,0.06); }
 html[data-theme="dark"] .home-bottom-nav { background: rgba(0, 0, 0, 0.95); border-color: rgba(255,255,255,0.06); }
-/* Dark theme: Channel page – black/dark background, no bg.png */
+/* Dark theme: Channel page – keep background image */
 html[data-theme="dark"] .channel-view-body { background: #0a0a0f !important; }
-html[data-theme="dark"] .channel-view-body .bg { display: none !important; }
+html[data-theme="dark"] .channel-view-body .bg { display: block !important; }
 
 /* Theme: light – applied when Settings > Theme = Light.
    All pages (current + future) use same look. New page-specific classes: add overrides below in this block and keep same colors: #1a1f38, #2d3a5c, #4338ca, #4f6dd8, rgba(79,109,216,...). See .cursor/rules/theme-and-new-pages.mdc */
@@ -58,8 +60,8 @@ html[data-theme="light"] body {
     background: var(--bg-deep);
 }
 html[data-theme="light"] .bg {
-    background: linear-gradient(160deg, #e8ecf4 0%, #d4dce8 50%, #c8d0e0 100%);
-    background-image: none;
+    background-color: transparent !important;
+    background-image: url("bg.png") !important;
 }
 html[data-theme="light"] .settings-title,
 html[data-theme="light"] .settings-profile-card__name,
@@ -485,7 +487,7 @@ html[data-theme="light"] .short-analytics-thumb-placeholder { background: linear
 
 /* Light theme: Channel page – white background, colourful text */
 html[data-theme="light"] .channel-view-body { background: #fff !important; color: #1a1f38; }
-html[data-theme="light"] .channel-view-body .bg { display: none !important; }
+html[data-theme="light"] .channel-view-body .bg { display: block !important; }
 html[data-theme="light"] .channel-view-body .channel-section-title { color: #1e3a8a !important; font-weight: 800; }
 html[data-theme="light"] .channel-view-body .channel-sub-tab { color: #0f0f0f !important; }
 html[data-theme="light"] .channel-view-body .channel-sub-tab.channel-sub-tab--active { color: #0f0f0f !important; }
@@ -815,8 +817,8 @@ html:has(body.home-body) body.home-body {
     position: relative;
 }
 
-/* Background – main page = mainbg.png, other pages = bg.png */
-body.main-page .bg { background-image: url("../mainbg.png"); }
+/* Background – main page uses bg.png too */
+body.main-page .bg { background-image: url("bg.png"); }
 /* Studio page – default theme: show bg.png behind content */
 body.studio-body { background: transparent !important; }
 body.studio-body .studio-layout { position: relative; z-index: 1; }
@@ -833,11 +835,11 @@ body.studio-body .studio-main { margin-left: 240px; }
     body.studio-body .studio-sidebar { position: static; height: auto; overflow: visible; }
     body.studio-body .studio-main { margin-left: 0; }
 }
-html[data-theme="light"] body.studio-body .bg { display: none !important; }
+html[data-theme="light"] body.studio-body .bg { display: block !important; }
 .bg {
     position: fixed;
     inset: 0;
-    background-image: url("../bg.png");
+    background-image: url("bg.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -959,14 +961,54 @@ html[data-theme="light"] body.studio-body .bg { display: none !important; }
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    /* Improve readability on top of background images */
+    text-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), 0 2px 10px rgba(0, 0, 0, 0.25);
 }
 
 .line {
-    font-size: 1.1rem;
-    color: var(--text-muted);
+    font-size: 1.14rem;
+    color: rgba(255, 255, 255, 0.92);
     margin-bottom: 10px;
     line-height: 1.6;
     margin-left: 0.5cm;
+    font-weight: 600;
+    /* Make text stand out on blurred / photo backgrounds */
+    text-shadow: 0 8px 22px rgba(0, 0, 0, 0.40), 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Light theme: avoid near-white text */
+html[data-theme="light"] .line {
+    color: rgba(26, 31, 56, 0.92);
+    text-shadow: 0 6px 18px rgba(0, 0, 0, 0.12), 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* Welcome page: stronger contrast + crisp text */
+body.main-page .greeting {
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.98) !important;
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 14px 36px rgba(0, 0, 0, 0.60), 0 3px 12px rgba(0, 0, 0, 0.35) !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body.main-page .line {
+    color: rgba(255, 255, 255, 0.96) !important;
+    font-weight: 750 !important;
+    text-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 2px 10px rgba(0, 0, 0, 0.30) !important;
+}
+
+html[data-theme="light"] body.main-page .greeting {
+    -webkit-text-fill-color: rgba(26, 31, 56, 0.98) !important;
+    color: rgba(26, 31, 56, 0.98) !important;
+    text-shadow: none !important;
+}
+
+html[data-theme="light"] body.main-page .line {
+    color: rgba(26, 31, 56, 0.92) !important;
+    text-shadow: none !important;
 }
 
 /* Right glass panel */
@@ -1143,6 +1185,37 @@ html[data-theme="light"] body.studio-body .bg { display: none !important; }
 .home-body {
     overflow: auto;
 }
+
+/* Welcome (index.html) page: hide app header */
+body.main-page .long-video__header { display: none !important; }
+body.main-page .long-video__header-right { display: none !important; }
+body.main-page #index-auth-btns { display: none !important; }
+body.main-page #index-notification-btn { display: none !important; }
+body.main-page #index-profile-wrap { display: none !important; }
+body.main-page #index-avatar { display: none !important; }
+
+/* Header: remove Log In / Sign Up buttons everywhere */
+header.long-video__header .long-video__auth-btns { display: none !important; }
+header.long-video__header .home-header__btn--ghost,
+header.long-video__header .home-header__btn--primary { display: none !important; }
+
+/* Extra safety: hide any header auth buttons even if they are injected/moved */
+.home-header__btn--ghost,
+.home-header__btn--primary { display: none !important; }
+
+/* Hard safety: hide the entire header (menu/bell/auth buttons) */
+header.long-video__header { display: none !important; }
+
+/* After hiding the header, push welcome content back down */
+body.main-page .home-layout { padding-top: 55px !important; }
+
+/* Welcome page: prevent welcome text from moving off-screen */
+body.main-page .left-panel { margin-top: 0 !important; }
+body.main-page .greeting { margin-top: 0 !important; }
+body.main-page .content { padding-top: 0 !important; }
+
+/* For safety: also hide header on home-body (user reported it still shows) */
+body.home-body .long-video__header { display: none !important; }
 
 .home-layout {
     min-height: 100vh;
@@ -4887,7 +4960,7 @@ html:has(body.shorts-body)::-webkit-scrollbar { display: none; }
 body.shorts-body {
     min-height: 100vh;
     position: relative;
-    background-image: url("../bg.png");
+    background-image: url("bg.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -4917,7 +4990,7 @@ body.shorts-body::-webkit-scrollbar { display: none; }
 .shorts-page__bg {
     position: fixed;
     inset: 0;
-    background-image: url("../bg.png");
+    background-image: url("bg.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
