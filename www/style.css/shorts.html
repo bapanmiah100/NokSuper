@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Shorts - NOK Super</title>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <script src="nok-video-db.js"></script>
+</head>
+<body class="shorts-body has-bottom-nav">
+    <div class="bg"></div>
+
+    <!-- Top Header - Same as Video page -->
+    <header class="video-header">
+        <div class="video-header__left">
+            <button type="button" class="long-video__back" id="header-back-btn" aria-label="Back" title="Back to previous page">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <button class="video-header__menu" id="header-menu-btn" aria-label="Menu" title="Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <a href="home.html" class="video-header__brand">
+                <img src="../noksuper.png" alt="NOK SUPER" class="video-header__logo">
+            </a>
+        </div>
+        <div class="video-header__center">
+            <form class="home-search" action="search.html" method="get" role="search">
+                <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input type="text" class="home-search__input" name="q" placeholder="Search" aria-label="Search">
+                <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+            </form>
+        </div>
+        <div class="video-header__right">
+            <a href="upload.html" class="video-header__icon" title="Upload video" aria-label="Upload"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></a>
+            <div class="header-caption-wrap">
+                <button type="button" class="header-caption-btn" id="shorts-caption-toggle" title="Caption share">Caption</button>
+                <div class="header-caption-dropdown header-caption-dropdown--full" id="shorts-caption-dropdown" aria-hidden="true">
+                    <div class="caption-bar-dropdown__quick-post">
+                        <span class="caption-bar-dropdown__quick-post-avatar">Y</span>
+                        <a href="upload.html?type=photo" class="caption-bar-dropdown__quick-post-input" title="Caption share">What's on your mind?</a>
+                        <a href="upload.html?type=photo" class="caption-bar-dropdown__quick-post-photo" title="Photo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Photo</span></a>
+                    </div>
+                    <div class="caption-bar-dropdown__title">Captions</div>
+                    <div class="caption-bar-dropdown__list" id="shorts-caption-list"></div>
+                </div>
+            </div>
+            <a href="channel.html" id="shorts-profile-wrap" style="display:none;text-decoration:none;color:inherit;align-items:center;gap:6px;" class="video-header__profile" title="Channel">
+                <span class="video-header__icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                <div class="video-header__avatar" id="shorts-avatar">?</div>
+            </a>
+            <div id="shorts-auth-btns">
+                <a href="login.html" class="home-header__btn home-header__btn--ghost">Log In</a>
+                <a href="signup.html" class="home-header__btn home-header__btn--primary">Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Header menu drawer (same on all pages) -->
+    <div class="header-drawer-backdrop" id="header-drawer-backdrop" aria-hidden="true"></div>
+    <aside class="header-drawer" id="header-drawer" aria-label="Main menu" aria-hidden="true">
+        <div class="header-drawer__head">
+            <span class="header-drawer__title">Menu</span>
+            <button type="button" class="header-drawer__close" id="header-drawer-close" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <nav class="header-drawer__nav">
+            <a href="studio.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span><span>Studio</span></a>
+            <a href="library.html#watch-later" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Watch later</span></a>
+            <a href="library.html#saved" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span><span>Saved videos</span></a>
+            <a href="library.html#library-files" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span><span>Your files</span></a>
+            <a href="upload.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+            <div class="header-drawer__divider"></div>
+            <a href="settings.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+        </nav>
+    </aside>
+
+    <div class="shorts-page shorts-page--fullscreen">
+        <div class="shorts-reels" id="shorts-reels">
+            <div class="shorts-reels__track" id="shorts-reels-track"></div>
+        </div>
+        <div class="shorts-video-slot" id="shorts-video-slot">
+            <video id="shorts-video-el" class="shorts-player__video-el" playsinline muted autoplay preload="auto"></video>
+        </div>
+        <button class="shorts-mute-btn" id="shorts-mute-btn" aria-label="Unmute" title="Tap for sound">
+            <svg class="shorts-mute-btn__icon shorts-mute-btn__icon--muted" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            <svg class="shorts-mute-btn__icon shorts-mute-btn__icon--unmuted" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </button>
+        <div class="shorts-progress-wrap" id="shorts-progress-wrap">
+            <div class="shorts-progress-bar" id="shorts-progress-bar"></div>
+        </div>
+        <div class="shorts-nav-btns">
+            <button type="button" class="shorts-nav-btn shorts-nav-up" id="shorts-nav-up" aria-label="Previous video"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
+            <button type="button" class="shorts-nav-btn shorts-nav-down" id="shorts-nav-down" aria-label="Next video"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        </div>
+    </div>
+
+    <!-- Approved super comment overlay (on video screen) -->
+    <div class="shorts-super-display" id="shorts-super-display" aria-hidden="true">
+        <div class="shorts-super-display__content">
+            <span class="shorts-super-display__badge">Super</span>
+            <p class="shorts-super-display__text" id="shorts-super-display-text"></p>
+            <span class="shorts-super-display__name" id="shorts-super-display-name"></span>
+            <span class="shorts-super-display__timer" id="shorts-super-display-timer"></span>
+        </div>
+    </div>
+
+    <!-- Comment Overlay - Alada panel -->
+    <div class="shorts-comment-overlay" id="shorts-comment-overlay" aria-hidden="true">
+        <div class="shorts-comment-overlay__backdrop" id="shorts-comment-backdrop"></div>
+        <div class="shorts-comment-overlay__panel">
+            <header class="shorts-comment-overlay__header">
+                <h3 class="shorts-comment-overlay__title">Comments</h3>
+                <button type="button" class="shorts-comment-overlay__close" id="shorts-comment-close" aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </header>
+            <div class="shorts-comment-overlay__list" id="shorts-comment-list"></div>
+            <div class="shorts-comment-overlay__send-wrap">
+                <input type="text" class="shorts-comment-overlay__input" id="shorts-comment-input" placeholder="Add a comment..." maxlength="200" autocomplete="off">
+                <button type="button" class="shorts-comment-overlay__gift-btn" id="shorts-comment-gift" aria-label="Super"><span class="shorts-comment-overlay__gift-letter">S</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coin gift modal -->
+    <div class="shorts-coin-modal" id="shorts-coin-modal" aria-hidden="true">
+        <div class="shorts-coin-modal__backdrop" id="shorts-coin-backdrop"></div>
+        <div class="shorts-coin-modal__panel">
+            <h3 class="shorts-coin-modal__title">Send coin gift</h3>
+            <p class="shorts-coin-modal__hint">Choose amount to support the creator</p>
+            <div class="shorts-coin-modal__options" id="shorts-coin-options">
+                <button type="button" class="shorts-coin-modal__opt" data-amount="5">5</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="10">10</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="25">25</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="50">50</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="100">100</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="200">200</button>
+            </div>
+            <p class="shorts-coin-modal__selected" id="shorts-coin-selected">0 coins</p>
+            <label class="shorts-coin-modal__label">Or enter amount</label>
+            <input type="number" class="shorts-coin-modal__input" id="shorts-coin-input" placeholder="e.g. 75" min="1" max="99999" step="1" inputmode="numeric">
+            <button type="button" class="shorts-coin-modal__send" id="shorts-coin-send">Send gift</button>
+            <button type="button" class="shorts-coin-modal__close" id="shorts-coin-close" aria-label="Close">×</button>
+        </div>
+    </div>
+
+    <!-- Bottom Nav - Same as Home -->
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item">
+            <span class="home-bottom-nav__icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </span>
+            <span>Home</span>
+        </a>
+        <a href="shorts.html" class="home-bottom-nav__item home-bottom-nav__item--active">
+            <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span>Shorts</span>
+        </a>
+        <a href="upload.html" class="home-bottom-nav__item">
+            <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            <span>Upload</span>
+        </a>
+        <a href="#" class="home-bottom-nav__item chat-trigger">
+            <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <span>Chats</span>
+        </a>
+        <a href="settings.html" class="home-bottom-nav__item">
+            <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <!-- Chat Overlay - Same as Home -->
+    <div class="chat-overlay" id="chat-overlay" aria-hidden="true">
+        <div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div>
+        <div class="chat-overlay__card">
+            <div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div>
+            <header class="nok-chat__header">
+                <a href="home.html" class="nok-chat__brand">
+                    <span class="nok-chat__logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                    <span class="nok-chat__logo-text">NOK Chat</span>
+                </a>
+                <div class="nok-chat__actions">
+                    <button type="button" class="nok-chat__action" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+                    <button type="button" class="nok-chat__action nok-chat__action--badge" aria-label="Notifications" data-badge="1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                    <button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize" title="Full screen"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><svg class="chat-resize-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                    <div class="nok-chat__menu-wrap">
+                        <button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+                        <div class="nok-chat__menu" id="chat-menu">
+                            <button type="button" class="nok-chat__menu-item">New chat</button>
+                            <button type="button" class="nok-chat__menu-item">New group</button>
+                            <a href="settings.html" class="nok-chat__menu-item">Settings</a>
+                            <button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="chat-login" id="chat-login">
+                <div class="chat-login__inner chat-login__step-login" id="chat-step-login">
+                    <h3 class="chat-login__title">Log in to Chat</h3>
+                    <p class="chat-login__sub">Sign in to start chatting with your subscriptions</p>
+                    <a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a>
+                    <p class="chat-login__legal">Don't have an account? <a href="signup.html" class="chat-login__link">Sign Up</a></p>
+                </div>
+                <div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none">
+                    <h3 class="chat-login__title">Verify Mobile Number</h3>
+                    <p class="chat-login__sub">Verify your mobile number to use Chat</p>
+                    <form class="chat-login__form" id="chat-verify-form">
+                        <div class="chat-login__phone-row">
+                            <select id="chat-verify-country" class="chat-login__select"><option value="880">+880 BD</option><option value="91">+91 IN</option><option value="1">+1 US</option><option value="44">+44 UK</option></select>
+                            <input type="tel" id="chat-verify-phone" class="chat-login__input chat-login__input--phone" placeholder="Mobile number" required>
+                        </div>
+                        <button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button>
+                    </form>
+                    <div id="chat-otp-step" style="display:none">
+                        <p class="chat-login__sub" style="margin-bottom:12px">Enter 6-digit code sent to your number</p>
+                        <div class="chat-login__otp-inputs">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
+                        <button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-content" id="chat-content">
+                <nav class="nok-chat__tabs">
+                    <button type="button" class="nok-chat__tab">Status</button>
+                    <button type="button" class="nok-chat__tab">Groups</button>
+                    <button type="button" class="nok-chat__tab nok-chat__tab--active">Updates</button>
+                    <button type="button" class="nok-chat__tab">Contacts</button>
+                </nav>
+                <a href="#" class="nok-chat__archived"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg><span>Archived Chats</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+                <div class="nok-chat__list">
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar nok-chat__avatar--verified">AR</span><div class="nok-chat__info"><span class="nok-chat__name">Amella Roy</span><span class="nok-chat__preview">Typing...</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--blue"></span>1h ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AN</span><div class="nok-chat__info"><span class="nok-chat__name">Ayesha Noor</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">11:36 AM</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">SD</span><div class="nok-chat__info"><span class="nok-chat__name">Sandeep Das</span><span class="nok-chat__preview">Catch you later!</span></div><span class="nok-chat__meta">20 min ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">TG</span><div class="nok-chat__info"><span class="nok-chat__name">Tanisha Gupta</span><span class="nok-chat__preview">Missed voice call</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--yellow"></span>1 hour ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">RK</span><div class="nok-chat__info"><span class="nok-chat__name">Rohit Kumar</span><span class="nok-chat__preview">Hey what's up?</span></div><span class="nok-chat__meta">11 hours ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">LA</span><div class="nok-chat__info"><span class="nok-chat__name">Lucas Ahmed</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">Yesterday</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">PD</span><div class="nok-chat__info"><span class="nok-chat__name">Priya Das</span><span class="nok-chat__preview">Okay, thanks!</span></div><span class="nok-chat__meta">Yesterday</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">J</span><div class="nok-chat__info"><span class="nok-chat__name">Jonathen</span><span class="nok-chat__preview">Sure, see you</span></div><span class="nok-chat__meta">Yesterday</span></a>
+                </div>
+            </div>
+            <div class="chat-overlay__resize-handle" id="chat-resize-handle" aria-label="Resize"></div>
+            <nav class="nok-chat__bottom">
+                <a href="home.html" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+                <a href="#" class="nok-chat__bottom-item nok-chat__bottom-item--active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Chat</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Call</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="3"/><path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855"/></svg><span>You</span></a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="caption-comment-dropup" id="caption-comment-dropup" aria-hidden="true">
+        <div class="caption-comment-dropup__backdrop" id="caption-comment-backdrop"></div>
+        <div class="caption-comment-dropup__panel">
+            <div class="caption-comment-dropup__handle" id="caption-comment-handle"></div>
+            <div class="caption-comment-dropup__head">
+                <h4 class="caption-comment-dropup__title">Comments</h4>
+                <span class="caption-comment-dropup__meta" id="caption-comment-meta">0 comments</span>
+                <button type="button" class="caption-comment-dropup__close" id="caption-comment-close" aria-label="Close">×</button>
+            </div>
+            <div class="caption-comment-dropup__list" id="caption-comment-list"></div>
+            <div class="caption-comment-dropup__foot">
+                <input type="text" class="caption-comment-dropup__input" id="caption-comment-input" placeholder="Add a comment..." maxlength="300" autocomplete="off">
+                <button type="button" class="caption-comment-dropup__post" id="caption-comment-submit">Send</button>
+            </div>
+        </div>
+    </div>
+    <div class="shorts-coin-modal caption-gift-modal" id="caption-gift-modal" aria-hidden="true">
+        <div class="shorts-coin-modal__backdrop" id="caption-gift-backdrop"></div>
+        <div class="shorts-coin-modal__panel">
+            <h3 class="shorts-coin-modal__title">Send coin gift</h3>
+            <p class="shorts-coin-modal__hint">Choose amount to support the creator</p>
+            <div class="shorts-coin-modal__options" id="caption-gift-options">
+                <button type="button" class="shorts-coin-modal__opt" data-amount="5">5</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="10">10</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="25">25</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="50">50</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="100">100</button>
+                <button type="button" class="shorts-coin-modal__opt" data-amount="200">200</button>
+            </div>
+            <p class="shorts-coin-modal__selected" id="caption-gift-selected">0 coins</p>
+            <label class="shorts-coin-modal__label">Or enter amount</label>
+            <input type="number" class="shorts-coin-modal__input" id="caption-gift-input" placeholder="e.g. 75" min="1" max="99999" step="1" inputmode="numeric">
+            <button type="button" class="shorts-coin-modal__send" id="caption-gift-send">Send gift</button>
+            <button type="button" class="shorts-coin-modal__close" id="caption-gift-close" aria-label="Close">×</button>
+        </div>
+    </div>
+
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+    <script>
+        (function() {
+            // Chat overlay: handled by nok-chat-overlay.js (same as home page)
+
+            // Auth state - show Login/Sign Up or profile; profile = user initial or photo
+            function updateShortsAuthView() {
+                var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+                var profileWrap = document.getElementById('shorts-profile-wrap');
+                var authBtns = document.getElementById('shorts-auth-btns');
+                var avatarEl = document.getElementById('shorts-avatar');
+                if (profileWrap) profileWrap.style.display = isLoggedIn ? 'flex' : 'none';
+                if (authBtns) authBtns.style.display = isLoggedIn ? 'none' : 'flex';
+                if (avatarEl) {
+                    if (isLoggedIn) {
+                        var name = (localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You').toString().trim();
+                        var initial = name ? name.charAt(0).toUpperCase() : '?';
+                        var photoUrl = localStorage.getItem('nokUserPhotoUrl') || '';
+                        if (photoUrl) {
+                            avatarEl.innerHTML = '<img src="' + photoUrl.replace(/"/g, '&quot;') + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
+                        } else {
+                            avatarEl.textContent = initial;
+                        }
+                    } else {
+                        avatarEl.textContent = '?';
+                    }
+                }
+            }
+            updateShortsAuthView();
+            window.addEventListener('pageshow', function() { updateShortsAuthView(); });
+
+            function updateChatView() {
+                var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+                var mobileVerified = localStorage.getItem('nokMobileVerified') === 'yes';
+                var chatLogin = document.getElementById('chat-login'), chatContent = document.getElementById('chat-content');
+                var chatStepLogin = document.getElementById('chat-step-login'), chatStepVerify = document.getElementById('chat-step-verify');
+                if (chatLogin) chatLogin.style.display = (!isLoggedIn || !mobileVerified) ? 'flex' : 'none';
+                if (chatContent) chatContent.style.display = (isLoggedIn && mobileVerified) ? 'flex' : 'none';
+                if (chatStepLogin) chatStepLogin.style.display = !isLoggedIn ? 'block' : 'none';
+                if (chatStepVerify) { chatStepVerify.style.display = (isLoggedIn && !mobileVerified) ? 'block' : 'none'; if (isLoggedIn && !mobileVerified) { document.getElementById('chat-verify-form').style.display = ''; document.getElementById('chat-otp-step').style.display = 'none'; document.querySelectorAll('.chat-login__otp-digit').forEach(function(d) { d.value = ''; }); } }
+            }
+            updateChatView();
+            document.getElementById('chat-verify-form').addEventListener('submit', function(e) { e.preventDefault(); var p = document.getElementById('chat-verify-phone').value.trim(); if (p) { this.style.display = 'none'; document.getElementById('chat-otp-step').style.display = 'block'; } });
+            document.getElementById('chat-verify-otp').addEventListener('click', function() { var d = document.querySelectorAll('.chat-login__otp-digit'); var code = Array.from(d).map(function(x) { return x.value; }).join(''); if (code.length === 6) { localStorage.setItem('nokMobileVerified', 'yes'); updateChatView(); } });
+            var od = document.querySelectorAll('.chat-login__otp-digit'); od.forEach(function(inp, i) { inp.addEventListener('input', function() { if (this.value.length === 1 && i < od.length - 1) od[i + 1].focus(); }); inp.addEventListener('keydown', function(e) { if (e.key === 'Backspace' && !this.value && i > 0) od[i - 1].focus(); }); });
+
+            (function shortsCaptionDropdown() {
+                var captionToggle = document.getElementById('shorts-caption-toggle');
+                var captionDropdown = document.getElementById('shorts-caption-dropdown');
+                var captionListEl = document.getElementById('shorts-caption-list');
+                function closeCaption() {
+                    if (!captionDropdown) return;
+                    captionDropdown.classList.remove('header-caption-dropdown--open');
+                    captionDropdown.setAttribute('aria-hidden', 'true');
+                }
+                function openCaption() {
+                    if (!captionDropdown) return;
+                    renderShortsCaptionList();
+                    captionDropdown.classList.add('header-caption-dropdown--open');
+                    captionDropdown.setAttribute('aria-hidden', 'false');
+                }
+                function getCaptionPosts() { try { return JSON.parse(localStorage.getItem('nokCaptionPosts') || '[]'); } catch (e) { return []; } }
+                function saveCaptionPosts(posts) { try { localStorage.setItem('nokCaptionPosts', JSON.stringify(posts)); } catch (e) {} }
+                function getCaptionGifts() { try { return JSON.parse(localStorage.getItem('nokCaptionGifts') || '{}'); } catch (e) { return {}; } }
+                function saveCaptionGifts(map) { try { localStorage.setItem('nokCaptionGifts', JSON.stringify(map)); } catch (e) {} }
+                function getCaptionGiftCount(postId) { var m = getCaptionGifts(); return parseInt(m[postId] || 0, 10) || 0; }
+                function addCaptionGift(postId, amount) { var m = getCaptionGifts(); m[postId] = (parseInt(m[postId] || 0, 10) || 0) + (amount || 0); saveCaptionGifts(m); return m[postId]; }
+                function getCaptionLikedPosts() { try { return JSON.parse(localStorage.getItem('nokCaptionLikedPosts') || '{}'); } catch (e) { return {}; } }
+                function setCaptionLiked(postId) { var o = getCaptionLikedPosts(); o[postId] = true; try { localStorage.setItem('nokCaptionLikedPosts', JSON.stringify(o)); } catch (e) {} }
+                function timeAgoCaption(ts) { var d = Date.now() - ts; if (d < 60000) return 'Just now'; if (d < 3600000) return Math.floor(d / 60000) + 'm ago'; if (d < 86400000) return Math.floor(d / 3600000) + 'h ago'; if (d < 604800000) return Math.floor(d / 86400000) + 'd ago'; return new Date(ts).toLocaleDateString(); }
+                function capInitial(str) { return (str || '?').toString().trim().charAt(0).toUpperCase(); }
+                function escapeCap(str) { if (!str) return ''; return String(str).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+                function isLoggedInCap() { return (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn'); }
+                function renderShortsCaptionList() {
+                    if (!captionListEl) return;
+                    var posts = getCaptionPosts();
+                    captionListEl.innerHTML = '';
+                    posts.forEach(function(post) {
+                        var card = document.createElement('div');
+                        card.className = 'caption-mini-card';
+                        card.dataset.postId = post.id;
+                        var author = post.author || 'You';
+                        var text = (post.caption || '').trim();
+                        var textEsc = escapeCap(text).substring(0, 120);
+                        if (text.length > 120) textEsc += '…';
+                        var thumbHtml = post.photoData ? '<div class="caption-mini-card__thumb"><img src="' + escapeCap(post.photoData) + '" alt=""></div>' : '';
+                        var likes = post.likes || 0;
+                        var commentsCount = (post.comments && post.comments.length) || 0;
+                        var sharesCount = post.shares || 0;
+                        var giftCount = getCaptionGiftCount(post.id);
+                        var actionsHtml = '<div class="caption-mini-card__actions"><span class="cap-like" role="button" data-action="like">❤ ' + likes + '</span><span class="cap-comment" role="button" data-action="comment">💬 ' + commentsCount + '</span><span class="cap-share" role="button" data-action="share">🔗 ' + sharesCount + '</span><span class="cap-gift" role="button" data-action="gift">🎁 ' + giftCount + '</span></div>';
+                        card.innerHTML = '<a href="captions.html" class="caption-mini-card__link">' + '<div class="caption-mini-card__row"><div class="caption-mini-card__avatar">' + capInitial(author) + '</div><span class="caption-mini-card__author">' + escapeCap(author) + '</span></div>' + (textEsc ? '<div class="caption-mini-card__text">' + textEsc + '</div>' : '') + thumbHtml + '<div class="caption-mini-card__meta">' + timeAgoCaption(post.createdAt) + '</div>' + '</a>' + actionsHtml;
+                        captionListEl.appendChild(card);
+                    });
+                }
+                var captionCommentDropup = document.getElementById('caption-comment-dropup');
+                var captionCommentInput = document.getElementById('caption-comment-input');
+                var captionCommentSubmit = document.getElementById('caption-comment-submit');
+                var captionCommentList = document.getElementById('caption-comment-list');
+                var captionCommentMeta = document.getElementById('caption-comment-meta');
+                var currentUserCap = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You';
+                var pendingCommentPostId = null, pendingCommentActionEl = null;
+                function countCommentsTotal(comments) { if (!comments || !comments.length) return 0; var n = comments.length; comments.forEach(function(c) { n += (c.replies && c.replies.length) || 0; }); return n; }
+                function renderDropupComment(c, isReply) {
+                    var item = document.createElement('div');
+                    item.className = 'caption-comment-dropup__item' + (isReply ? ' caption-comment-dropup__item--reply' : '');
+                    item.dataset.commentId = c.id;
+                    var author = (c.author || 'User').toString().trim();
+                    var initial = author ? author.charAt(0).toUpperCase() : '?';
+                    var text = (c.text || '').toString().replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                    var line = '<strong>' + (author || 'User') + '</strong> ' + text;
+                    var replyBtn = isReply ? '' : '<button type="button" class="caption-comment-dropup__reply-btn" data-reply-to="' + c.id + '">Reply</button>';
+                    var replyForm = isReply ? '' : '<div class="caption-comment-dropup__reply-form" id="reply-form-' + c.id + '"><input type="text" class="caption-comment-dropup__reply-input" placeholder="Write a reply..." maxlength="300" data-reply-for="' + c.id + '"><button type="button" class="caption-comment-dropup__reply-send" data-send-reply="' + c.id + '">Send</button></div>';
+                    item.innerHTML = '<div class="caption-comment-dropup__avatar">' + initial + '</div><div class="caption-comment-dropup__body"><div class="caption-comment-dropup__line">' + line + '</div>' + replyBtn + replyForm + '</div>';
+                    return item;
+                }
+                function renderDropupComments(post) {
+                    if (!captionCommentList) return;
+                    captionCommentList.innerHTML = '';
+                    var comments = post.comments || [];
+                    comments.forEach(function(c) {
+                        var wrap = document.createElement('div');
+                        wrap.appendChild(renderDropupComment(c, false));
+                        if (c.replies && c.replies.length) { var repliesDiv = document.createElement('div'); repliesDiv.className = 'caption-comment-dropup__replies'; c.replies.forEach(function(r) { repliesDiv.appendChild(renderDropupComment(r, true)); }); wrap.querySelector('.caption-comment-dropup__body').appendChild(repliesDiv); }
+                        captionCommentList.appendChild(wrap);
+                    });
+                    if (captionCommentMeta) captionCommentMeta.textContent = countCommentsTotal(comments) + ' comment' + (countCommentsTotal(comments) !== 1 ? 's' : '');
+                }
+                function openCaptionCommentCard(postId, actionEl) {
+                    pendingCommentPostId = postId; pendingCommentActionEl = actionEl;
+                    if (captionCommentInput) captionCommentInput.value = '';
+                    var posts = getCaptionPosts();
+                    var p = posts.find(function(x) { return x.id === postId; });
+                    if (p) {
+                        renderDropupComments(p);
+                        if (captionCommentDropup) { captionCommentDropup.classList.add('caption-comment-dropup--open'); captionCommentDropup.setAttribute('aria-hidden', 'false'); }
+                        setTimeout(function() { if (captionCommentInput) captionCommentInput.focus(); }, 150);
+                    }
+                }
+                function closeCaptionCommentCard() {
+                    pendingCommentPostId = null; pendingCommentActionEl = null;
+                    if (captionCommentDropup) { captionCommentDropup.classList.remove('caption-comment-dropup--open'); captionCommentDropup.setAttribute('aria-hidden', 'true'); }
+                }
+                function openCaptionGiftModal(postId, actionEl) {
+                    window._captionGiftPostId = postId; window._captionGiftActionEl = actionEl;
+                    var sel = document.getElementById('caption-gift-selected'); var inp = document.getElementById('caption-gift-input'); var opt = document.getElementById('caption-gift-options');
+                    if (sel) sel.textContent = '0 coins'; if (inp) inp.value = '';
+                    if (opt) opt.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                    var modal = document.getElementById('caption-gift-modal');
+                    if (modal) { modal.classList.add('shorts-coin-modal--open'); modal.setAttribute('aria-hidden', 'false'); }
+                }
+                function closeCaptionGiftModal() {
+                    window._captionGiftPostId = null; window._captionGiftActionEl = null;
+                    var modal = document.getElementById('caption-gift-modal');
+                    if (modal) modal.classList.remove('shorts-coin-modal--open');
+                }
+                if (captionCommentDropup) {
+                    var cb = document.getElementById('caption-comment-backdrop'); if (cb) cb.addEventListener('click', closeCaptionCommentCard);
+                    var ccl = document.getElementById('caption-comment-close'); if (ccl) ccl.addEventListener('click', closeCaptionCommentCard);
+                    if (captionCommentSubmit) captionCommentSubmit.addEventListener('click', function() {
+                        if (!pendingCommentPostId || !captionCommentInput) return;
+                        var text = (captionCommentInput.value || '').trim();
+                        if (!text) return;
+                        if (!isLoggedInCap()) { window.location.href = 'login.html?next=' + encodeURIComponent('shorts.html'); return; }
+                        var posts = getCaptionPosts();
+                        var p = posts.find(function(x) { return x.id === pendingCommentPostId; });
+                        if (p) {
+                            p.comments = p.comments || [];
+                            p.comments.push({ id: 'c_' + Date.now(), text: text, author: currentUserCap, createdAt: Date.now(), replies: [] });
+                            saveCaptionPosts(posts);
+                            if (pendingCommentActionEl) pendingCommentActionEl.textContent = '💬 ' + p.comments.length;
+                            renderDropupComments(p);
+                            if (captionCommentMeta) captionCommentMeta.textContent = countCommentsTotal(p.comments) + ' comment' + (countCommentsTotal(p.comments) !== 1 ? 's' : '');
+                            if (captionCommentInput) captionCommentInput.value = '';
+                        }
+                    });
+                    if (captionCommentList) captionCommentList.addEventListener('click', function(e) {
+                        var replyBtn = e.target.closest('.caption-comment-dropup__reply-btn[data-reply-to]');
+                        var sendBtn = e.target.closest('.caption-comment-dropup__reply-send[data-send-reply]');
+                        if (replyBtn) {
+                            var cid = replyBtn.getAttribute('data-reply-to');
+                            var form = document.getElementById('reply-form-' + cid);
+                            document.querySelectorAll('.caption-comment-dropup__reply-form').forEach(function(f) { f.classList.remove('caption-comment-dropup__reply-form--show'); });
+                            if (form) { form.classList.add('caption-comment-dropup__reply-form--show'); form.querySelector('.caption-comment-dropup__reply-input').focus(); }
+                            return;
+                        }
+                        if (sendBtn && pendingCommentPostId) {
+                            var commentId = sendBtn.getAttribute('data-send-reply');
+                            var form = document.getElementById('reply-form-' + commentId);
+                            var inp = form ? form.querySelector('.caption-comment-dropup__reply-input') : null;
+                            var text = inp ? (inp.value || '').trim() : '';
+                            if (!text) return;
+                            if (!isLoggedInCap()) { window.location.href = 'login.html?next=' + encodeURIComponent('shorts.html'); return; }
+                            var posts = getCaptionPosts();
+                            var p = posts.find(function(x) { return x.id === pendingCommentPostId; });
+                            var comment = p && p.comments ? p.comments.find(function(c) { return c.id === commentId; }) : null;
+                            if (comment) {
+                                comment.replies = comment.replies || [];
+                                comment.replies.push({ id: 'r_' + Date.now(), text: text, author: currentUserCap, createdAt: Date.now() });
+                                saveCaptionPosts(posts);
+                                if (pendingCommentActionEl) pendingCommentActionEl.textContent = '💬 ' + p.comments.length;
+                                renderDropupComments(p);
+                                if (captionCommentMeta) captionCommentMeta.textContent = countCommentsTotal(p.comments) + ' comment' + (countCommentsTotal(p.comments) !== 1 ? 's' : '');
+                                if (form) { form.classList.remove('caption-comment-dropup__reply-form--show'); if (inp) inp.value = ''; }
+                            }
+                        }
+                    });
+                }
+                (function initShortsCaptionGiftModal() {
+                    var backdrop = document.getElementById('caption-gift-backdrop');
+                    var options = document.getElementById('caption-gift-options');
+                    var selectedEl = document.getElementById('caption-gift-selected');
+                    var inputEl = document.getElementById('caption-gift-input');
+                    var sendBtn = document.getElementById('caption-gift-send');
+                    var closeBtn = document.getElementById('caption-gift-close');
+                    var selectedAmount = 0;
+                    function getEff() { var v = inputEl ? parseInt(inputEl.value, 10) : NaN; if (!isNaN(v) && v > 0) return v; return selectedAmount; }
+                    if (backdrop) backdrop.addEventListener('click', closeCaptionGiftModal);
+                    if (closeBtn) closeBtn.addEventListener('click', closeCaptionGiftModal);
+                    if (options) options.addEventListener('click', function(e) {
+                        var opt = e.target.closest('.shorts-coin-modal__opt');
+                        if (!opt) return;
+                        options.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                        opt.classList.add('shorts-coin-modal__opt--active');
+                        selectedAmount = parseInt(opt.getAttribute('data-amount'), 10) || 0;
+                        if (selectedEl) selectedEl.textContent = selectedAmount + ' coins';
+                        if (inputEl) inputEl.value = selectedAmount > 0 ? selectedAmount : '';
+                    });
+                    if (inputEl) inputEl.addEventListener('input', function() { var v = parseInt(inputEl.value, 10); if (!isNaN(v) && v > 0) { selectedAmount = v; if (selectedEl) selectedEl.textContent = v + ' coins'; } });
+                    if (sendBtn) sendBtn.addEventListener('click', function() {
+                        var postId = window._captionGiftPostId; var actionEl = window._captionGiftActionEl; var amount = getEff();
+                        if (!postId || amount <= 0) return;
+                        if (!isLoggedInCap()) { window.location.href = 'login.html?next=' + encodeURIComponent('shorts.html'); return; }
+                        var n = addCaptionGift(postId, amount);
+                        if (actionEl) actionEl.textContent = '🎁 ' + n;
+                        closeCaptionGiftModal();
+                    });
+                })();
+                if (captionListEl) {
+                    captionListEl.addEventListener('click', function(e) {
+                        var actionEl = e.target.closest('[data-action]');
+                        if (!actionEl || !actionEl.dataset.action) return;
+                        var card = e.target.closest('.caption-mini-card');
+                        if (!card) return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var postId = card.dataset.postId;
+                        if (!postId) return;
+                        var action = actionEl.dataset.action;
+                        if (action === 'comment') {
+                            if (!isLoggedInCap()) { window.location.href = 'login.html?next=' + encodeURIComponent('shorts.html'); return; }
+                            openCaptionCommentCard(postId, actionEl);
+                            return;
+                        }
+                        if ((action === 'like' || action === 'gift') && !isLoggedInCap()) { window.location.href = 'login.html?next=' + encodeURIComponent('shorts.html'); return; }
+                        var posts = getCaptionPosts();
+                        var p = posts.find(function(x) { return x.id === postId; });
+                        var liked = getCaptionLikedPosts();
+                        if (action === 'like' && p && !liked[postId]) {
+                            p.likes = (p.likes || 0) + 1; saveCaptionPosts(posts); setCaptionLiked(postId);
+                            actionEl.textContent = '❤ ' + p.likes;
+                        } else if (action === 'share' && p) {
+                            p.shares = (p.shares || 0) + 1; saveCaptionPosts(posts);
+                            actionEl.textContent = '🔗 ' + p.shares;
+                        } else if (action === 'gift') {
+                            openCaptionGiftModal(postId, actionEl);
+                        }
+                    });
+                }
+                if (captionToggle) {
+                    captionToggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (!captionDropdown) return;
+                        if (captionDropdown.classList.contains('header-caption-dropdown--open')) closeCaption();
+                        else openCaption();
+                    });
+                }
+                if (captionDropdown) captionDropdown.addEventListener('click', function(e) { e.stopPropagation(); });
+                document.addEventListener('click', function(e) {
+                    if (captionDropdown && captionDropdown.classList.contains('header-caption-dropdown--open') && !captionDropdown.contains(e.target) && e.target !== captionToggle) closeCaption();
+                });
+                document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeCaption(); });
+            })();
+
+            var params = new URLSearchParams(window.location.search);
+            var userShorts = JSON.parse(localStorage.getItem('nokShortsVideos') || '[]');
+            var id = params.get('id') || (userShorts.length ? userShorts[0].id : 'night');
+            if (!params.get('id') && userShorts.length) { var u = new URL(window.location.href); u.searchParams.set('id', userShorts[0].id); window.history.replaceState({}, '', u.toString()); }
+            var shortsIds = {};
+            userShorts.forEach(function(s) { shortsIds[s.id] = true; });
+            var userVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
+            var isLongVideo = userVideos.some(function(v) { return v.id === id && !shortsIds[v.id]; });
+            if (isLongVideo) { window.location.replace('video.html?id=' + encodeURIComponent(id) + '&autoplay=1'); return; }
+            /* No demo: only uploaded shorts. Card show korbe when user upload kore. */
+            var data = {};
+            var thumbMap = { mountains: 'hike', waterfall: 'beach', city: 'citywalk', wild: 'hike', portrait: 'short-portrait', night: 'night', hike: 'hike', beach: 'beach' };
+            var userMap = {};
+            userShorts.forEach(function(s) {
+                var t = s.thumb || 'night';
+                var thumb = thumbMap[t] || thumbMap.mountains || 'hike';
+                var likes = (s.likes || '0') + '';
+                var ch = s.channel || 'Creator';
+                var handle = ch.replace(/\s+/g, '');
+                userMap[s.id] = {
+                    title: s.title, likes: likes.indexOf('K') >= 0 ? likes : (likes || '0') + 'K',
+                    comments: (s.comments || '0') + 'K', shares: (s.shares || '0') + '', saves: (s.saves || '0') + 'K',
+                    channel: ch, handle: '@' + handle, hashtags: s.hashtags || '#viral #trend',
+                    thumb: thumb, thumbData: s.thumbData,
+                    commentsPreview: s.commentsPreview || ['Nice!', 'Love it 🔥']
+                };
+            });
+            var shortsList = userShorts;
+            window.shortsList = shortsList;
+            var defaultInfo = { title: '', likes: '0', comments: '0', shares: '0', saves: '0', channel: 'NOK Super', handle: '@NOKSuper', hashtags: '#shorts', thumb: 'night', commentsPreview: [] };
+            function parseCountStr(s) { if (!s) return 0; var m = (s + '').match(/^([\d.]+)\s*K?$/i); if (!m) return parseInt(s, 10) || 0; var n = parseFloat(m[1]); return (s.toUpperCase().indexOf('K') >= 0) ? Math.round(n * 1000) : n; }
+            function formatCount(n) { n = Math.round(n); if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'; if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K'; return String(n); }
+            function getLikeCount(id) { var base = parseCountStr((userMap[id] || data[id] || defaultInfo).likes); var delta = JSON.parse(localStorage.getItem('nokShortsLikeDelta') || '{}'); return base + (delta[id] || 0); }
+            function setLikeDelta(id, liked) { var o = JSON.parse(localStorage.getItem('nokShortsLikeDelta') || '{}'); o[id] = liked ? 1 : 0; localStorage.setItem('nokShortsLikeDelta', JSON.stringify(o)); }
+            function getCoinGifts() { try { return JSON.parse(localStorage.getItem('nokShortsCoinGifts') || '{}'); } catch (e) { return {}; } }
+            function getCoinGiftTotal(shortId) { var g = getCoinGifts(); return typeof g[shortId] === 'number' ? g[shortId] : 0; }
+            function addCoinGift(shortId, amount) { var g = getCoinGifts(); g[shortId] = (g[shortId] || 0) + (amount || 0); localStorage.setItem('nokShortsCoinGifts', JSON.stringify(g)); }
+            function formatCoinCount(n) { n = Math.round(n); if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'; if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K'; return String(n); }
+            if (shortsList.length === 0) {
+                var t = document.getElementById('shorts-reels-track');
+                if (t) t.innerHTML = '<div class="shorts-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 45px);padding:24px;text-align:center;color:rgba(255,255,255,0.95);"><p style="font-size:1.2rem;margin:0 0 8px;">No shorts yet</p><p style="font-size:0.95rem;opacity:0.85;margin:0 0 20px;">Upload a short to get started</p><a href="upload.html" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:12px;text-decoration:none;font-weight:600;">Upload Short</a></div>';
+                return;
+            }
+            var currentIdx = shortsList.findIndex(function(s) { return s.id === id; });
+            if (currentIdx < 0) { currentIdx = 0; id = shortsList[0].id; var uu = new URL(window.location.href); uu.searchParams.set('id', id); window.history.replaceState({}, '', uu.toString()); }
+            var info = userMap[id] || data[id] || defaultInfo;
+
+            var reels = document.getElementById('shorts-reels');
+            var track = document.getElementById('shorts-reels-track');
+            var videoEl = document.getElementById('shorts-video-el');
+            var playBtn = document.getElementById('shorts-play');
+            var progressBar = document.getElementById('shorts-progress-bar');
+            var progressWrap = document.getElementById('shorts-progress-wrap');
+            var muteBtn = document.getElementById('shorts-mute-btn');
+
+            track.innerHTML = '';
+            shortsList.forEach(function(s, idx) {
+                var inf = userMap[s.id] || data[s.id] || defaultInfo;
+                var nextInf = idx < shortsList.length - 1 ? (userMap[shortsList[idx + 1].id] || data[shortsList[idx + 1].id] || defaultInfo) : null;
+                var thumbCls = 'shorts-player__video--' + (inf.thumb || 'night');
+                var thumbGradientCls = 'shorts-slide__thumb--' + (inf.thumb === 'short-portrait' ? 'portrait' : (inf.thumb || 'night'));
+                var bgStyle = inf.thumbData ? ' style="background-image:url(' + (inf.thumbData || '').replace(/"/g, '&quot;') + ');background-size:cover;background-position:center"' : '';
+                var thumbStyle = inf.thumbData ? ' style="background-image:url(' + (inf.thumbData || '').replace(/"/g, '&quot;') + ');background-size:cover;background-position:center"' : '';
+                var initials = (inf.channel || 'NOK').substring(0, 2).toUpperCase();
+                var slide = document.createElement('div');
+                slide.className = 'shorts-slide';
+                slide.dataset.idx = idx;
+                slide.dataset.id = s.id;
+                slide.innerHTML = '<div class="shorts-slide__bg ' + thumbCls + '"' + bgStyle + '></div>' +
+                    '<div class="shorts-slide__video-slot"><div class="shorts-slide__video-thumb ' + thumbGradientCls + '"' + thumbStyle + '></div></div>' +
+                    '<div class="shorts-slide__overlay">' +
+                    '<a href="#" class="shorts-slide__back" aria-label="Back" data-back="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>' +
+                    '<div class="shorts-slide__mute-slot"></div>' +
+                    '<div class="shorts-slide__left"><div class="shorts-slide__profile"><div class="shorts-slide__avatar">' + initials + '</div><div class="shorts-slide__meta"><span class="shorts-slide__name">' + (inf.channel || '') + '</span><span class="shorts-slide__handle">' + (inf.handle || '@NOKSuper') + '</span></div></div>' +
+                    '<h1 class="shorts-slide__title">' + (inf.title || '') + '</h1><p class="shorts-slide__hashtags">' + (inf.hashtags || '#viral #trend') + '</p></div>' +
+                    '<div class="shorts-slide__actions"><button class="shorts-slide__action shorts-slide__action--like' + (JSON.parse(localStorage.getItem('nokShortsLiked') || '{}')[s.id] ? ' shorts-slide__action--liked' : '') + '" aria-label="Like" data-idx="' + idx + '" data-id="' + s.id + '"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>' + formatCount(getLikeCount(s.id)) + '</span></button>' +
+                    '<button class="shorts-slide__action shorts-comment-trigger" aria-label="Comments" data-idx="' + idx + '" data-id="' + s.id + '"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>' + (inf.comments || '0') + '</span></button>' +
+                    '<button class="shorts-slide__action shorts-slide__action--share" aria-label="Share" data-id="' + s.id + '" data-idx="' + idx + '"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>' + (inf.shares || '0') + '</span></button>' +
+                    '<button class="shorts-slide__action shorts-slide__action--coin" aria-label="Send coins" data-id="' + s.id + '" data-idx="' + idx + '"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="16" height="14" rx="2"/><circle cx="16" cy="12" r="3"/><path d="M6 9V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4"/></svg><span>' + (formatCoinCount(getCoinGiftTotal(s.id))) + '</span></button>' +
+                    '<button class="shorts-slide__action" aria-label="Save"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg><span>' + (inf.saves || '0') + '</span></button></div>' +
+                    '<div class="shorts-slide__progress-slot"></div>' +
+                    '<div class="shorts-slide__comment-bar-wrap"><form class="shorts-slide__comment-wrap shorts-slide__comment-form" data-idx="' + idx + '"><input type="text" class="shorts-slide__comment-inline-input" placeholder="Add a comment..." maxlength="200" name="comment" autocomplete="off"><button type="button" class="shorts-slide__comment-gift-inline" aria-label="Super" data-idx="' + idx + '" data-id="' + s.id + '"><span class="shorts-slide__comment-gift-letter">S</span></button></form></div><p class="shorts-slide__swipe">Swipe up to watch next</p></div></div>';
+                track.appendChild(slide);
+            });
+
+            var commentOverlay = document.getElementById('shorts-comment-overlay');
+            var commentListEl = document.getElementById('shorts-comment-list');
+            var commentInputEl = document.getElementById('shorts-comment-input');
+            var commentGiftBtn = document.getElementById('shorts-comment-gift');
+            var commentCloseBtn = document.getElementById('shorts-comment-close');
+            var commentBackdrop = document.getElementById('shorts-comment-backdrop');
+            var commentShortId = null;
+            var commentsByShort = {};
+            var userInitial = (localStorage.getItem('nokUserChannel') || 'You').charAt(0).toUpperCase();
+            function isLoggedIn() { return (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn'); }
+            function getShortsNextUrl() { return window.location.pathname ? (window.location.pathname + (window.location.search || '')) : 'shorts.html'; }
+            function getSuperComments() { return JSON.parse(localStorage.getItem('nokSuperComments') || '{}'); }
+            function setSuperComments(obj) { localStorage.setItem('nokSuperComments', JSON.stringify(obj)); }
+            var superDisplayInterval = null;
+            var superDisplay = document.getElementById('shorts-super-display');
+            var superDisplayText = document.getElementById('shorts-super-display-text');
+            var superDisplayName = document.getElementById('shorts-super-display-name');
+            var superDisplayTimer = document.getElementById('shorts-super-display-timer');
+            function updateSuperDisplay(slideIdx) {
+                if (!superDisplay || slideIdx < 0 || slideIdx >= shortsList.length) return;
+                superDisplay.classList.remove('shorts-super-display--show');
+                if (superDisplayInterval) { clearInterval(superDisplayInterval); superDisplayInterval = null; }
+            }
+
+            function loadSuperIntoComments() {
+                var sc = getSuperComments();
+                Object.keys(sc || {}).forEach(function(sid) {
+                    (sc[sid] || []).forEach(function(s) {
+                        if (!commentsByShort[sid]) commentsByShort[sid] = [];
+                        if (!commentsByShort[sid].some(function(c) { return c.superId === s.id; })) {
+                            commentsByShort[sid].push({ name: s.name, text: s.text, superId: s.id });
+                        }
+                    });
+                });
+            }
+            function renderCommentList(shortId) {
+                var list = commentsByShort[shortId] || [];
+                commentListEl.innerHTML = list.map(function(c, idx) {
+                    var cid = c.id || (shortId + '_' + idx);
+                    if (!c.id) c.id = cid;
+                    if (!c.replies) c.replies = [];
+                    var nm = (c.name || 'Viewer').charAt(0).toUpperCase();
+                    var text = (c.text + '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    var replyRows = (c.replies || []).map(function(r) {
+                        var rn = (r.name || 'Viewer').charAt(0).toUpperCase();
+                        var rt = (r.text + '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                        return '<div class="shorts-comment-overlay__item shorts-comment-overlay__item--reply"><span class="shorts-comment-overlay__avatar">' + rn + '</span><div class="shorts-comment-overlay__text-wrap"><span class="shorts-comment-overlay__name">' + (r.name || 'Viewer') + '</span><p class="shorts-comment-overlay__text">' + rt + '</p></div></div>';
+                    }).join('');
+                    return '<div class="shorts-comment-overlay__block" data-comment-id="' + cid + '"><div class="shorts-comment-overlay__item"><span class="shorts-comment-overlay__avatar">' + nm + '</span><div class="shorts-comment-overlay__text-wrap"><span class="shorts-comment-overlay__name">' + (c.name || 'Viewer') + '</span><p class="shorts-comment-overlay__text">' + text + '</p><button type="button" class="shorts-comment-overlay__reply-btn">Reply</button></div></div><div class="shorts-comment-overlay__replies">' + replyRows + '</div><div class="shorts-comment-overlay__reply-form" data-comment-id="' + cid + '" style="display:none"><input type="text" class="shorts-comment-overlay__reply-input" placeholder="Write a reply..." maxlength="200"><button type="button" class="shorts-comment-overlay__reply-send">Reply</button></div></div>';
+                }).join('');
+            }
+            function openCommentOverlay(shortId) {
+                commentShortId = shortId;
+                var inf = userMap[shortId] || data[shortId] || defaultInfo;
+                var prev = (inf.commentsPreview || []);
+                if (!commentsByShort[shortId]) commentsByShort[shortId] = prev.map(function(t, i) { return { id: shortId + '_b' + i, name: 'Viewer', text: t, replies: [] }; });
+                else if (commentsByShort[shortId].length === 0 && prev.length) commentsByShort[shortId] = prev.map(function(t, i) { return { id: shortId + '_b' + i, name: 'Viewer', text: t, replies: [] }; });
+                loadSuperIntoComments();
+                renderCommentList(shortId);
+                updateCommentCountsForShort(shortId);
+                if (commentInputEl) commentInputEl.value = '';
+                if (commentOverlay) commentOverlay.classList.add('shorts-comment-overlay--open');
+                var listEl = commentListEl;
+                setTimeout(function() {
+                    renderCommentList(shortId);
+                    if (listEl) { listEl.scrollTop = listEl.scrollHeight; }
+                    if (commentInputEl) commentInputEl.focus();
+                }, 50);
+            }
+            function closeCommentOverlay() {
+                if (commentOverlay) commentOverlay.classList.remove('shorts-comment-overlay--open');
+                commentShortId = null;
+            }
+            window.addSuperCommentDirect = function() {
+                if (pendingSuperComment) addPendingSuper(1, 0);
+            };
+            window.openOverlayGiftModal = function() {
+                if (!commentShortId || !window.setPendingSuperComment || !window.addSuperCommentDirect) return;
+                var idx = shortsList.findIndex(function(s) { return s.id === commentShortId; });
+                window.setPendingSuperComment({ shortId: commentShortId, idx: idx >= 0 ? idx : 0, text: commentInputEl ? commentInputEl.value.trim() : '', overlay: true });
+                window.addSuperCommentDirect();
+            };
+            window.sendOverlayComment = function() {
+                if (!isLoggedIn()) { window.location.href = 'login.html?next=' + encodeURIComponent(getShortsNextUrl()); return; }
+                if (!commentShortId || !commentInputEl || !commentInputEl.value.trim()) return;
+                var text = commentInputEl.value.trim();
+                var userName = localStorage.getItem('nokUserChannel') || 'You';
+                if (!commentsByShort[commentShortId]) commentsByShort[commentShortId] = [];
+                commentsByShort[commentShortId].push({ id: commentShortId + '_' + Date.now(), name: userName, text: text, replies: [] });
+                commentInputEl.value = '';
+                updateCommentCountsForShort(commentShortId);
+                renderCommentList(commentShortId);
+            };
+            function getShortsLiked() { return JSON.parse(localStorage.getItem('nokShortsLiked') || '{}'); }
+            function setShortsLiked(id, liked) { var o = getShortsLiked(); o[id] = !!liked; localStorage.setItem('nokShortsLiked', JSON.stringify(o)); }
+            function updateCommentCountsForShort(shortId) {
+                var list = commentsByShort[shortId] || [];
+                var cnt = list.length;
+                list.forEach(function(c) { cnt += (c.replies || []).length; });
+                var slide = track.querySelector('.shorts-slide[data-id="' + shortId + '"]');
+                if (slide) {
+                    var btn = slide.querySelector('.shorts-comment-trigger span');
+                    if (btn) btn.textContent = formatCount(cnt);
+                }
+            }
+            shortsList.forEach(function(s) {
+                var inf = userMap[s.id] || data[s.id] || defaultInfo;
+                var prev = (inf.commentsPreview || []);
+                commentsByShort[s.id] = prev.map(function(t, i) { return { id: s.id + '_b' + i, name: 'Viewer', text: t, replies: [] }; });
+            });
+            loadSuperIntoComments();
+            shortsList.forEach(function(s) { updateCommentCountsForShort(s.id); });
+
+            function handleCommentSend(formOrBtn, e) {
+                try {
+                if (e && e.preventDefault) { e.preventDefault(); e.stopPropagation(); }
+                if (!isLoggedIn()) { window.location.href = 'login.html?next=' + encodeURIComponent(getShortsNextUrl()); return; }
+                var form = formOrBtn && formOrBtn.tagName === 'FORM' ? formOrBtn : (formOrBtn && formOrBtn.closest ? formOrBtn.closest('form.shorts-slide__comment-form') : null);
+                if (!form) return;
+                var inp = form.querySelector('.shorts-slide__comment-inline-input');
+                var text = inp ? inp.value.trim() : '';
+                if (!text) return;
+                var slide = form.closest('.shorts-slide');
+                var idx = parseInt(form.getAttribute('data-idx'), 10);
+                var shortId = (slide && slide.getAttribute('data-id')) || (!isNaN(idx) && shortsList[idx] ? shortsList[idx].id : null);
+                if (!shortId) return;
+                if (!commentsByShort[shortId]) commentsByShort[shortId] = [];
+                var userName = isLoggedIn() ? (localStorage.getItem('nokUserChannel') || 'You') : 'Viewer';
+                commentsByShort[shortId].push({ id: shortId + '_' + Date.now(), name: userName, text: text, replies: [] });
+                if (inp) inp.value = '';
+                updateCommentCountsForShort(shortId);
+                renderCommentList(shortId);
+                openCommentOverlay(shortId);
+                } catch (err) { console.error('handleCommentSend', err); }
+            }
+            window.handleCommentSend = handleCommentSend;
+            window.openCommentOverlay = openCommentOverlay;
+            track.querySelectorAll('.shorts-slide__comment-form').forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    if (window.handleCommentSend) window.handleCommentSend(form, e);
+                });
+                var inp = form.querySelector('.shorts-slide__comment-inline-input');
+                if (inp) {
+                    inp.addEventListener('focus', function() {
+                        if (!isLoggedIn()) window.location.href = 'login.html?next=' + encodeURIComponent(getShortsNextUrl());
+                    });
+                    inp.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        var idx = parseInt(form.getAttribute('data-idx'), 10);
+                        if (!isNaN(idx) && shortsList[idx]) {
+                            openCommentOverlay(shortsList[idx].id);
+                            inp.blur();
+                            setTimeout(function() { if (commentInputEl) commentInputEl.focus(); }, 100);
+                        }
+                    });
+                }
+            });
+
+            track.addEventListener('click', function(e) {
+                var backLink = e.target.closest('.shorts-slide__back');
+                if (backLink) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (window.history.length > 1) {
+                        window.history.back();
+                    } else {
+                        window.location.href = 'home.html';
+                    }
+                    return;
+                }
+                var teachSlide = e.target.closest('.shorts-slide__swipe');
+                if (teachSlide) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (currentIdx < shortsList.length - 1) {
+                        currentIdx++;
+                        setSlidePosition(currentIdx);
+                        loadVideoForIdx(currentIdx);
+                    }
+                    return;
+                }
+                var commentWrap = e.target.closest('.shorts-slide__comment-wrap');
+                if (commentWrap && e.target.closest('form')) {
+                    var form = commentWrap.closest('form.shorts-slide__comment-form');
+                    if (form && !e.target.closest('.shorts-slide__comment-inline-input')) {
+                        var idx = parseInt(form.getAttribute('data-idx'), 10);
+                        if (!isNaN(idx) && shortsList[idx]) {
+                            e.preventDefault();
+                            openCommentOverlay(shortsList[idx].id);
+                            setTimeout(function() { if (commentInputEl) commentInputEl.focus(); }, 100);
+                        }
+                    }
+                    return;
+                }
+                if (e.target.closest('.shorts-slide__mute-slot')) return;
+                var likeBtn = e.target.closest('.shorts-slide__action--like');
+                if (likeBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var id = likeBtn.getAttribute('data-id');
+                    if (id) {
+                        var liked = !getShortsLiked()[id];
+                        setShortsLiked(id, liked);
+                        setLikeDelta(id, liked);
+                        likeBtn.classList.toggle('shorts-slide__action--liked', liked);
+                        var span = likeBtn.querySelector('span');
+                        if (span) span.textContent = formatCount(getLikeCount(id));
+                    }
+                    return;
+                }
+                var coinBtn = e.target.closest('.shorts-slide__action--coin');
+                if (coinBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var cid = coinBtn.getAttribute('data-id');
+                    if (cid && window.openCoinGiftModal) window.openCoinGiftModal(cid);
+                    return;
+                }
+                var shareBtn = e.target.closest('.shorts-slide__action--share');
+                if (shareBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var shortId = shareBtn.getAttribute('data-id');
+                    var base = window.location.origin + (window.location.pathname || '/shorts.html');
+                    var shareUrl = base + (base.indexOf('?') >= 0 ? '&' : '?') + 'id=' + encodeURIComponent(shortId || '');
+                    var inf = shortId ? (userMap[shortId] || data[shortId] || defaultInfo) : defaultInfo;
+                    var shareTitle = inf.title || 'NOK Shorts';
+                    function doCopyLink() {
+                        try {
+                            navigator.clipboard.writeText(shareUrl);
+                            if (typeof alert === 'function') alert('Link copied!');
+                        } catch (err) {
+                            if (typeof prompt === 'function') prompt('Copy link:', shareUrl);
+                        }
+                    }
+                    if (navigator.share) {
+                        navigator.share({ url: shareUrl, title: shareTitle, text: shareTitle }).catch(doCopyLink);
+                    } else {
+                        doCopyLink();
+                    }
+                    return;
+                }
+                var slide = e.target.closest('.shorts-slide');
+                var btn = e.target.closest('.shorts-comment-trigger');
+                if (btn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var idx = parseInt(btn.getAttribute('data-idx'), 10);
+                    if (!isNaN(idx) && shortsList[idx]) openCommentOverlay(shortsList[idx].id);
+                    return;
+                }
+                if (slide && !e.target.closest('.shorts-slide__actions') && !e.target.closest('.shorts-slide__comment-wrap') && !e.target.closest('.shorts-slide__mute-slot') && parseInt(slide.dataset.idx, 10) === currentIdx) {
+                    var rect = slide.getBoundingClientRect();
+                    var relY = (e.clientY - rect.top) / rect.height;
+                    if (relY < 0.75) {
+                        e.preventDefault();
+                        if (videoEl.src && videoEl.paused) {
+                            sessionStorage.setItem('nokShortsSound', '1');
+                            videoEl.muted = false;
+                            videoEl.removeAttribute('muted');
+                            videoEl.volume = 1;
+                            videoEl.play();
+                            if (muteBtn) { var mi = muteBtn.querySelector('.shorts-mute-btn__icon--muted'); var ui = muteBtn.querySelector('.shorts-mute-btn__icon--unmuted'); if (mi) mi.style.display = 'none'; if (ui) ui.style.display = ''; }
+                            document.body.classList.add('shorts--playing');
+                            if (playBtn) playBtn.style.display = 'none';
+                        } else if (videoEl.src && !videoEl.paused) {
+                            videoEl.pause();
+                            document.body.classList.remove('shorts--playing');
+                            if (playBtn) playBtn.style.display = 'flex';
+                        }
+                    }
+                }
+                var commentWrap = e.target.closest('.shorts-slide__comment-wrap');
+            });
+            if (commentCloseBtn) commentCloseBtn.addEventListener('click', closeCommentOverlay);
+            if (commentBackdrop) commentBackdrop.addEventListener('click', closeCommentOverlay);
+
+            (function initCoinGiftModal() {
+                var coinModal = document.getElementById('shorts-coin-modal');
+                var coinBackdrop = document.getElementById('shorts-coin-backdrop');
+                var coinOptions = document.getElementById('shorts-coin-options');
+                var coinSelectedEl = document.getElementById('shorts-coin-selected');
+                var coinInput = document.getElementById('shorts-coin-input');
+                var coinSendBtn = document.getElementById('shorts-coin-send');
+                var coinCloseBtn = document.getElementById('shorts-coin-close');
+                var pendingCoinShortId = null;
+                var selectedAmount = 0;
+                function updateCoinDisplay(shortId) {
+                    var slide = track.querySelector('.shorts-slide[data-id="' + shortId + '"]');
+                    if (slide) {
+                        var btn = slide.querySelector('.shorts-slide__action--coin span');
+                        if (btn) btn.textContent = formatCoinCount(getCoinGiftTotal(shortId));
+                    }
+                }
+                function getEffectiveAmount() {
+                    var manual = coinInput ? parseInt(coinInput.value, 10) : NaN;
+                    if (!isNaN(manual) && manual > 0) return manual;
+                    return selectedAmount;
+                }
+                function closeCoinModal() {
+                    if (coinModal) coinModal.classList.remove('shorts-coin-modal--open');
+                    if (coinModal) coinModal.setAttribute('aria-hidden', 'true');
+                    pendingCoinShortId = null;
+                    selectedAmount = 0;
+                    if (coinSelectedEl) coinSelectedEl.textContent = '0 coins';
+                    if (coinInput) coinInput.value = '';
+                    if (coinOptions) coinOptions.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                }
+                window.openCoinGiftModal = function(shortId) {
+                    pendingCoinShortId = shortId;
+                    selectedAmount = 0;
+                    if (coinSelectedEl) coinSelectedEl.textContent = '0 coins';
+                    if (coinInput) coinInput.value = '';
+                    if (coinOptions) coinOptions.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                    if (coinModal) { coinModal.classList.add('shorts-coin-modal--open'); coinModal.setAttribute('aria-hidden', 'false'); }
+                };
+                if (coinBackdrop) coinBackdrop.addEventListener('click', closeCoinModal);
+                if (coinCloseBtn) coinCloseBtn.addEventListener('click', closeCoinModal);
+                if (coinOptions) coinOptions.addEventListener('click', function(e) {
+                    var opt = e.target.closest('.shorts-coin-modal__opt');
+                    if (!opt) return;
+                    coinOptions.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                    opt.classList.add('shorts-coin-modal__opt--active');
+                    selectedAmount = parseInt(opt.getAttribute('data-amount'), 10) || 0;
+                    if (coinSelectedEl) coinSelectedEl.textContent = selectedAmount + ' coins';
+                    if (coinInput) coinInput.value = selectedAmount > 0 ? selectedAmount : '';
+                });
+                if (coinInput) coinInput.addEventListener('input', function() {
+                    var v = parseInt(coinInput.value, 10);
+                    if (!isNaN(v) && v > 0) {
+                        selectedAmount = v;
+                        if (coinSelectedEl) coinSelectedEl.textContent = v + ' coins';
+                        coinOptions.querySelectorAll('.shorts-coin-modal__opt').forEach(function(o) { o.classList.remove('shorts-coin-modal__opt--active'); });
+                    } else {
+                        if (coinSelectedEl) coinSelectedEl.textContent = selectedAmount > 0 ? selectedAmount + ' coins' : '0 coins';
+                    }
+                });
+                if (coinSendBtn) coinSendBtn.addEventListener('click', function() {
+                    var amount = getEffectiveAmount();
+                    if (!pendingCoinShortId || amount <= 0) return;
+                    addCoinGift(pendingCoinShortId, amount);
+                    updateCoinDisplay(pendingCoinShortId);
+                    closeCoinModal();
+                    if (typeof alert === 'function') alert('Gift sent! \uD83C\uDF81');
+                });
+            })();
+            commentListEl.addEventListener('click', function(e) {
+                var replyBtn = e.target.closest('.shorts-comment-overlay__reply-btn');
+                if (replyBtn && commentShortId) {
+                    e.preventDefault();
+                    var block = replyBtn.closest('.shorts-comment-overlay__block');
+                    var cid = block && block.getAttribute('data-comment-id');
+                    if (!cid) return;
+                    var form = commentListEl.querySelector('.shorts-comment-overlay__reply-form[data-comment-id="' + cid + '"]');
+                    commentListEl.querySelectorAll('.shorts-comment-overlay__reply-form').forEach(function(f) { f.style.display = 'none'; });
+                    if (form) {
+                        form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+                        if (form.style.display === 'flex') {
+                            var inp = form.querySelector('.shorts-comment-overlay__reply-input');
+                            if (inp) { inp.value = ''; inp.focus(); }
+                        }
+                    }
+                    return;
+                }
+                var sendBtn = e.target.closest('.shorts-comment-overlay__reply-send');
+                if (sendBtn && commentShortId) {
+                    e.preventDefault();
+                    var form = sendBtn.closest('.shorts-comment-overlay__reply-form');
+                    if (!form) return;
+                    var cid = form.getAttribute('data-comment-id');
+                    var inp = form.querySelector('.shorts-comment-overlay__reply-input');
+                    var text = inp && inp.value && inp.value.trim();
+                    if (!text || !cid) return;
+                    if (!isLoggedIn()) { window.location.href = 'login.html?next=' + encodeURIComponent(getShortsNextUrl()); return; }
+                    var list = commentsByShort[commentShortId] || [];
+                    var comment = list.find(function(c) { return (c.id || '') === cid; });
+                    if (comment) {
+                        if (!comment.replies) comment.replies = [];
+                        comment.replies.push({ name: localStorage.getItem('nokUserChannel') || 'You', text: text });
+                        updateCommentCountsForShort(commentShortId);
+                        renderCommentList(commentShortId);
+                    }
+                    return;
+                }
+                var approveBtn = e.target.closest('.shorts-comment-approve-btn');
+                if (approveBtn) {
+                    e.preventDefault();
+                    var superId = approveBtn.getAttribute('data-super-id');
+                    var sc = getSuperComments();
+                    Object.keys(sc || {}).forEach(function(sid) {
+                        (sc[sid] || []).forEach(function(s) {
+                            if (s.id === superId && s.status === 'pending') {
+                                s.status = 'approved';
+                                s.approvedAt = Date.now();
+                                s.expiresAt = s.approvedAt + (s.durationHours || 1) * 60 * 60 * 1000;
+                                setSuperComments(sc);
+                                if (!commentsByShort[sid]) commentsByShort[sid] = [];
+                                var idx = commentsByShort[sid].findIndex(function(c) { return c.superId === superId; });
+                                if (idx >= 0) commentsByShort[sid][idx].status = 'approved';
+                                renderCommentList(commentShortId);
+                                updateCommentCountsForShort(sid);
+                                updateSuperDisplay(currentIdx);
+                            }
+                        });
+                    });
+                }
+            });
+            var pendingSuperComment = null;
+            window.setPendingSuperComment = function(o) { pendingSuperComment = o; };
+            function hideSuperPayModal() { pendingSuperComment = null; }
+            function addPendingSuper(durationHours, amount) {
+                if (!pendingSuperComment) return;
+                var sc = getSuperComments();
+                if (!sc[pendingSuperComment.shortId]) sc[pendingSuperComment.shortId] = [];
+                sc[pendingSuperComment.shortId].push({ id: Date.now().toString(), name: localStorage.getItem('nokUserChannel') || 'You', text: pendingSuperComment.text, status: 'pending', durationHours: durationHours, amount: amount, createdAt: Date.now() });
+                setSuperComments(sc);
+                if (!commentsByShort[pendingSuperComment.shortId]) commentsByShort[pendingSuperComment.shortId] = [];
+                commentsByShort[pendingSuperComment.shortId].push({ name: localStorage.getItem('nokUserChannel') || 'You', text: pendingSuperComment.text, type: 'super', status: 'pending', superId: sc[pendingSuperComment.shortId][sc[pendingSuperComment.shortId].length - 1].id });
+                if (commentShortId === pendingSuperComment.shortId && commentListEl) renderCommentList(commentShortId);
+                updateCommentCountsForShort(pendingSuperComment.shortId);
+                if (commentInputEl) commentInputEl.value = '';
+                if (!pendingSuperComment.overlay) { var slides = track.querySelectorAll('.shorts-slide'); var inp = slides[pendingSuperComment.idx] ? slides[pendingSuperComment.idx].querySelector('.shorts-slide__comment-inline-input') : null; if (inp) inp.value = ''; }
+                hideSuperPayModal();
+            }
+            if (commentGiftBtn) commentGiftBtn.addEventListener('click', function() { window.openOverlayGiftModal(); });
+            if (commentInputEl) commentInputEl.addEventListener('focus', function() {
+                if (!isLoggedIn()) window.location.href = 'login.html?next=' + encodeURIComponent(getShortsNextUrl());
+            });
+            if (commentInputEl) commentInputEl.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') { e.preventDefault(); window.sendOverlayComment(); }
+            });
+            commentListEl.addEventListener('keydown', function(e) {
+                if (e.key !== 'Enter') return;
+                var inp = e.target.closest('.shorts-comment-overlay__reply-input');
+                if (!inp) return;
+                var form = inp.closest('.shorts-comment-overlay__reply-form');
+                var sendBtn = form && form.querySelector('.shorts-comment-overlay__reply-send');
+                if (sendBtn) { e.preventDefault(); sendBtn.click(); }
+            });
+
+            var slides = track.querySelectorAll('.shorts-slide');
+            function getSlideHeight() {
+                if (reels.clientHeight) return reels.clientHeight;
+                if (slides[0]) return slides[0].offsetHeight || slides[0].getBoundingClientRect().height;
+                var navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bottom-nav-height') || '52', 10);
+                return window.innerHeight - 45 - 12 - navH;
+            }
+            var slideHeight = getSlideHeight();
+            function setSlidePosition(idx) {
+                var h = getSlideHeight();
+                if (h === 0) return;
+                track.style.height = (h * slides.length) + 'px';
+                track.style.transform = 'translateY(-' + (idx * h) + 'px)';
+            }
+            if (slideHeight === 0) { setTimeout(function() { slideHeight = getSlideHeight(); setSlidePosition(currentIdx); }, 100); }
+            else { setSlidePosition(currentIdx); }
+
+            /* Eker odik video na ase – shudhu slide handler, scroll bondo */
+
+            function loadVideoForIdx(idx) {
+                if (idx < 0 || idx >= shortsList.length) return;
+                videoEl.pause();
+                if (progressBar) progressBar.style.width = '0%';
+                var s = shortsList[idx];
+                var slot = slides[idx] ? slides[idx].querySelector('.shorts-slide__video-slot') : null;
+                var progressSlot = slides[idx] ? slides[idx].querySelector('.shorts-slide__progress-slot') : null;
+                var muteSlot = slides[idx] ? slides[idx].querySelector('.shorts-slide__mute-slot') : null;
+                if (!slot) return;
+                if (videoEl.parentNode) videoEl.parentNode.removeChild(videoEl);
+                slot.appendChild(videoEl);
+                if (progressWrap && progressSlot) {
+                    if (progressWrap.parentNode) progressWrap.parentNode.removeChild(progressWrap);
+                    progressSlot.appendChild(progressWrap);
+                }
+                if (muteBtn && muteSlot) {
+                    if (muteBtn.parentNode) muteBtn.parentNode.removeChild(muteBtn);
+                    muteSlot.appendChild(muteBtn);
+                }
+                if (videoEl.src) { URL.revokeObjectURL(videoEl.src); }
+                videoEl.src = '';
+                videoEl.removeAttribute('src');
+                document.title = (userMap[s.id] || data[s.id] || defaultInfo).title + ' - NOK Super Shorts';
+                /* Protek ta video nexter sathe URL change – share/bookmark er jonno */
+                var u = new URL(window.location.href); u.searchParams.set('id', s.id); window.history.replaceState({}, '', u.toString());
+                if (userMap[s.id] && window.nokVideoDB) {
+                    videoEl.style.display = '';
+                    var soundOn = sessionStorage.getItem('nokShortsSound') !== '0';
+                    if (soundOn) {
+                        videoEl.muted = false;
+                        videoEl.removeAttribute('muted');
+                        videoEl.volume = 1;
+                        if (muteBtn) { var mi = muteBtn.querySelector('.shorts-mute-btn__icon--muted'); var ui = muteBtn.querySelector('.shorts-mute-btn__icon--unmuted'); if (mi) mi.style.display = 'none'; if (ui) ui.style.display = ''; muteBtn.style.display = 'flex'; }
+                    } else {
+                        videoEl.muted = true;
+                        videoEl.setAttribute('muted', '');
+                        if (muteBtn) { var mi = muteBtn.querySelector('.shorts-mute-btn__icon--muted'); var ui = muteBtn.querySelector('.shorts-mute-btn__icon--unmuted'); if (mi) mi.style.display = ''; if (ui) ui.style.display = 'none'; muteBtn.style.display = 'flex'; }
+                    }
+                    nokVideoDB.get(s.id).then(function(blob) {
+                        if (!blob) return;
+                        if (currentIdx !== idx) return;
+                        videoEl.src = URL.createObjectURL(blob);
+                        var playWhenReady = function() {
+                            if (currentIdx !== idx) return;
+                            videoEl.play().then(function() { if (playBtn) playBtn.style.display = 'none'; }).catch(function() {
+                                if (soundOn) { if (playBtn) playBtn.style.display = 'flex'; } else { videoEl.muted = true; videoEl.setAttribute('muted',''); videoEl.play().then(function() { if (playBtn) playBtn.style.display = 'none'; }).catch(function() { if (playBtn) playBtn.style.display = 'flex'; }); }
+                            });
+                        };
+                        videoEl.addEventListener('canplay', playWhenReady, { once: true });
+                    }).catch(function(){});
+                } else {
+                    videoEl.style.display = 'none';
+                    if (playBtn) playBtn.style.display = 'flex';
+                    if (muteBtn) muteBtn.style.display = 'none';
+                }
+                updateSuperDisplay(idx);
+            }
+
+            /* Swipe up = next, swipe down = previous – extra card slide bondo (no drag preview) */
+            var touchStartY = 0, touchActive = false;
+            reels.addEventListener('touchstart', function(e) { touchStartY = e.touches[0].clientY; touchActive = true; }, { passive: true });
+            reels.addEventListener('touchend', function(e) {
+                touchActive = false;
+                var touchEndY = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientY : touchStartY;
+                var delta = touchStartY - touchEndY;
+                var idx = currentIdx;
+                if (delta > 40 && currentIdx < shortsList.length - 1) idx = currentIdx + 1;
+                else if (delta < -40 && currentIdx > 0) idx = currentIdx - 1;
+                if (idx !== currentIdx) { currentIdx = idx; loadVideoForIdx(idx); setSlidePosition(currentIdx); }
+            }, { passive: true });
+            var mouseStartY = 0, isDragging = false;
+            reels.addEventListener('mousedown', function(e) { mouseStartY = e.clientY; isDragging = true; });
+            function handleMouseUp(e) {
+                if (!isDragging) return;
+                isDragging = false;
+                var delta = mouseStartY - e.clientY;
+                var idx = currentIdx;
+                if (delta > 40 && currentIdx < shortsList.length - 1) idx = currentIdx + 1;
+                else if (delta < -40 && currentIdx > 0) idx = currentIdx - 1;
+                if (idx !== currentIdx) { currentIdx = idx; loadVideoForIdx(idx); setSlidePosition(currentIdx); }
+            }
+            reels.addEventListener('mouseup', handleMouseUp);
+            document.addEventListener('mouseup', handleMouseUp);
+            reels.addEventListener('mouseleave', function() { if (isDragging) isDragging = false; });
+            var wheelLock = 0;
+            reels.addEventListener('wheel', function(e) {
+                if (Date.now() - wheelLock < 500) { e.preventDefault(); return; }
+                var idx = currentIdx;
+                if (e.deltaY > 30 && currentIdx < shortsList.length - 1) idx = currentIdx + 1;
+                else if (e.deltaY < -30 && currentIdx > 0) idx = currentIdx - 1;
+                if (idx !== currentIdx) {
+                    e.preventDefault();
+                    wheelLock = Date.now();
+                    currentIdx = idx;
+                    setSlidePosition(idx);
+                    loadVideoForIdx(idx);
+                }
+            }, { passive: false });
+
+            setSlidePosition(currentIdx);
+            loadVideoForIdx(currentIdx);
+
+            var navUpBtn = document.getElementById('shorts-nav-up');
+            var navDownBtn = document.getElementById('shorts-nav-down');
+            if (navUpBtn) navUpBtn.addEventListener('click', function(e) {
+                e.preventDefault(); e.stopPropagation();
+                if (currentIdx > 0) { currentIdx--; setSlidePosition(currentIdx); loadVideoForIdx(currentIdx); }
+            });
+            if (navDownBtn) navDownBtn.addEventListener('click', function(e) {
+                e.preventDefault(); e.stopPropagation();
+                if (currentIdx < shortsList.length - 1) { currentIdx++; setSlidePosition(currentIdx); loadVideoForIdx(currentIdx); }
+            });
+
+            if (playBtn) playBtn.addEventListener('click', function() {
+                if (videoEl.src) {
+                    if (videoEl.paused) { sessionStorage.setItem('nokShortsSound', '1'); videoEl.muted = false; videoEl.removeAttribute('muted'); videoEl.volume = 1; videoEl.play(); if (playBtn) playBtn.style.display = 'none'; if (muteBtn) { var mi = muteBtn.querySelector('.shorts-mute-btn__icon--muted'); var ui = muteBtn.querySelector('.shorts-mute-btn__icon--unmuted'); if (mi) mi.style.display = 'none'; if (ui) ui.style.display = ''; } }
+                    else { videoEl.pause(); if (playBtn) playBtn.style.display = 'flex'; }
+                }
+            });
+            videoEl.addEventListener('ended', function() {
+                if (playBtn) playBtn.style.display = 'flex';
+                if (shortsList.length > 1) {
+                    var nextIdx = (currentIdx + 1) % shortsList.length;
+                    currentIdx = nextIdx;
+                    setSlidePosition(nextIdx);
+                    loadVideoForIdx(nextIdx);
+                } else { videoEl.currentTime = 0; videoEl.play(); }
+            });
+            videoEl.addEventListener('play', function() { if (playBtn) playBtn.style.display = 'none'; document.body.classList.add('shorts--playing'); });
+            videoEl.addEventListener('pause', function() { if (playBtn) playBtn.style.display = 'flex'; document.body.classList.remove('shorts--playing'); });
+
+            if (muteBtn) {
+                muteBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!videoEl.src) return;
+                    if (videoEl.muted) {
+                        sessionStorage.setItem('nokShortsSound', '1');
+                        videoEl.muted = false;
+                        videoEl.removeAttribute('muted');
+                        videoEl.volume = 1;
+                        videoEl.play().then(function() { if (playBtn) playBtn.style.display = 'none'; }).catch(function(){});
+                        var mi = muteBtn.querySelector('.shorts-mute-btn__icon--muted');
+                        var ui = muteBtn.querySelector('.shorts-mute-btn__icon--unmuted');
+                        if (mi) mi.style.display = 'none';
+                        if (ui) ui.style.display = '';
+                    } else {
+                        sessionStorage.setItem('nokShortsSound', '0');
+                        videoEl.muted = true;
+                        videoEl.setAttribute('muted', '');
+                        var mi = muteBtn.querySelector('.shorts-mute-btn__icon--muted');
+                        var ui = muteBtn.querySelector('.shorts-mute-btn__icon--unmuted');
+                        if (mi) mi.style.display = '';
+                        if (ui) ui.style.display = 'none';
+                    }
+                });
+            }
+
+            if (progressBar) {
+                function updateProgress() {
+                    if (videoEl.duration && !isNaN(videoEl.duration)) progressBar.style.width = (100 * videoEl.currentTime / videoEl.duration) + '%';
+                }
+                videoEl.addEventListener('timeupdate', updateProgress);
+                videoEl.addEventListener('loadedmetadata', updateProgress);
+                videoEl.addEventListener('ended', function() { progressBar.style.width = '0%'; });
+            }
+            if (progressWrap) {
+                progressWrap.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!videoEl.src) return;
+                    var rect = progressWrap.getBoundingClientRect();
+                    var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                    if (videoEl.duration && !isNaN(videoEl.duration)) videoEl.currentTime = pct * videoEl.duration;
+                    sessionStorage.setItem('nokShortsSound', '1');
+                    videoEl.muted = false;
+                    videoEl.removeAttribute('muted');
+                    videoEl.volume = 1;
+                    videoEl.play().then(function() { if (playBtn) playBtn.style.display = 'none'; }).catch(function() { if (playBtn) playBtn.style.display = 'flex'; });
+                    if (muteBtn) { var mi = muteBtn.querySelector('.shorts-mute-btn__icon--muted'); var ui = muteBtn.querySelector('.shorts-mute-btn__icon--unmuted'); if (mi) mi.style.display = 'none'; if (ui) ui.style.display = ''; }
+                });
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowUp') { e.preventDefault(); if (currentIdx > 0) { currentIdx--; setSlidePosition(currentIdx); loadVideoForIdx(currentIdx); } }
+                else if (e.key === 'ArrowDown') { e.preventDefault(); if (currentIdx < shortsList.length - 1) { currentIdx++; setSlidePosition(currentIdx); loadVideoForIdx(currentIdx); } }
+            });
+        })();
+    </script>
+    <script src="nok-shorts-comments.js"></script>
+</body>
+</html>

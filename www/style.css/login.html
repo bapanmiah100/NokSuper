@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Log In - NOK Super</title>
+    <script>
+        (function(){
+            if (sessionStorage.getItem('nokAuth') === 'loggedIn' || localStorage.getItem('nokAuth') === 'loggedIn') {
+                var next = (new URLSearchParams(location.search).get('next') || 'home.html');
+                if (/^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) window.location.replace(next);
+                else window.location.replace('home.html');
+            }
+        })();
+    </script>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <script src="nok-config.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="home-body">
+    <div class="home-layout">
+        <div class="bg"></div>
+
+        <header class="long-video__header">
+            <div class="long-video__header-left">
+                <a href="home.html" class="long-video__logo">
+                    <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+                </a>
+            </div>
+            <div class="long-video__search">
+                <div class="home-search">
+                    <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" class="home-search__input" placeholder="Search">
+                    <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+                </div>
+            </div>
+            <div class="long-video__header-right">
+                <button type="button" class="long-video__header-icon" id="login-notification-btn" aria-label="Notifications" title="Notifications">
+                    <span class="long-video__icon-bell-wrap"><svg class="long-video__icon-bell" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+                    <span class="long-video__icon-bell-off-wrap" style="display:none"><svg class="long-video__icon-bell-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="1" y1="1" x2="23" y2="23"/></svg></span>
+                </button>
+                <div class="long-video__profile-wrap" id="login-profile-wrap" style="display:none">
+                    <div class="long-video__avatar" id="login-avatar">AZ</div>
+                </div>
+                <div class="long-video__auth-btns" id="login-auth-btns">
+                    <a href="login.html" class="home-header__btn home-header__btn--ghost">Log In</a>
+                    <a href="signup.html" class="home-header__btn home-header__btn--primary">Sign Up</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="content content--centered" style="position:relative;z-index:1;">
+            <div class="glass glass--login">
+                <div id="login-step">
+                    <img src="../noklogo.png" alt="NOK SUPER" class="glass__logo">
+                    <h2 class="glass__title">Log In</h2>
+                    <p class="glass__subtitle glass__success" id="login-reset-msg" style="display:none">Password updated. You can log in now.</p>
+                    <form class="glass__form" id="login-form">
+                        <div id="email-field" class="glass__field">
+                            <input type="email" id="login-input" class="glass__input" placeholder="Enter your email" required>
+                        </div>
+                        <div class="glass__input-wrap">
+                            <input type="password" id="password-input" class="glass__input glass__input--with-icon" placeholder="Password">
+                            <button type="button" class="glass__eye" id="toggle-password" aria-label="Show password">
+                                <svg class="glass__eye-icon glass__eye--show" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="glass__eye-icon glass__eye--hide" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="glass__forgot-wrap"><a href="forgot-password.html" class="glass__forgot">Forgot password?</a></p>
+                        <button type="submit" class="glass__btn glass__btn--primary">Log In</button>
+                    </form>
+                    <div class="glass__divider"><span>or</span></div>
+                    <div id="google-signin-container" class="glass__google-wrap">
+                        <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="glass__btn glass__btn--google" title="Add Google Client ID in nok-config.js to enable"><svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg> Continue with Google</a>
+                    </div>
+                    <p class="glass__legal">Don't have an account? <a href="signup.html" class="glass__link">Sign Up</a></p>
+                </div>
+                <div id="otp-step" style="display:none" class="glass--otp-wrap">
+                    <button type="button" class="glass__back" id="otp-back" aria-label="Back">←</button>
+                    <img src="../noklogo.png" alt="NOK SUPER" class="glass__logo">
+                    <h2 class="glass__title glass__title--verify-otp">Verify OTP</h2>
+                    <p class="glass__subtitle" id="otp-subtitle">Enter the 6-digit code sent to your email</p>
+                    <form class="glass__form" id="otp-form">
+                        <div class="otp-inputs">
+                            <input type="text" class="otp__digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp__digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp__digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp__digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp__digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="otp__digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
+                        <button type="submit" class="glass__btn glass__btn--primary">Verify</button>
+                    </form>
+                    <p class="glass__legal">Didn't receive the code? <span id="otp-timer" class="otp-timer">Resend OTP in <span id="timer-count">30</span>s</span><a href="#" class="glass__link" id="resend-otp" style="display:none">Resend OTP</a></p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        (function() {
+            var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+            if (isLoggedIn) {
+                var next = new URLSearchParams(window.location.search).get('next');
+                window.location.replace((next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'home.html');
+                return;
+            }
+        })();
+        window.handleGoogleCredential = function(response) {
+            if (response && response.credential) {
+                sessionStorage.setItem('nokAuth', 'loggedIn');
+                localStorage.setItem('nokAuth', 'loggedIn');
+                localStorage.removeItem('nokMobileVerified');
+                var next = new URLSearchParams(window.location.search).get('next');
+                window.location.href = (next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'home.html';
+            }
+        };
+        if (new URLSearchParams(window.location.search).get('reset') === '1') {
+            var resetMsg = document.getElementById('login-reset-msg');
+            if (resetMsg) resetMsg.style.display = 'block';
+            history.replaceState({}, '', 'login.html');
+        }
+        (function() {
+            var USERS_KEY = 'nokUsers';
+            function getUsers() { try { var j = localStorage.getItem(USERS_KEY); return j ? JSON.parse(j) : []; } catch (e) { return []; } }
+            function showError(msg) {
+                var wrap = document.getElementById('login-error');
+                if (!wrap) {
+                    wrap = document.createElement('div');
+                    wrap.id = 'login-error';
+                    wrap.className = 'glass__error';
+                    wrap.setAttribute('role', 'alert');
+                    document.getElementById('login-form').insertBefore(wrap, document.querySelector('#login-form .glass__btn'));
+                }
+                wrap.textContent = msg;
+                wrap.style.display = 'block';
+            }
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var email = (document.getElementById('login-input').value || '').trim().toLowerCase();
+                var password = (document.getElementById('password-input').value || '');
+                var key = email;
+                if (!key) { showError('Enter your email.'); return; }
+                if (!password) { showError('Enter your password.'); return; }
+
+                var users = getUsers();
+                var user = users.find(function(u) {
+                    if (u.email && u.email.toLowerCase() === key) return true;
+                    if (u.phoneKey && u.phoneKey.toLowerCase() === key) return true;
+                    return false;
+                });
+                if (!user || user.password !== password) {
+                    showError('Invalid email or password.');
+                    return;
+                }
+                var userKey = user.email || user.phoneKey || key;
+                sessionStorage.setItem('nokUserEmail', userKey);
+                if (user.email) {
+                    localStorage.setItem('nokUserEmail', user.email.toLowerCase());
+                    localStorage.setItem('nokAccountEmail', user.email.toLowerCase());
+                } else if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userKey)) {
+                    localStorage.setItem('nokUserEmail', userKey.toLowerCase());
+                    localStorage.setItem('nokAccountEmail', userKey.toLowerCase());
+                } else {
+                    localStorage.removeItem('nokUserEmail');
+                }
+                sessionStorage.setItem('otpFrom', 'login');
+                localStorage.removeItem('nokMobileVerified');
+                document.getElementById('otp-subtitle').textContent = 'Enter the 6-digit code sent to ' + key;
+                document.getElementById('login-step').style.display = 'none';
+                document.getElementById('otp-step').style.display = 'block';
+                document.querySelectorAll('.otp__digit').forEach(function(d){ d.value = ''; });
+                startOtpTimer();
+                var errEl = document.getElementById('login-error');
+                if (errEl) errEl.style.display = 'none';
+            });
+        })();
+        document.getElementById('otp-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            sessionStorage.setItem('nokAuth', 'loggedIn');
+            localStorage.setItem('nokAuth', 'loggedIn');
+            sessionStorage.removeItem('otpFrom');
+            localStorage.removeItem('nokMobileVerified');
+            var next = new URLSearchParams(window.location.search).get('next');
+            window.location.href = (next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'home.html';
+        });
+        var digits = document.querySelectorAll('.otp__digit');
+        digits.forEach(function(input, i) {
+            input.addEventListener('input', function() {
+                if (this.value.length === 1 && i < digits.length - 1) digits[i + 1].focus();
+            });
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && i > 0) digits[i - 1].focus();
+            });
+        });
+        function startOtpTimer() {
+            var count = 30;
+            var timerEl = document.getElementById('timer-count');
+            var timerWrap = document.getElementById('otp-timer');
+            var resendBtn = document.getElementById('resend-otp');
+            if (resendBtn) resendBtn.style.display = 'none';
+            if (timerWrap) timerWrap.style.display = 'inline';
+            var iv = setInterval(function() {
+                count--;
+                if (timerEl) timerEl.textContent = count;
+                if (count <= 0) {
+                    clearInterval(iv);
+                    if (timerWrap) timerWrap.style.display = 'none';
+                    if (resendBtn) resendBtn.style.display = 'inline';
+                }
+            }, 1000);
+        }
+        document.getElementById('resend-otp').addEventListener('click', function(e) {
+            e.preventDefault();
+            startOtpTimer();
+        });
+        document.getElementById('otp-back').addEventListener('click', function() {
+            document.getElementById('otp-step').style.display = 'none';
+            document.getElementById('login-step').style.display = 'block';
+            digits.forEach(function(d) { d.value = ''; });
+        });
+        function initGoogleSignIn() {
+            var clientId = (window.NOK_GOOGLE_CLIENT_ID || '').trim();
+            var container = document.getElementById('google-signin-container');
+            if (!container) return;
+            if (clientId && typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                container.innerHTML = '';
+                google.accounts.id.initialize({ client_id: clientId, callback: handleGoogleCredential });
+                google.accounts.id.renderButton(container, { type: 'standard', theme: 'filled_black', size: 'large', text: 'continue_with', width: 320 });
+            }
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function() { setTimeout(initGoogleSignIn, 500); });
+        else setTimeout(initGoogleSignIn, 500);
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const input = document.getElementById('password-input');
+            const showIcon = this.querySelector('.glass__eye--show');
+            const hideIcon = this.querySelector('.glass__eye--hide');
+            if (input.type === 'password') {
+                input.type = 'text';
+                showIcon.style.display = 'none';
+                hideIcon.style.display = 'block';
+                this.setAttribute('aria-label', 'Hide password');
+            } else {
+                input.type = 'password';
+                showIcon.style.display = 'block';
+                hideIcon.style.display = 'none';
+                this.setAttribute('aria-label', 'Show password');
+            }
+        });
+    </script>
+</body>
+</html>

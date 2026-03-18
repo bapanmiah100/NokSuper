@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Money - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <script src="nok-theme.js"></script>
+    <script src="nok-wallet-country.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .add-page { font-family: 'Outfit', -apple-system, sans-serif; min-height: 100vh; padding: 24px 16px 80px; padding-top: calc(24px + 56px); max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+        .add-title { font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .add-subtitle { font-size: 0.9rem; color: rgba(200,210,255,0.6); margin-bottom: 24px; }
+        .add-card { background: rgba(15,22,41,0.55); backdrop-filter: blur(20px); border: 1px solid rgba(100,130,255,0.12); border-radius: 18px; padding: 20px; margin-bottom: 20px; }
+        .add-label { font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.9); margin-bottom: 10px; display: block; }
+        .add-amount-input { width: 100%; padding: 16px 18px; border-radius: 12px; border: 1px solid rgba(100,130,255,0.25); background: rgba(0,0,0,0.3); color: #fff; font-size: 1.25rem; font-family: inherit; }
+        .add-amount-input:focus { outline: none; border-color: rgba(99,102,241,0.5); }
+        .add-amount-input::placeholder { color: rgba(200,210,255,0.4); }
+        .add-bonus { font-size: 0.85rem; color: rgba(34,197,94,0.95); margin-top: 8px; }
+        .add-section-title { font-size: 0.8rem; font-weight: 700; color: rgba(200,210,255,0.55); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+        .add-bank-list { display: flex; flex-direction: column; gap: 10px; }
+        .add-bank-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: rgba(0,0,0,0.25); border: 2px solid rgba(100,130,255,0.2); border-radius: 14px; cursor: pointer; transition: all 0.2s; }
+        .add-bank-item:hover { border-color: rgba(139,92,246,0.5); background: rgba(99,102,241,0.12); }
+        .add-bank-item.add-bank-item--selected { border-color: rgba(139,92,246,0.8); background: rgba(99,102,241,0.2); }
+        .add-bank-item__icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+        .add-bank-item__name { font-size: 1rem; font-weight: 600; color: #fff; }
+        .add-bank-item__desc { font-size: 0.8rem; color: rgba(200,210,255,0.6); margin-top: 2px; }
+        .add-submit { width: 100%; padding: 16px 24px; border-radius: 12px; font-size: 1rem; font-weight: 600; border: none; cursor: pointer; font-family: inherit; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: #fff; margin-top: 24px; }
+        .add-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(79,109,216,0.4); }
+        .add-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .add-card-form { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(100,130,255,0.2); }
+        .add-card-form.add-card-form--show { display: block; }
+        .add-card-form .add-label { margin-top: 14px; }
+        .add-card-form .add-label:first-child { margin-top: 0; }
+        .add-card-form input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(100,130,255,0.25); background: rgba(0,0,0,0.3); color: #fff; font-size: 1rem; font-family: inherit; box-sizing: border-box; }
+        .add-card-form input:focus { outline: none; border-color: rgba(99,102,241,0.5); }
+        .add-card-form input::placeholder { color: rgba(200,210,255,0.4); }
+        .add-card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .add-card-row .add-label { grid-column: 1 / -1; }
+        .add-payment-form { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(100,130,255,0.2); }
+        .add-payment-form.add-payment-form--show { display: block; }
+        .add-payment-form .add-label { margin-top: 14px; }
+        .add-payment-form .add-label:first-child { margin-top: 0; }
+        .add-payment-form input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(100,130,255,0.25); background: rgba(0,0,0,0.3); color: #fff; font-size: 1rem; font-family: inherit; box-sizing: border-box; }
+        .add-payment-form input:focus { outline: none; border-color: rgba(99,102,241,0.5); }
+        .add-payment-form input::placeholder { color: rgba(200,210,255,0.4); }
+        .add-wallet-msg { font-size: 0.9rem; color: rgba(200,210,255,0.8); padding: 14px 16px; background: rgba(0,0,0,0.2); border-radius: 12px; margin-top: 16px; }
+        .add-flow-steps { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; font-size: 0.75rem; color: rgba(200,210,255,0.5); }
+        .add-flow-steps span { padding: 4px 8px; border-radius: 6px; }
+        .add-flow-steps .add-flow-done { color: rgba(34,197,94,0.9); }
+        .add-flow-steps .add-flow-current { color: var(--accent-light); font-weight: 600; }
+        .add-gateway-overlay { display: none; position: fixed; inset: 0; background: rgba(10,15,30,0.95); z-index: 100; align-items: center; justify-content: center; padding: 24px; }
+        .add-gateway-overlay.add-gateway-overlay--show { display: flex; }
+        .add-gateway-card { background: rgba(15,22,41,0.95); border: 1px solid rgba(100,130,255,0.2); border-radius: 20px; padding: 32px; max-width: 360px; width: 100%; text-align: center; }
+        .add-gateway-spinner { width: 48px; height: 48px; margin: 0 auto 20px; border: 3px solid rgba(100,130,255,0.3); border-top-color: var(--accent-blue); border-radius: 50%; animation: add-spin 0.8s linear infinite; }
+        .add-gateway-success { width: 56px; height: 56px; margin: 0 auto 20px; border-radius: 50%; background: rgba(34,197,94,0.25); display: none; align-items: center; justify-content: center; }
+        .add-gateway-overlay.add-gateway-overlay--success .add-gateway-spinner { display: none; }
+        .add-gateway-overlay.add-gateway-overlay--success .add-gateway-success { display: flex; }
+        .add-gateway-success svg { width: 32px; height: 32px; color: #4ade80; }
+        .add-gateway-title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .add-gateway-text { font-size: 0.9rem; color: rgba(200,210,255,0.75); }
+        @keyframes add-spin { to { transform: rotate(360deg); } }
+        .add-launch-banner { background: linear-gradient(135deg, rgba(34,197,94,0.2) 0%, rgba(22,163,74,0.15) 100%); border: 1px solid rgba(34,197,94,0.4); border-radius: 14px; padding: 14px 18px; margin-bottom: 24px; text-align: center; }
+        .add-launch-banner__title { font-size: 1rem; font-weight: 700; color: #86efac; margin: 0 0 4px 0; }
+        .add-launch-banner__sub { font-size: 0.85rem; color: rgba(200,210,255,0.8); margin: 0; }
+    </style>
+</head>
+<body class="home-body">
+    <div class="home-layout">
+        <div class="bg"></div>
+        <header class="long-video__header">
+            <div class="long-video__header-left">
+                <a href="wallet.html" class="long-video__menu" style="display:flex;align-items:center;justify-content:center;color:inherit;text-decoration:none;" aria-label="Back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </a>
+                <a href="home.html" class="long-video__logo">
+                    <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+                </a>
+            </div>
+            <div class="long-video__header-right">
+                <a href="wallet.html" class="long-video__profile-wrap" style="display:flex;align-items:center;color:inherit;text-decoration:none;font-weight:600;">Wallet</a>
+            </div>
+        </header>
+
+        <main class="add-page" id="add-main">
+            <p class="add-flow-steps" id="add-flow-steps"><span class="add-flow-current">Add Money</span> <span>↓</span> <span>Card / Payment</span> <span>↓</span> <span>Payment Gateway</span> <span>↓</span> <span>Wallet Balance</span> <span>↓</span> <span>Buy Coins</span></p>
+            <h1 class="add-title">Add money</h1>
+            <div class="add-launch-banner">
+                <p class="add-launch-banner__title">Ready for launch – Coming soon</p>
+                <p class="add-launch-banner__sub">Payment options will be live at full launch.</p>
+            </div>
+            <p class="add-subtitle" id="add-subtitle">Choose amount and payment method. You get bonus coins.</p>
+
+            <div class="add-card">
+                <label class="add-label" id="add-amount-label">Amount</label>
+                <input type="number" id="add-amount" class="add-amount-input" placeholder="0.00" value="">
+                <p class="add-summary" id="add-summary" style="margin-top:12px;font-size:0.95rem;color:rgba(200,210,255,0.85);">Currency: <span id="add-summary-currency"></span> · Adding: <span id="add-summary-amount">—</span></p>
+                <p class="add-bonus" id="add-bonus-hint"></p>
+            </div>
+
+            <p class="add-section-title">Banking / Payment method</p>
+            <div class="add-card">
+                <div class="add-bank-list" id="add-bank-list"></div>
+                <div class="add-card-form" id="add-card-form">
+                    <label class="add-label" for="add-card-number">Card number</label>
+                    <input type="text" id="add-card-number" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" autocomplete="cc-number">
+                    <label class="add-label" for="add-card-name">Name on card</label>
+                    <input type="text" id="add-card-name" placeholder="John Doe" autocomplete="cc-name">
+                    <div class="add-card-row">
+                        <div>
+                            <label class="add-label" for="add-card-expiry">Expiry (MM/YY)</label>
+                            <input type="text" id="add-card-expiry" placeholder="MM/YY" maxlength="5" inputmode="numeric" autocomplete="cc-exp">
+                        </div>
+                        <div>
+                            <label class="add-label" for="add-card-cvv">CVV</label>
+                            <input type="text" id="add-card-cvv" placeholder="123" maxlength="4" inputmode="numeric" autocomplete="cc-csc">
+                        </div>
+                    </div>
+                </div>
+                <div class="add-payment-form" id="add-bank-form">
+                    <label class="add-label" for="add-bank-name">Account holder name</label>
+                    <input type="text" id="add-bank-name" placeholder="Full name as on account">
+                    <label class="add-label" for="add-bank-bank">Bank name</label>
+                    <input type="text" id="add-bank-bank" placeholder="Your bank name">
+                    <label class="add-label" for="add-bank-account">Account number</label>
+                    <input type="text" id="add-bank-account" placeholder="Account number" inputmode="numeric">
+                    <label class="add-label" for="add-bank-routing">Routing / Sort code (optional)</label>
+                    <input type="text" id="add-bank-routing" placeholder="e.g. 123456789 or 12-34-56" inputmode="numeric">
+                </div>
+                <div class="add-payment-form" id="add-applepay-form">
+                    <p class="add-wallet-msg">Pay securely with Apple Pay. Tap Add money below to continue — you’ll complete payment on the next step.</p>
+                </div>
+                <div class="add-payment-form" id="add-paypal-form">
+                    <label class="add-label" for="add-paypal-email">PayPal email</label>
+                    <input type="email" id="add-paypal-email" placeholder="your@email.com" autocomplete="email">
+                    <p class="add-wallet-msg" style="margin-top:12px;">You’ll be redirected to PayPal to complete payment with this account.</p>
+                </div>
+                <div class="add-payment-form" id="add-upi-form">
+                    <label class="add-label" for="add-upi-id">UPI ID</label>
+                    <input type="text" id="add-upi-id" placeholder="yourname@upi" autocomplete="off">
+                    <p class="add-wallet-msg" style="margin-top:12px;">Pay via GPay, PhonePe or Paytm using this UPI ID.</p>
+                </div>
+                <div class="add-payment-form" id="add-paytm-form">
+                    <label class="add-label" for="add-paytm-mobile">Paytm mobile number</label>
+                    <input type="tel" id="add-paytm-mobile" placeholder="10-digit number" maxlength="10" inputmode="numeric" autocomplete="tel">
+                    <p class="add-wallet-msg" style="margin-top:12px;">Enter the mobile number linked to your Paytm wallet.</p>
+                </div>
+                <div class="add-payment-form" id="add-phonepe-form">
+                    <label class="add-label" for="add-phonepe-mobile">PhonePe mobile number</label>
+                    <input type="tel" id="add-phonepe-mobile" placeholder="10-digit number" maxlength="10" inputmode="numeric" autocomplete="tel">
+                    <p class="add-wallet-msg" style="margin-top:12px;">Enter the mobile number linked to your PhonePe wallet.</p>
+                </div>
+                <button type="button" class="add-submit" id="add-submit-btn" disabled>Pay</button>
+            </div>
+        </main>
+
+        <div class="add-gateway-overlay" id="add-gateway-overlay" aria-hidden="true">
+            <div class="add-gateway-card">
+                <div class="add-gateway-spinner" id="add-gateway-spinner"></div>
+                <div class="add-gateway-success" id="add-gateway-success">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
+                <p class="add-gateway-title" id="add-gateway-title">Connecting to payment gateway</p>
+                <p class="add-gateway-text" id="add-gateway-text">Please wait...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            var BDT_PER_USD = 115;
+            var COINS_PER_USD = 20;
+            function getConfig() {
+                if (typeof NOK_WALLET_COUNTRY !== 'undefined' && NOK_WALLET_COUNTRY.getAddMoneyConfig)
+                    return NOK_WALLET_COUNTRY.getAddMoneyConfig();
+                return { currency: '৳', code: 'BDT', localPerBdt: 1, min: 50, name: 'Bangladesh', payments: [
+                    { method: 'bkash', icon: '📱', name: 'bKash', desc: 'Mobile wallet' },
+                    { method: 'bank', icon: '🏦', name: 'Bank transfer', desc: 'Net banking' },
+                    { method: 'card', icon: '💳', name: 'Card', desc: 'Visa, Mastercard' }
+                ]};
+            }
+            function getTakaAdded() { var v = localStorage.getItem('nokBalanceTakaAdded'); return (v === null || v === '') ? 0 : parseFloat(v, 10) || 0; }
+            function setTakaAdded(n) { localStorage.setItem('nokBalanceTakaAdded', String(n)); }
+            function getCoins() { var v = localStorage.getItem('nokCoins'); return (v === null || v === '') ? 0 : parseInt(v, 10) || 0; }
+            function setCoins(n) { localStorage.setItem('nokCoins', String(n)); }
+            function localToBdt(localAmount, config) { return localAmount / config.localPerBdt; }
+            function formatNum(n) { return (Math.round(n * 100) / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+            var config = getConfig();
+            var amountInput = document.getElementById('add-amount');
+            var submitBtn = document.getElementById('add-submit-btn');
+            var bonusHint = document.getElementById('add-bonus-hint');
+            var amountLabel = document.getElementById('add-amount-label');
+            var subtitleEl = document.getElementById('add-subtitle');
+            var bankList = document.getElementById('add-bank-list');
+            var selectedMethod = null;
+
+            var summaryCurrency = document.getElementById('add-summary-currency');
+            var summaryAmount = document.getElementById('add-summary-amount');
+            if (amountLabel) amountLabel.textContent = 'Amount (' + config.currency + ' ' + config.code + ')';
+            if (amountInput) { amountInput.placeholder = '0'; amountInput.min = config.min; amountInput.step = config.min >= 1 ? 10 : 0.5; }
+            if (summaryCurrency) summaryCurrency.textContent = config.currency + ' (' + config.code + ')';
+            if (subtitleEl) subtitleEl.textContent = 'Add money in ' + config.name + ' currency. You get bonus coins: 100 coins per ' + config.currency + (config.localPerBdt >= 0.1 ? formatNum(5 / config.localPerBdt) : '5') + ' equivalent.';
+
+            if (bankList) {
+                config.payments.forEach(function(p) {
+                    var div = document.createElement('div');
+                    div.className = 'add-bank-item';
+                    div.setAttribute('data-method', p.method);
+                    div.tabIndex = 0;
+                    div.innerHTML = '<div class="add-bank-item__icon">' + p.icon + '</div><div><div class="add-bank-item__name">' + p.name + '</div><div class="add-bank-item__desc">' + p.desc + '</div></div>';
+                    div.addEventListener('click', function() {
+                        document.querySelectorAll('.add-bank-item').forEach(function(i) { i.classList.remove('add-bank-item--selected'); });
+                        this.classList.add('add-bank-item--selected');
+                        selectedMethod = this.getAttribute('data-method');
+                        var cardForm = document.getElementById('add-card-form');
+                        var bankForm = document.getElementById('add-bank-form');
+                        var appleForm = document.getElementById('add-applepay-form');
+                        var paypalForm = document.getElementById('add-paypal-form');
+                        var upiForm = document.getElementById('add-upi-form');
+                        var paytmForm = document.getElementById('add-paytm-form');
+                        var phonepeForm = document.getElementById('add-phonepe-form');
+                        if (cardForm) { cardForm.classList.toggle('add-card-form--show', selectedMethod === 'card'); }
+                        if (bankForm) { bankForm.classList.toggle('add-payment-form--show', selectedMethod === 'bank'); }
+                        if (appleForm) { appleForm.classList.toggle('add-payment-form--show', selectedMethod === 'applepay'); }
+                        if (paypalForm) { paypalForm.classList.toggle('add-payment-form--show', selectedMethod === 'paypal'); }
+                        if (upiForm) { upiForm.classList.toggle('add-payment-form--show', selectedMethod === 'upi'); }
+                        if (paytmForm) { paytmForm.classList.toggle('add-payment-form--show', selectedMethod === 'paytm'); }
+                        if (phonepeForm) { phonepeForm.classList.toggle('add-payment-form--show', selectedMethod === 'phonepe'); }
+                        updateSubmitState();
+                    });
+                    bankList.appendChild(div);
+                });
+            }
+
+            var cardForm = document.getElementById('add-card-form');
+            var cardNumberInput = document.getElementById('add-card-number');
+            var cardExpiryInput = document.getElementById('add-card-expiry');
+            var cardCvvInput = document.getElementById('add-card-cvv');
+            var cardNameInput = document.getElementById('add-card-name');
+
+            function formatCardNumber(v) {
+                var digits = (v || '').replace(/\D/g, '').slice(0, 16);
+                return digits.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+            }
+            function formatExpiry(v) {
+                var digits = (v || '').replace(/\D/g, '').slice(0, 4);
+                if (digits.length >= 2) return digits.slice(0, 2) + '/' + digits.slice(2);
+                return digits;
+            }
+            if (cardNumberInput) cardNumberInput.addEventListener('input', function() {
+                this.value = formatCardNumber(this.value);
+                updateSubmitState();
+            });
+            if (cardExpiryInput) cardExpiryInput.addEventListener('input', function() {
+                this.value = formatExpiry(this.value);
+                updateSubmitState();
+            });
+            if (cardCvvInput) cardCvvInput.addEventListener('input', function() {
+                this.value = (this.value || '').replace(/\D/g, '').slice(0, 4);
+                updateSubmitState();
+            });
+            if (cardNameInput) cardNameInput.addEventListener('input', updateSubmitState);
+
+            function isCardFormValid() {
+                if (!cardNumberInput || !cardExpiryInput || !cardCvvInput || !cardNameInput) return false;
+                var num = (cardNumberInput.value || '').replace(/\D/g, '');
+                var exp = (cardExpiryInput.value || '').replace(/\D/g, '');
+                var cvv = (cardCvvInput.value || '').replace(/\D/g, '');
+                var name = (cardNameInput.value || '').trim();
+                if (num.length < 13 || num.length > 19) return false;
+                if (exp.length !== 4) return false;
+                var mm = parseInt(exp.slice(0, 2), 10);
+                var yy = parseInt(exp.slice(2, 4), 10);
+                if (mm < 1 || mm > 12 || yy < 0 || yy > 99) return false;
+                if (cvv.length < 3 || cvv.length > 4) return false;
+                if (name.length < 2) return false;
+                return true;
+            }
+            var bankNameInput = document.getElementById('add-bank-name');
+            var bankBankInput = document.getElementById('add-bank-bank');
+            var bankAccountInput = document.getElementById('add-bank-account');
+            var paypalEmailInput = document.getElementById('add-paypal-email');
+            function isBankFormValid() {
+                if (!bankNameInput || !bankBankInput || !bankAccountInput) return false;
+                var name = (bankNameInput.value || '').trim();
+                var bank = (bankBankInput.value || '').trim();
+                var acc = (bankAccountInput.value || '').trim();
+                return name.length >= 2 && bank.length >= 2 && acc.length >= 4;
+            }
+            function isPaypalFormValid() {
+                if (!paypalEmailInput) return false;
+                var e = (paypalEmailInput.value || '').trim();
+                return e.length >= 5 && e.indexOf('@') > 0 && e.indexOf('.') > e.indexOf('@');
+            }
+            var upiIdInput = document.getElementById('add-upi-id');
+            var paytmMobileInput = document.getElementById('add-paytm-mobile');
+            var phonepeMobileInput = document.getElementById('add-phonepe-mobile');
+            function isUpiFormValid() {
+                if (!upiIdInput) return false;
+                var v = (upiIdInput.value || '').trim();
+                return v.length >= 5 && v.indexOf('@') > 0;
+            }
+            function isPaytmFormValid() {
+                if (!paytmMobileInput) return false;
+                var v = (paytmMobileInput.value || '').replace(/\D/g, '');
+                return v.length === 10;
+            }
+            function isPhonepeFormValid() {
+                if (!phonepeMobileInput) return false;
+                var v = (phonepeMobileInput.value || '').replace(/\D/g, '');
+                return v.length === 10;
+            }
+            if (upiIdInput) upiIdInput.addEventListener('input', updateSubmitState);
+            if (paytmMobileInput) paytmMobileInput.addEventListener('input', function() { this.value = (this.value || '').replace(/\D/g, '').slice(0, 10); updateSubmitState(); });
+            if (phonepeMobileInput) phonepeMobileInput.addEventListener('input', function() { this.value = (this.value || '').replace(/\D/g, '').slice(0, 10); updateSubmitState(); });
+            if (bankNameInput) bankNameInput.addEventListener('input', updateSubmitState);
+            if (bankBankInput) bankBankInput.addEventListener('input', updateSubmitState);
+            if (bankAccountInput) bankAccountInput.addEventListener('input', updateSubmitState);
+            if (paypalEmailInput) paypalEmailInput.addEventListener('input', updateSubmitState);
+
+            function updateSubmitState() {
+                var amt = parseFloat(amountInput && amountInput.value ? amountInput.value : '', 10);
+                var amountOk = !isNaN(amt) && amt >= config.min && selectedMethod;
+                var methodOk = true;
+                if (selectedMethod === 'card' && cardForm && cardForm.classList.contains('add-card-form--show'))
+                    methodOk = isCardFormValid();
+                else if (selectedMethod === 'bank' && document.getElementById('add-bank-form') && document.getElementById('add-bank-form').classList.contains('add-payment-form--show'))
+                    methodOk = isBankFormValid();
+                else if (selectedMethod === 'paypal' && document.getElementById('add-paypal-form') && document.getElementById('add-paypal-form').classList.contains('add-payment-form--show'))
+                    methodOk = isPaypalFormValid();
+                else if (selectedMethod === 'upi' && document.getElementById('add-upi-form') && document.getElementById('add-upi-form').classList.contains('add-payment-form--show'))
+                    methodOk = isUpiFormValid();
+                else if (selectedMethod === 'paytm' && document.getElementById('add-paytm-form') && document.getElementById('add-paytm-form').classList.contains('add-payment-form--show'))
+                    methodOk = isPaytmFormValid();
+                else if (selectedMethod === 'phonepe' && document.getElementById('add-phonepe-form') && document.getElementById('add-phonepe-form').classList.contains('add-payment-form--show'))
+                    methodOk = isPhonepeFormValid();
+                else if (selectedMethod === 'applepay' || selectedMethod === 'bkash' || selectedMethod === 'nagad' || selectedMethod === 'rocket')
+                    methodOk = true;
+                if (submitBtn) {
+                    submitBtn.disabled = !amountOk || !methodOk;
+                    submitBtn.textContent = amountOk && amt > 0 ? 'Pay ' + config.currency + ' ' + formatNum(amt) : 'Pay';
+                }
+            }
+
+            function updateBonusHint() {
+                var amt = parseFloat(amountInput && amountInput.value ? amountInput.value : '', 10);
+                if (summaryAmount) summaryAmount.textContent = (!isNaN(amt) && amt > 0) ? (config.currency + ' ' + formatNum(amt)) : '—';
+                if (bonusHint) {
+                    if (isNaN(amt) || amt < config.min) bonusHint.textContent = 'Min ' + config.currency + ' ' + config.min + '. Bonus: 100 coins per ~' + config.currency + (5 / config.localPerBdt).toFixed(0);
+                    else {
+                        var bdt = localToBdt(amt, config);
+                        var usd = bdt / BDT_PER_USD;
+                        var coins = Math.round(usd * COINS_PER_USD);
+                        bonusHint.textContent = 'You will get ' + coins + ' bonus coins';
+                    }
+                }
+            }
+
+            if (amountInput) amountInput.addEventListener('input', function() { updateSubmitState(); updateBonusHint(); });
+
+            var gatewayOverlay = document.getElementById('add-gateway-overlay');
+            var gatewayTitle = document.getElementById('add-gateway-title');
+            var gatewayText = document.getElementById('add-gateway-text');
+            function setGatewayStatus(title, text) {
+                if (gatewayTitle) gatewayTitle.textContent = title;
+                if (gatewayText) gatewayText.textContent = text;
+            }
+            // Demo: add money disabled until verification; shows verification message. Real money: use backend + gateway (see WALLET-PAYMENTS.md).
+            if (submitBtn) submitBtn.addEventListener('click', function() {
+                var amtLocal = parseFloat(amountInput && amountInput.value ? amountInput.value : '', 10);
+                if (isNaN(amtLocal) || amtLocal < config.min) { alert('Please enter at least ' + config.currency + ' ' + config.min); return; }
+                if (!selectedMethod) { alert('Please select a payment method'); return; }
+                if (selectedMethod === 'card' && !isCardFormValid()) { alert('Please enter valid card details.'); return; }
+                if (selectedMethod === 'bank' && !isBankFormValid()) { alert('Please enter valid bank details.'); return; }
+                if (selectedMethod === 'paypal' && !isPaypalFormValid()) { alert('Please enter a valid PayPal email.'); return; }
+                if (selectedMethod === 'upi' && !isUpiFormValid()) { alert('Please enter a valid UPI ID (e.g. name@upi).'); return; }
+                if (selectedMethod === 'paytm' && !isPaytmFormValid()) { alert('Please enter a valid 10-digit Paytm mobile number.'); return; }
+                if (selectedMethod === 'phonepe' && !isPhonepeFormValid()) { alert('Please enter a valid 10-digit PhonePe mobile number.'); return; }
+
+                // Demo: never add taka; always show verification required
+                if (gatewayOverlay) {
+                    gatewayOverlay.classList.remove('add-gateway-overlay--success');
+                    gatewayOverlay.classList.add('add-gateway-overlay--show');
+                    gatewayOverlay.setAttribute('aria-hidden', 'false');
+                }
+                setGatewayStatus('Verification required', 'Please verify your account first to add money.');
+                var successEl = gatewayOverlay ? gatewayOverlay.querySelector('.add-gateway-success') : null;
+                var spinnerEl = gatewayOverlay ? gatewayOverlay.querySelector('.add-gateway-spinner') : null;
+                if (spinnerEl) spinnerEl.style.display = 'none';
+                if (successEl) {
+                    successEl.style.display = 'flex';
+                    successEl.innerHTML = '<div style="text-align:center;"><p style="font-size:1rem;font-weight:600;margin:0 0 12px 0;">Verify account first</p><p style="font-size:0.9rem;color:rgba(200,210,255,0.85);margin:0 0 20px 0;">Add money is available after you verify your account in Wallet.</p><a href="wallet.html" class="add-submit" style="display:inline-block;text-decoration:none;margin-top:8px;">Go to Wallet</a></div>';
+                }
+                if (gatewayOverlay) gatewayOverlay.classList.add('add-gateway-overlay--success');
+            });
+
+            updateBonusHint();
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earnings - Studio - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <style>
+        body.studio-body { min-height: 100vh; }
+        .studio-layout { display: flex; min-height: 100vh; }
+        .studio-sidebar { width: 240px; background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%); flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .studio-sidebar__logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+        .studio-sidebar__logo-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .studio-sidebar__logo-icon svg { width: 20px; height: 20px; color: #fff; }
+        .studio-sidebar__logo-text { font-size: 1.25rem; font-weight: 700; color: #fff; }
+        .studio-sidebar__nav { display: flex; flex-direction: column; gap: 4px; }
+        .studio-sidebar__item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: background 0.2s, color 0.2s; border: none; background: none; cursor: pointer; width: 100%; text-align: left; }
+        .studio-sidebar__item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .studio-sidebar__item--active { background: rgba(255,255,255,0.15); color: #fff; }
+        .studio-sidebar__item svg { width: 22px; height: 22px; flex-shrink: 0; }
+        .studio-main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 24px 32px 100px; }
+        .earn-back { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; background: rgba(139,92,246,0.25); color: #e9d5ff; font-size: 0.9rem; font-weight: 600; text-decoration: none; margin-bottom: 18px; width: fit-content; transition: all 0.2s; }
+        .earn-back:hover { background: rgba(139,92,246,0.4); color: #fff; }
+        .earn-topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+        .earn-title { margin: 0 0 8px; font-size: 1.9rem; font-weight: 800; color: #fff; letter-spacing: -0.03em; }
+        .earn-subtitle { margin: 0; color: rgba(220,228,255,0.74); max-width: 760px; line-height: 1.6; }
+        .earn-user { display: flex; align-items: center; gap: 12px; }
+        .earn-user__meta { display: grid; gap: 2px; text-align: right; }
+        .earn-user__label { color: rgba(220,228,255,0.55); font-size: 0.8rem; }
+        .earn-user__name { color: #fff; font-size: 0.95rem; font-weight: 700; }
+        .earn-user__avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; overflow: hidden; }
+        .earn-user__avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .earn-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 22px; }
+        .earn-card { background: rgba(22,22,42,0.62); backdrop-filter: blur(12px); border: 1px solid rgba(139,92,246,0.24); border-radius: 18px; padding: 18px; box-shadow: 0 0 24px rgba(139,92,246,0.08); }
+        .earn-card__label { color: rgba(220,228,255,0.62); font-size: 0.82rem; font-weight: 600; margin-bottom: 10px; }
+        .earn-card__value { color: #fff; font-size: 1.65rem; font-weight: 800; letter-spacing: -0.03em; }
+        .earn-card__sub { color: #86efac; font-size: 0.82rem; margin-top: 6px; }
+        .earn-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.95fr); gap: 24px; align-items: start; }
+        .earn-column { display: grid; gap: 18px; }
+        .earn-panel { background: rgba(22,22,42,0.62); backdrop-filter: blur(12px); border: 1px solid rgba(139,92,246,0.24); border-radius: 18px; padding: 20px; box-shadow: 0 0 24px rgba(139,92,246,0.08); }
+        .earn-panel__title { margin: 0 0 8px; color: #fff; font-size: 1rem; font-weight: 700; }
+        .earn-panel__text { margin: 0 0 16px; color: rgba(220,228,255,0.68); font-size: 0.9rem; line-height: 1.55; }
+        .earn-form { display: grid; gap: 14px; }
+        .earn-field { display: grid; gap: 8px; }
+        .earn-label { color: rgba(235,239,255,0.9); font-size: 0.88rem; font-weight: 600; }
+        .earn-input, .earn-select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(139,92,246,0.28);
+            background: rgba(10,12,24,0.55);
+            color: #fff;
+            font: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+        .earn-input:focus, .earn-select:focus { outline: none; border-color: rgba(167,139,250,0.7); box-shadow: 0 0 0 3px rgba(139,92,246,0.16); background: rgba(10,12,24,0.74); }
+        .earn-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+        .earn-btn { border: none; border-radius: 12px; padding: 11px 16px; font: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: transform 0.18s, box-shadow 0.18s, background 0.18s; }
+        .earn-btn:hover { transform: translateY(-1px); }
+        .earn-btn--primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; box-shadow: 0 10px 24px rgba(99,102,241,0.24); }
+        .earn-btn--secondary { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); color: #fff; }
+        .earn-btn--ghost { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: rgba(235,239,255,0.78); }
+        .earn-switch-list { display: grid; gap: 12px; }
+        .earn-switch-row { display: flex; justify-content: space-between; gap: 14px; align-items: center; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+        .earn-switch-row:first-child { border-top: none; padding-top: 0; }
+        .earn-switch-title { color: #fff; font-size: 0.93rem; font-weight: 600; display: block; }
+        .earn-switch-hint { color: rgba(220,228,255,0.58); font-size: 0.82rem; display: block; margin-top: 4px; line-height: 1.45; }
+        .earn-switch { width: 54px; height: 30px; border-radius: 999px; background: rgba(255,255,255,0.14); border: none; position: relative; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
+        .earn-switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+        .earn-switch.is-on { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .earn-switch.is-on::after { transform: translateX(24px); }
+        .earn-chart { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; align-items: end; min-height: 190px; }
+        .earn-bar-wrap { display: grid; gap: 8px; }
+        .earn-bar { min-height: 32px; border-radius: 14px 14px 8px 8px; background: linear-gradient(180deg, rgba(167,139,250,0.92), rgba(79,70,229,0.92)); box-shadow: 0 10px 22px rgba(99,102,241,0.22); }
+        .earn-bar__value { color: rgba(220,228,255,0.88); font-size: 0.8rem; font-weight: 700; text-align: center; }
+        .earn-bar__month { color: rgba(220,228,255,0.58); font-size: 0.78rem; text-align: center; }
+        .earn-split { display: grid; gap: 12px; }
+        .earn-split__row { display: grid; gap: 8px; }
+        .earn-split__top { display: flex; justify-content: space-between; gap: 12px; align-items: center; color: rgba(235,239,255,0.9); font-size: 0.88rem; }
+        .earn-split__line { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+        .earn-split__fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #22c55e, #6366f1); }
+        .earn-list { display: grid; gap: 12px; }
+        .earn-list__item { display: flex; justify-content: space-between; gap: 14px; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+        .earn-list__item:first-child { border-top: none; padding-top: 0; }
+        .earn-list__title { color: #fff; font-size: 0.92rem; font-weight: 600; display: block; }
+        .earn-list__meta { color: rgba(220,228,255,0.58); font-size: 0.8rem; display: block; margin-top: 4px; }
+        .earn-list__value { color: #86efac; font-size: 0.92rem; font-weight: 700; white-space: nowrap; }
+        .earn-pill-row { display: flex; flex-wrap: wrap; gap: 10px; }
+        .earn-pill { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; background: rgba(255,255,255,0.08); color: rgba(235,239,255,0.9); font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); }
+        .earn-pill strong { color: #fff; }
+        .earn-status { min-height: 20px; color: rgba(220,228,255,0.72); font-size: 0.88rem; font-weight: 600; }
+        .earn-status.is-success { color: #86efac; }
+        .earn-status.is-error { color: #fca5a5; }
+        @media (max-width: 1180px) {
+            .earn-grid { grid-template-columns: 1fr; }
+            .earn-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 900px) {
+            .studio-layout { display: block; }
+            .studio-sidebar { width: 100%; padding-bottom: 12px; }
+            .studio-sidebar__nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 0 10px; }
+            .studio-main { padding: 20px 16px 100px; }
+            .earn-topbar { flex-direction: column; align-items: stretch; }
+        }
+        @media (max-width: 640px) {
+            .earn-cards { grid-template-columns: 1fr; }
+            .earn-chart { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .earn-user { justify-content: space-between; width: 100%; }
+        }
+    </style>
+</head>
+<body class="home-body has-bottom-nav studio-body">
+    <div class="bg"></div>
+    <div class="studio-layout">
+        <aside class="studio-sidebar">
+            <div class="studio-sidebar__logo">
+                <div class="studio-sidebar__logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+                <span class="studio-sidebar__logo-text">Studio</span>
+            </div>
+            <nav class="studio-sidebar__nav">
+                <a href="studio.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+                <a href="studio-earning.html" class="studio-sidebar__item studio-sidebar__item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M15 9.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span>Earning</span></a>
+                <a href="studio-monetization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><path d="M12 15h6"/></svg><span>Monetization</span></a>
+                <a href="studio-customization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Customization</span></a>
+                <a href="studio-content-detection.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Content Detection</span></a>
+                <a href="settings.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a>
+            </nav>
+        </aside>
+
+        <main class="studio-main">
+            <a href="studio.html" class="earn-back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                Back to Dashboard
+            </a>
+
+            <div class="earn-topbar">
+                <div>
+                    <h1 class="earn-title">Advanced Earnings Center</h1>
+                    <p class="earn-subtitle">Track revenue health, control payout settings, review estimated monthly income and manage the earning sources that power your channel.</p>
+                </div>
+                <div class="earn-user">
+                    <div class="earn-user__meta">
+                        <span class="earn-user__label">Studio creator</span>
+                        <span class="earn-user__name" id="earn-user-name">CREATOR</span>
+                    </div>
+                    <div class="earn-user__avatar" id="earn-user-avatar">C</div>
+                </div>
+            </div>
+
+            <div class="earn-cards">
+                <div class="earn-card">
+                    <div class="earn-card__label">Estimated revenue</div>
+                    <div class="earn-card__value" id="earn-total-value">$0</div>
+                    <div class="earn-card__sub" id="earn-growth-value">+0% from last period</div>
+                </div>
+                <div class="earn-card">
+                    <div class="earn-card__label">Withdrawable now</div>
+                    <div class="earn-card__value" id="earn-withdrawable-value">$0</div>
+                    <div class="earn-card__sub">Available after reserves</div>
+                </div>
+                <div class="earn-card">
+                    <div class="earn-card__label">Pending clearance</div>
+                    <div class="earn-card__value" id="earn-pending-value">$0</div>
+                    <div class="earn-card__sub">Rolling safety hold</div>
+                </div>
+                <div class="earn-card">
+                    <div class="earn-card__label">RPM estimate</div>
+                    <div class="earn-card__value" id="earn-rpm-value">$0.00</div>
+                    <div class="earn-card__sub">Revenue per 1,000 views</div>
+                </div>
+            </div>
+
+            <div class="earn-grid">
+                <div class="earn-column">
+                    <section class="earn-panel">
+                        <h2 class="earn-panel__title">Payout Setup</h2>
+                        <p class="earn-panel__text">Choose how your revenue should be released once you hit your payout threshold.</p>
+                        <div class="earn-form">
+                            <div class="earn-field">
+                                <label class="earn-label" for="earn-method">Payout method</label>
+                                <select class="earn-select" id="earn-method">
+                                    <option value="bank">Bank transfer</option>
+                                    <option value="paypal">PayPal</option>
+                                    <option value="wallet">Wallet transfer</option>
+                                </select>
+                            </div>
+                            <div class="earn-field">
+                                <label class="earn-label" for="earn-account-name">Account holder name</label>
+                                <input class="earn-input" id="earn-account-name" type="text" placeholder="Full payout name">
+                            </div>
+                            <div class="earn-field">
+                                <label class="earn-label" for="earn-handle">Payout email / account</label>
+                                <input class="earn-input" id="earn-handle" type="text" placeholder="name@bank.com or wallet id">
+                            </div>
+                            <div class="earn-field">
+                                <label class="earn-label" for="earn-threshold">Minimum payout threshold ($)</label>
+                                <input class="earn-input" id="earn-threshold" type="number" min="10" step="5" placeholder="100">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="earn-panel">
+                        <h2 class="earn-panel__title">Revenue Source Controls</h2>
+                        <p class="earn-panel__text">Turn earning surfaces on or off depending on your content strategy and audience mix.</p>
+                        <div class="earn-switch-list">
+                            <div class="earn-switch-row">
+                                <div>
+                                    <span class="earn-switch-title">Ad revenue share</span>
+                                    <span class="earn-switch-hint">Include video and short ad revenue in your earning mix.</span>
+                                </div>
+                                <button type="button" class="earn-switch" id="earn-toggle-ads" aria-label="Toggle ad revenue"></button>
+                            </div>
+                            <div class="earn-switch-row">
+                                <div>
+                                    <span class="earn-switch-title">Gifts and super thanks</span>
+                                    <span class="earn-switch-hint">Allow tips, support gifts and viewer contribution events.</span>
+                                </div>
+                                <button type="button" class="earn-switch" id="earn-toggle-gifts" aria-label="Toggle gifts"></button>
+                            </div>
+                            <div class="earn-switch-row">
+                                <div>
+                                    <span class="earn-switch-title">Membership earnings</span>
+                                    <span class="earn-switch-hint">Count channel memberships and premium supporter income.</span>
+                                </div>
+                                <button type="button" class="earn-switch" id="earn-toggle-membership" aria-label="Toggle memberships"></button>
+                            </div>
+                            <div class="earn-switch-row">
+                                <div>
+                                    <span class="earn-switch-title">Affiliate / sponsor tracking</span>
+                                    <span class="earn-switch-hint">Reserve a share of revenue for branded content and affiliate links.</span>
+                                </div>
+                                <button type="button" class="earn-switch" id="earn-toggle-affiliate" aria-label="Toggle affiliate"></button>
+                            </div>
+                            <div class="earn-switch-row">
+                                <div>
+                                    <span class="earn-switch-title">Auto payout</span>
+                                    <span class="earn-switch-hint">Send payouts automatically whenever the threshold is reached.</span>
+                                </div>
+                                <button type="button" class="earn-switch" id="earn-toggle-auto" aria-label="Toggle auto payout"></button>
+                            </div>
+                            <div class="earn-switch-row">
+                                <div>
+                                    <span class="earn-switch-title">Hold reserve for chargeback safety</span>
+                                    <span class="earn-switch-hint">Keep a small protection reserve before releasing all funds.</span>
+                                </div>
+                                <button type="button" class="earn-switch" id="earn-toggle-reserve" aria-label="Toggle reserve"></button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="earn-panel">
+                        <h2 class="earn-panel__title">Monthly Earnings Trend</h2>
+                        <p class="earn-panel__text">A simple six-month revenue trend based on your current total earning profile.</p>
+                        <div class="earn-chart" id="earn-chart"></div>
+                    </section>
+                </div>
+
+                <div class="earn-column">
+                    <section class="earn-panel">
+                        <h2 class="earn-panel__title">Revenue Mix</h2>
+                        <p class="earn-panel__text">See how your current earning total is distributed across different sources.</p>
+                        <div class="earn-split">
+                            <div class="earn-split__row">
+                                <div class="earn-split__top"><span>Ads</span><strong id="earn-split-ads-label">$0</strong></div>
+                                <div class="earn-split__line"><div class="earn-split__fill" id="earn-split-ads-fill" style="width:0%"></div></div>
+                            </div>
+                            <div class="earn-split__row">
+                                <div class="earn-split__top"><span>Memberships</span><strong id="earn-split-membership-label">$0</strong></div>
+                                <div class="earn-split__line"><div class="earn-split__fill" id="earn-split-membership-fill" style="width:0%"></div></div>
+                            </div>
+                            <div class="earn-split__row">
+                                <div class="earn-split__top"><span>Tips & gifts</span><strong id="earn-split-gifts-label">$0</strong></div>
+                                <div class="earn-split__line"><div class="earn-split__fill" id="earn-split-gifts-fill" style="width:0%"></div></div>
+                            </div>
+                            <div class="earn-split__row">
+                                <div class="earn-split__top"><span>Affiliate / sponsor</span><strong id="earn-split-affiliate-label">$0</strong></div>
+                                <div class="earn-split__line"><div class="earn-split__fill" id="earn-split-affiliate-fill" style="width:0%"></div></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="earn-panel">
+                        <h2 class="earn-panel__title">Quick Summary</h2>
+                        <div class="earn-pill-row">
+                            <span class="earn-pill">Threshold: <strong id="earn-pill-threshold">$100</strong></span>
+                            <span class="earn-pill">Method: <strong id="earn-pill-method">Bank transfer</strong></span>
+                            <span class="earn-pill">Next payout: <strong id="earn-pill-next">7 days</strong></span>
+                        </div>
+                    </section>
+
+                    <section class="earn-panel">
+                        <h2 class="earn-panel__title">Recent Payout Activity</h2>
+                        <p class="earn-panel__text">Your last processed and pending payout snapshots.</p>
+                        <div class="earn-list" id="earn-payout-list"></div>
+                    </section>
+
+                    <section class="earn-panel">
+                        <h2 class="earn-panel__title">Actions</h2>
+                        <p class="earn-panel__text">Save your payout configuration or jump to related earning pages.</p>
+                        <div class="earn-status" id="earn-status"></div>
+                        <div class="earn-actions">
+                            <button type="button" class="earn-btn earn-btn--primary" id="earn-save-btn">Save payout setup</button>
+                            <a href="wallet.html" class="earn-btn earn-btn--secondary" style="text-decoration:none;">Open wallet</a>
+                            <a href="studio-monetization.html" class="earn-btn earn-btn--ghost" style="text-decoration:none;">Monetization</a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="chat-overlay" id="chat-overlay" aria-hidden="true">
+        <div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div>
+        <div class="chat-overlay__card">
+            <div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div>
+            <header class="nok-chat__header">
+                <a href="home.html" class="nok-chat__brand">
+                    <span class="nok-chat__logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                    <span class="nok-chat__logo-text">NOK Chat</span>
+                </a>
+                <div class="nok-chat__actions">
+                    <button type="button" class="nok-chat__action" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+                    <button type="button" class="nok-chat__action nok-chat__action--badge" aria-label="Notifications" data-badge="1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                    <button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize" title="Full screen"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><svg class="chat-resize-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                    <div class="nok-chat__menu-wrap">
+                        <button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+                        <div class="nok-chat__menu" id="chat-menu">
+                            <button type="button" class="nok-chat__menu-item">New chat</button>
+                            <button type="button" class="nok-chat__menu-item">New group</button>
+                            <a href="settings.html" class="nok-chat__menu-item">Settings</a>
+                            <button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="chat-login" id="chat-login">
+                <div class="chat-login__inner chat-login__step-login" id="chat-step-login">
+                    <h3 class="chat-login__title">Log in to Chat</h3>
+                    <p class="chat-login__sub">Sign in to start chatting with your subscriptions</p>
+                    <a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a>
+                    <p class="chat-login__legal">Don't have an account? <a href="signup.html" class="chat-login__link">Sign Up</a></p>
+                </div>
+                <div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none">
+                    <h3 class="chat-login__title">Verify Mobile Number</h3>
+                    <p class="chat-login__sub">Verify your mobile number to use Chat</p>
+                    <form class="chat-login__form" id="chat-verify-form">
+                        <div class="chat-login__phone-row">
+                            <select id="chat-verify-country" class="chat-login__select"><option value="880">+880 BD</option><option value="91">+91 IN</option><option value="1">+1 US</option><option value="44">+44 UK</option></select>
+                            <input type="tel" id="chat-verify-phone" class="chat-login__input chat-login__input--phone" placeholder="Mobile number" required>
+                        </div>
+                        <button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button>
+                    </form>
+                    <div id="chat-otp-step" style="display:none">
+                        <p class="chat-login__sub" style="margin-bottom:12px">Enter 6-digit code sent to your number</p>
+                        <div class="chat-login__otp-inputs">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
+                        <button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-content" id="chat-content">
+                <nav class="nok-chat__tabs">
+                    <button type="button" class="nok-chat__tab">Status</button>
+                    <button type="button" class="nok-chat__tab">Groups</button>
+                    <button type="button" class="nok-chat__tab nok-chat__tab--active">Updates</button>
+                    <button type="button" class="nok-chat__tab">Contacts</button>
+                </nav>
+                <a href="#" class="nok-chat__archived"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg><span>Archived Chats</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+                <div class="nok-chat__list">
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar nok-chat__avatar--verified">AR</span><div class="nok-chat__info"><span class="nok-chat__name">Amella Roy</span><span class="nok-chat__preview">Typing...</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--blue"></span>1h ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AN</span><div class="nok-chat__info"><span class="nok-chat__name">Ayesha Noor</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">11:36 AM</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">SD</span><div class="nok-chat__info"><span class="nok-chat__name">Sandeep Das</span><span class="nok-chat__preview">Catch you later!</span></div><span class="nok-chat__meta">20 min ago</span></a>
+                </div>
+            </div>
+            <div class="chat-overlay__resize-handle" id="chat-resize-handle" aria-label="Resize"></div>
+            <nav class="nok-chat__bottom">
+                <a href="home.html" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+                <a href="#" class="nok-chat__bottom-item nok-chat__bottom-item--active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Chat</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Call</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="3"/><path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855"/></svg><span>You</span></a>
+            </nav>
+        </div>
+    </div>
+
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+        <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+        <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+        <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+        <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+    </nav>
+
+    <script>
+        (function() {
+            var SETTINGS_KEY = 'nokEarningSettings';
+            var DEFAULTS = {
+                method: 'bank',
+                accountName: '',
+                handle: '',
+                threshold: '100',
+                autoPayout: '1',
+                holdReserve: '1',
+                ads: '1',
+                gifts: '1',
+                membership: '1',
+                affiliate: '0'
+            };
+
+            function parseSettings() {
+                var saved = {};
+                try { saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); } catch (_) { saved = {}; }
+                return {
+                    method: saved.method || DEFAULTS.method,
+                    accountName: saved.accountName || '',
+                    handle: saved.handle || '',
+                    threshold: saved.threshold || DEFAULTS.threshold,
+                    autoPayout: saved.autoPayout !== '0' ? '1' : '0',
+                    holdReserve: saved.holdReserve !== '0' ? '1' : '0',
+                    ads: saved.ads !== '0' ? '1' : '0',
+                    gifts: saved.gifts !== '0' ? '1' : '0',
+                    membership: saved.membership !== '0' ? '1' : '0',
+                    affiliate: saved.affiliate === '1' ? '1' : '0'
+                };
+            }
+
+            var settings = parseSettings();
+            var totalEarning = parseFloat(localStorage.getItem('nokTotalEarning') || '0') || 0;
+            var totalViews = parseInt(localStorage.getItem('nokTotalViews') || '0', 10) || 0;
+            if (!totalViews) {
+                try {
+                    var videos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
+                    var shorts = JSON.parse(localStorage.getItem('nokShortsVideos') || '[]');
+                    videos.forEach(function(v) { totalViews += parseInt(v.views || 0, 10) || 0; });
+                    shorts.forEach(function(s) { totalViews += parseInt(String(s.views || s.viewCount || '0').replace(/K/g, '000').replace(/M/g, '000000'), 10) || 0; });
+                } catch (_) {}
+            }
+
+            function $(id) { return document.getElementById(id); }
+            function formatMoney(value) { return '$' + (Math.round(value * 100) / 100).toLocaleString(undefined, { minimumFractionDigits: value < 10 ? 2 : 0, maximumFractionDigits: 2 }); }
+            function formatCompact(value) {
+                value = Number(value) || 0;
+                if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                if (value >= 1000) return (value / 1000).toFixed(1) + 'K';
+                return String(Math.round(value));
+            }
+            function methodLabel(value) {
+                if (value === 'paypal') return 'PayPal';
+                if (value === 'wallet') return 'Wallet transfer';
+                return 'Bank transfer';
+            }
+            function setStatus(message, type) {
+                var el = $('earn-status');
+                if (!el) return;
+                el.textContent = message || '';
+                el.className = 'earn-status' + (type ? ' is-' + type : '');
+            }
+            function bindSwitch(button, key) {
+                function render() {
+                    var isOn = settings[key] === '1';
+                    button.classList.toggle('is-on', isOn);
+                    button.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+                }
+                button.addEventListener('click', function() {
+                    settings[key] = settings[key] === '1' ? '0' : '1';
+                    render();
+                    renderMetrics();
+                });
+                render();
+            }
+            function updateUserMeta() {
+                var name = (localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'Creator').toString().trim();
+                $('earn-user-name').textContent = name.toUpperCase().slice(0, 18);
+                var avatar = $('earn-user-avatar');
+                var photo = localStorage.getItem('nokUserPhotoUrl') || '';
+                if (!photo) {
+                    try {
+                        var ch = JSON.parse(localStorage.getItem('nokChannelData') || '{}');
+                        if (ch.photoUrl) photo = ch.photoUrl;
+                    } catch (_) {}
+                }
+                if (photo) avatar.innerHTML = '<img src="' + photo.replace(/"/g, '&quot;') + '" alt="">';
+                else {
+                    avatar.innerHTML = '';
+                    avatar.textContent = name ? name.charAt(0).toUpperCase() : 'C';
+                }
+            }
+            function syncFields() {
+                $('earn-method').value = settings.method;
+                $('earn-account-name').value = settings.accountName;
+                $('earn-handle').value = settings.handle;
+                $('earn-threshold').value = settings.threshold;
+            }
+            function revenueMix() {
+                var adsPct = settings.ads === '1' ? 0.52 : 0;
+                var membershipPct = settings.membership === '1' ? 0.2 : 0;
+                var giftsPct = settings.gifts === '1' ? 0.18 : 0;
+                var affiliatePct = settings.affiliate === '1' ? 0.1 : 0;
+                var sum = adsPct + membershipPct + giftsPct + affiliatePct;
+                if (!sum) return { ads: 0, membership: 0, gifts: 0, affiliate: 0 };
+                return {
+                    ads: totalEarning * (adsPct / sum),
+                    membership: totalEarning * (membershipPct / sum),
+                    gifts: totalEarning * (giftsPct / sum),
+                    affiliate: totalEarning * (affiliatePct / sum)
+                };
+            }
+            function renderMetrics() {
+                var reserveRate = settings.holdReserve === '1' ? 0.18 : 0.06;
+                var pending = totalEarning * reserveRate;
+                var withdrawable = Math.max(0, totalEarning - pending);
+                var threshold = parseFloat(settings.threshold || '100') || 100;
+                var rpm = totalViews ? (totalEarning / totalViews) * 1000 : 0;
+                $('earn-total-value').textContent = formatMoney(totalEarning);
+                $('earn-withdrawable-value').textContent = formatMoney(withdrawable);
+                $('earn-pending-value').textContent = formatMoney(pending);
+                $('earn-rpm-value').textContent = '$' + rpm.toFixed(2);
+                $('earn-growth-value').textContent = totalEarning > 0 ? '+12% from last period' : '+0% from last period';
+                $('earn-pill-threshold').textContent = formatMoney(threshold);
+                $('earn-pill-method').textContent = methodLabel(settings.method);
+                $('earn-pill-next').textContent = withdrawable >= threshold ? 'Ready now' : '7 days';
+
+                var split = revenueMix();
+                var max = Math.max(split.ads, split.membership, split.gifts, split.affiliate, 1);
+                [['ads', split.ads], ['membership', split.membership], ['gifts', split.gifts], ['affiliate', split.affiliate]].forEach(function(item) {
+                    $( 'earn-split-' + item[0] + '-label').textContent = formatMoney(item[1]);
+                    $('earn-split-' + item[0] + '-fill').style.width = ((item[1] / max) * 100) + '%';
+                });
+
+                renderChart(totalEarning);
+                renderPayoutList(withdrawable, pending, threshold);
+            }
+            function renderChart(total) {
+                var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+                var weights = [0.52, 0.6, 0.72, 0.78, 0.9, 1];
+                var max = Math.max(total, 1);
+                var chart = $('earn-chart');
+                chart.innerHTML = '';
+                weights.forEach(function(weight, index) {
+                    var value = total ? Math.max(12, total * weight * 0.28) : 0;
+                    var height = total ? Math.max(36, (value / max) * 170) : 32;
+                    var wrap = document.createElement('div');
+                    wrap.className = 'earn-bar-wrap';
+                    wrap.innerHTML = '<div class="earn-bar__value">' + formatMoney(value || 0) + '</div><div class="earn-bar" style="height:' + height + 'px"></div><div class="earn-bar__month">' + months[index] + '</div>';
+                    chart.appendChild(wrap);
+                });
+            }
+            function renderPayoutList(withdrawable, pending, threshold) {
+                var list = $('earn-payout-list');
+                var rows = [];
+                rows.push({ title: 'Pending clearance', meta: 'Rolling reserve hold', value: formatMoney(pending) });
+                rows.push({ title: 'Withdrawable balance', meta: withdrawable >= threshold ? 'Threshold reached' : 'Below threshold', value: formatMoney(withdrawable) });
+                rows.push({ title: 'Next scheduled payout', meta: settings.autoPayout === '1' ? methodLabel(settings.method) : 'Manual release', value: withdrawable >= threshold ? 'Ready' : 'In review' });
+                list.innerHTML = rows.map(function(row) {
+                    return '<div class="earn-list__item"><div><span class="earn-list__title">' + row.title + '</span><span class="earn-list__meta">' + row.meta + '</span></div><div class="earn-list__value">' + row.value + '</div></div>';
+                }).join('');
+            }
+            function saveSettings() {
+                settings.method = $('earn-method').value;
+                settings.accountName = $('earn-account-name').value.trim();
+                settings.handle = $('earn-handle').value.trim();
+                settings.threshold = String(parseFloat($('earn-threshold').value || settings.threshold || '100') || 100);
+                if (!settings.accountName) { setStatus('Enter account holder name first.', 'error'); return; }
+                if (!settings.handle) { setStatus('Enter payout email or account first.', 'error'); return; }
+                localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+                setStatus('Earning setup saved successfully.', 'success');
+                renderMetrics();
+            }
+
+            updateUserMeta();
+            syncFields();
+            bindSwitch($('earn-toggle-ads'), 'ads');
+            bindSwitch($('earn-toggle-gifts'), 'gifts');
+            bindSwitch($('earn-toggle-membership'), 'membership');
+            bindSwitch($('earn-toggle-affiliate'), 'affiliate');
+            bindSwitch($('earn-toggle-auto'), 'autoPayout');
+            bindSwitch($('earn-toggle-reserve'), 'holdReserve');
+            $('earn-method').addEventListener('change', renderMetrics);
+            $('earn-threshold').addEventListener('input', renderMetrics);
+            $('earn-save-btn').addEventListener('click', saveSettings);
+            renderMetrics();
+        })();
+    </script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Page not found - NOK Super</title>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <style>
+        .page-not-found { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; }
+        .page-not-found__code { font-size: 5rem; font-weight: 800; color: rgba(139,92,246,0.5); line-height: 1; margin-bottom: 12px; }
+        .page-not-found__title { font-size: 1.5rem; font-weight: 700; color: #fff; margin: 0 0 8px; }
+        .page-not-found__text { color: rgba(255,255,255,0.6); font-size: 0.95rem; margin: 0 0 24px; max-width: 360px; }
+        .page-not-found__link { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 12px; background: rgba(139,92,246,0.3); color: #e9d5ff; font-weight: 600; text-decoration: none; transition: background 0.2s, color 0.2s; }
+        .page-not-found__link:hover { background: rgba(139,92,246,0.5); color: #fff; }
+    </style>
+</head>
+<body class="home-body">
+    <div class="bg"></div>
+    <div class="page-not-found">
+        <div class="page-not-found__code">404</div>
+        <h1 class="page-not-found__title">Page not found</h1>
+        <p class="page-not-found__text">The page you are looking for does not exist or has been moved.</p>
+        <a href="home.html" class="page-not-found__link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Back to Home
+        </a>
+    </div>
+</body>
+</html>

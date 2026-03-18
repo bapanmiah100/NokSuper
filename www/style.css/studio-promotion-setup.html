@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promotion Setup - Studio - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <style>
+        body.studio-body { min-height: 100vh; }
+        .studio-layout { display: flex; min-height: 100vh; }
+        .studio-sidebar { width: 240px; background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%); flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .studio-sidebar__logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+        .studio-sidebar__logo-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .studio-sidebar__logo-icon svg { width: 20px; height: 20px; color: #fff; }
+        .studio-sidebar__logo-text { font-size: 1.25rem; font-weight: 700; color: #fff; }
+        .studio-sidebar__nav { display: flex; flex-direction: column; gap: 4px; }
+        .studio-sidebar__item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: background 0.2s, color 0.2s; }
+        .studio-sidebar__item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .studio-sidebar__item svg { width: 22px; height: 22px; flex-shrink: 0; }
+        .studio-main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 24px 32px 100px; }
+        .studio-topbar__back { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; background: rgba(139,92,246,0.25); color: #e9d5ff; font-size: 0.9rem; font-weight: 600; text-decoration: none; margin-bottom: 24px; width: fit-content; transition: all 0.2s; }
+        .studio-topbar__back:hover { background: rgba(139,92,246,0.4); color: #fff; }
+        .studio-topbar__title { font-size: 1.75rem; font-weight: 700; color: #fff; margin: 0 0 18px 0; }
+        .studio-card { background: rgba(30,30,50,0.6); border: 1px solid rgba(139,92,246,0.18); border-radius: 16px; padding: 18px; }
+        .promo-grid { display: grid; grid-template-columns: 320px 1fr; gap: 18px; align-items: start; }
+        @media (max-width: 900px) { .promo-grid { grid-template-columns: 1fr; } }
+        .promo-video { display: flex; gap: 14px; align-items: center; }
+        .promo-thumb { width: 160px; height: 90px; border-radius: 10px; object-fit: cover; background: rgba(139,92,246,0.2); }
+        .promo-thumb-placeholder { width: 160px; height: 90px; border-radius: 10px; background: linear-gradient(135deg, rgba(249,115,22,0.3) 0%, rgba(251,146,60,0.3) 100%); display: flex; align-items: center; justify-content: center; }
+        .promo-thumb-placeholder svg { width: 34px; height: 34px; color: rgba(255,255,255,0.55); }
+        .promo-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0 0 6px 0; line-height: 1.2; }
+        .promo-sub { color: rgba(255,255,255,0.55); font-size: 0.85rem; }
+        .form { display: grid; gap: 12px; }
+        .field { display: grid; gap: 6px; }
+        .label { color: rgba(255,255,255,0.7); font-size: 0.85rem; font-weight: 600; }
+        .input, .select { padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(139,92,246,0.35); background: rgba(30,30,50,0.8); color: #fff; font-size: 0.95rem; outline: none; }
+        .input:focus, .select:focus { border-color: rgba(139,92,246,0.7); }
+        .hint { color: rgba(255,255,255,0.45); font-size: 0.8rem; }
+        .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(139,92,246,0.35); background: rgba(139,92,246,0.25); color: #e9d5ff; font-weight: 700; cursor: pointer; text-decoration: none; }
+        .btn:hover { background: rgba(139,92,246,0.4); color: #fff; border-color: rgba(139,92,246,0.6); }
+        .btn--ghost { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.12); }
+        .btn--ghost:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn--danger { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.35); color: #fecaca; }
+        .btn--danger:hover { background: rgba(239,68,68,0.25); border-color: rgba(239,68,68,0.55); color: #fff; }
+        .toast { margin-top: 10px; color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+        .toast--ok { color: #86efac; }
+        .toast--err { color: #fca5a5; }
+    </style>
+</head>
+<body class="home-body has-bottom-nav studio-body">
+    <div class="bg"></div>
+    <div class="studio-layout">
+        <aside class="studio-sidebar">
+            <div class="studio-sidebar__logo">
+                <div class="studio-sidebar__logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+                <span class="studio-sidebar__logo-text">Studio</span>
+            </div>
+            <nav class="studio-sidebar__nav">
+                <a href="studio.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+                <a href="studio-monetization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><path d="M12 15h6"/></svg><span>Monetization</span></a>
+                <a href="settings.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a>
+            </nav>
+        </aside>
+        <main class="studio-main">
+            <a href="studio-videos.html" class="studio-topbar__back" id="promo-back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                <span id="promo-back-text">Back to Video Analytics</span>
+            </a>
+            <h1 class="studio-topbar__title">Promotion setup</h1>
+
+            <div class="promo-grid">
+                <div class="studio-card">
+                    <div class="promo-video">
+                        <div id="promo-thumb-wrap"></div>
+                        <div>
+                            <div class="promo-title" id="promo-title">Loading…</div>
+                            <div class="promo-sub" id="promo-sub">Select promotion options and save.</div>
+                        </div>
+                    </div>
+                    <div class="toast" id="promo-toast"></div>
+                </div>
+
+                <div class="studio-card">
+                    <form class="form" id="promo-form">
+                        <div class="field">
+                            <div class="label">Objective</div>
+                            <select class="select" id="promo-objective">
+                                <option value="more_views">More views</option>
+                                <option value="more_subscribers">More subscribers</option>
+                                <option value="more_likes">More likes</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <div class="label">Audience (country)</div>
+                            <select class="select" id="promo-audience">
+                                <option value="">Select country</option>
+                                <option value="Bangladesh" selected>Bangladesh</option>
+                                <option value="India">India</option>
+                                <option value="Pakistan">Pakistan</option>
+                                <option value="Nepal">Nepal</option>
+                                <option value="Sri Lanka">Sri Lanka</option>
+                                <option value="Afghanistan">Afghanistan</option>
+                                <option value="Bhutan">Bhutan</option>
+                                <option value="Maldives">Maldives</option>
+                                <option value="United States">United States</option>
+                                <option value="United Kingdom">United Kingdom</option>
+                                <option value="Canada">Canada</option>
+                                <option value="Australia">Australia</option>
+                                <option value="Germany">Germany</option>
+                                <option value="France">France</option>
+                                <option value="Italy">Italy</option>
+                                <option value="Spain">Spain</option>
+                                <option value="Japan">Japan</option>
+                                <option value="South Korea">South Korea</option>
+                                <option value="China">China</option>
+                                <option value="Indonesia">Indonesia</option>
+                                <option value="Malaysia">Malaysia</option>
+                                <option value="Singapore">Singapore</option>
+                                <option value="Thailand">Thailand</option>
+                                <option value="Vietnam">Vietnam</option>
+                                <option value="Philippines">Philippines</option>
+                                <option value="Saudi Arabia">Saudi Arabia</option>
+                                <option value="United Arab Emirates">United Arab Emirates</option>
+                                <option value="Turkey">Turkey</option>
+                                <option value="Egypt">Egypt</option>
+                                <option value="South Africa">South Africa</option>
+                                <option value="Nigeria">Nigeria</option>
+                                <option value="Kenya">Kenya</option>
+                                <option value="Brazil">Brazil</option>
+                                <option value="Mexico">Mexico</option>
+                                <option value="Argentina">Argentina</option>
+                                <option value="Colombia">Colombia</option>
+                                <option value="Russia">Russia</option>
+                                <option value="Ukraine">Ukraine</option>
+                                <option value="Poland">Poland</option>
+                                <option value="Netherlands">Netherlands</option>
+                                <option value="Belgium">Belgium</option>
+                                <option value="Sweden">Sweden</option>
+                                <option value="Norway">Norway</option>
+                                <option value="Denmark">Denmark</option>
+                                <option value="Finland">Finland</option>
+                                <option value="Ireland">Ireland</option>
+                                <option value="Portugal">Portugal</option>
+                                <option value="Greece">Greece</option>
+                                <option value="Austria">Austria</option>
+                                <option value="Switzerland">Switzerland</option>
+                                <option value="New Zealand">New Zealand</option>
+                                <option value="Hong Kong">Hong Kong</option>
+                                <option value="Taiwan">Taiwan</option>
+                                <option value="Israel">Israel</option>
+                                <option value="Iran">Iran</option>
+                                <option value="Iraq">Iraq</option>
+                                <option value="Qatar">Qatar</option>
+                                <option value="Kuwait">Kuwait</option>
+                                <option value="Bahrain">Bahrain</option>
+                                <option value="Oman">Oman</option>
+                                <option value="Jordan">Jordan</option>
+                                <option value="Lebanon">Lebanon</option>
+                                <option value="Morocco">Morocco</option>
+                                <option value="Algeria">Algeria</option>
+                                <option value="Tunisia">Tunisia</option>
+                                <option value="Ghana">Ghana</option>
+                                <option value="Ethiopia">Ethiopia</option>
+                                <option value="Tanzania">Tanzania</option>
+                                <option value="Uganda">Uganda</option>
+                                <option value="Chile">Chile</option>
+                                <option value="Peru">Peru</option>
+                                <option value="Venezuela">Venezuela</option>
+                                <option value="Ecuador">Ecuador</option>
+                                <option value="Bangladesh (All)">Bangladesh (All)</option>
+                                <option value="Worldwide">Worldwide</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <div class="label">Audience age</div>
+                            <select class="select" id="promo-age">
+                                <option value="">Select age range</option>
+                                <option value="18-25">18-25</option>
+                                <option value="25-35">25-35</option>
+                                <option value="35-50">35-50</option>
+                                <option value="50-70">50-70</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <div class="label">Daily budget ($)</div>
+                            <input class="input" id="promo-daily" type="number" min="0" step="1" value="5">
+                        </div>
+
+                        <div class="field">
+                            <div class="label">Duration (days)</div>
+                            <input class="input" id="promo-days" type="number" min="1" step="1" value="7">
+                        </div>
+
+                        <div class="actions">
+                            <button type="submit" class="btn">Save promotion</button>
+                            <a class="btn btn--ghost" href="studio-videos.html" id="promo-cancel-link">Cancel</a>
+                            <button type="button" class="btn btn--danger" id="promo-remove">Remove promotion</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+        <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+        <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+        <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+        <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+    </nav>
+
+    <script>
+    (function() {
+        function qs(name) { return new URLSearchParams(location.search).get(name) || ''; }
+        function getUserVideos() { try { return JSON.parse(localStorage.getItem('nokUserVideos') || '[]'); } catch (e) { return []; } }
+        function getShorts() { try { return JSON.parse(localStorage.getItem('nokShortsVideos') || '[]'); } catch (e) { return []; } }
+        function getPromotionVideos() { try { return JSON.parse(localStorage.getItem('nokPromotionVideos') || '[]'); } catch (e) { return []; } }
+        function getPromotionShorts() { try { return JSON.parse(localStorage.getItem('nokPromotionShorts') || '[]'); } catch (e) { return []; } }
+        function setPromotionVideos(arr) { localStorage.setItem('nokPromotionVideos', JSON.stringify(arr)); localStorage.setItem('nokPromotionVideoCount', String(arr.length)); }
+        function setPromotionShorts(arr) { localStorage.setItem('nokPromotionShorts', JSON.stringify(arr)); }
+
+        var id = qs('id');
+        var type = (qs('type') || '').toLowerCase();
+        var isShort = type === 'short';
+        var video = null;
+        var short = null;
+        if (isShort) {
+            var shorts = getShorts();
+            for (var i = 0; i < shorts.length; i++) { if (String(shorts[i].id) === String(id)) { short = shorts[i]; break; } }
+        } else {
+            var videos = getUserVideos();
+            for (var i = 0; i < videos.length; i++) { if (String(videos[i].id) === String(id)) { video = videos[i]; break; } }
+        }
+        var item = isShort ? short : video;
+
+        var backLink = document.getElementById('promo-back-link');
+        var backText = document.getElementById('promo-back-text');
+        var cancelLink = document.getElementById('promo-cancel-link');
+        if (isShort) {
+            if (backLink) backLink.href = 'studio-shorts.html';
+            if (backText) backText.textContent = 'Back to Short Analytics';
+            if (cancelLink) cancelLink.href = 'studio-shorts.html';
+        } else {
+            if (backLink) backLink.href = 'studio-videos.html';
+            if (backText) backText.textContent = 'Back to Video Analytics';
+            if (cancelLink) cancelLink.href = 'studio-videos.html';
+        }
+
+        var titleEl = document.getElementById('promo-title');
+        var subEl = document.getElementById('promo-sub');
+        var thumbWrap = document.getElementById('promo-thumb-wrap');
+        var toast = document.getElementById('promo-toast');
+        function setToast(msg, kind) {
+            if (!toast) return;
+            toast.textContent = msg || '';
+            toast.className = 'toast' + (kind === 'ok' ? ' toast--ok' : kind === 'err' ? ' toast--err' : '');
+        }
+
+        if (!item) {
+            if (titleEl) titleEl.textContent = isShort ? 'Short not found' : 'Video not found';
+            if (subEl) subEl.textContent = isShort ? 'Go back and select a short to promote.' : 'Go back and select a video to promote.';
+            if (thumbWrap) thumbWrap.innerHTML = '<div class="promo-thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/><path d="M12 9v6M9 12h6"/></svg></div>';
+            setToast('Missing ' + (isShort ? 'short' : 'video') + ' id.', 'err');
+        } else {
+            var safeTitle = (item.title || item.id || (isShort ? 'Short' : 'Untitled')).toString();
+            if (titleEl) titleEl.textContent = safeTitle;
+            if (subEl) subEl.textContent = 'Set budget and objective for this promotion.';
+            if (thumbWrap) {
+                var thumbData = item.thumbData || (item.videoData && item.videoData.indexOf && item.videoData.indexOf('data:') === 0 ? item.videoData : null);
+                if (thumbData && typeof thumbData === 'string' && thumbData.indexOf('data:') === 0) {
+                    thumbWrap.innerHTML = '<img class="promo-thumb" src="' + thumbData.replace(/"/g, '&quot;') + '" alt="">';
+                } else {
+                    thumbWrap.innerHTML = '<div class="promo-thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/><path d="M12 9v6M9 12h6"/></svg></div>';
+                }
+            }
+        }
+
+        var promo = isShort ? getPromotionShorts() : getPromotionVideos();
+        var existing = null;
+        for (var j = 0; j < promo.length; j++) { if (String(promo[j].id) === String(id)) { existing = promo[j]; break; } }
+
+        var objectiveEl = document.getElementById('promo-objective');
+        var audienceEl = document.getElementById('promo-audience');
+        var ageEl = document.getElementById('promo-age');
+        var dailyEl = document.getElementById('promo-daily');
+        var daysEl = document.getElementById('promo-days');
+        var removeBtn = document.getElementById('promo-remove');
+        var form = document.getElementById('promo-form');
+
+        function prefill() {
+            if (!existing) {
+                if (removeBtn) removeBtn.style.display = 'none';
+                return;
+            }
+            if (objectiveEl && existing.objective) objectiveEl.value = existing.objective;
+            if (audienceEl && existing.audience) audienceEl.value = existing.audience;
+            if (ageEl && existing.ageRange) ageEl.value = existing.ageRange;
+            if (dailyEl && existing.dailyBudget != null) dailyEl.value = existing.dailyBudget;
+            if (daysEl && existing.durationDays != null) daysEl.value = existing.durationDays;
+        }
+        if (item) prefill();
+
+        if (form && item) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var objective = (objectiveEl && objectiveEl.value) ? objectiveEl.value : 'more_views';
+                var audience = (audienceEl && audienceEl.value) ? audienceEl.value.trim() : '';
+                var ageRange = (ageEl && ageEl.value) ? ageEl.value : '';
+                var dailyBudget = dailyEl ? parseFloat(dailyEl.value || '0') : 0;
+                var durationDays = daysEl ? parseInt(daysEl.value || '0', 10) : 0;
+
+                if (!durationDays || durationDays < 1) { setToast('Duration must be at least 1 day.', 'err'); return; }
+                if (dailyBudget < 0 || isNaN(dailyBudget)) { setToast('Daily budget is invalid.', 'err'); return; }
+
+                var startAt = new Date().toISOString();
+                var end = new Date();
+                end.setDate(end.getDate() + durationDays);
+                var endAt = end.toISOString();
+                var channelSubs = parseInt(localStorage.getItem('nokTotalSubscribers') || '0', 10) || 0;
+
+                if (isShort) {
+                    var views = parseInt(String(short.views || short.viewCount || '0').replace(/K/g, '000').replace(/M/g, '000000'), 10) || 0;
+                    var likes = parseInt(String(short.likes || '0').replace(/K/g, '000').replace(/M/g, '000000'), 10) || 0;
+                    var entry = {
+                        id: short.id,
+                        title: short.title,
+                        thumbData: short.thumbData || short.videoData,
+                        views: views,
+                        likes: likes,
+                        subscribers: channelSubs,
+                        visibility: short.visibility || 'public',
+                        objective: objective,
+                        audience: audience,
+                        ageRange: ageRange,
+                        dailyBudget: dailyBudget,
+                        durationDays: durationDays,
+                        totalBudget: Math.max(0, dailyBudget * durationDays),
+                        startAt: startAt,
+                        endAt: endAt,
+                        status: 'promoting',
+                        type: 'short'
+                    };
+                    var arr = getPromotionShorts();
+                    var replaced = false;
+                    for (var k = 0; k < arr.length; k++) {
+                        if (String(arr[k].id) === String(short.id)) {
+                            arr[k] = Object.assign({}, arr[k], entry);
+                            replaced = true;
+                            break;
+                        }
+                    }
+                    if (!replaced) arr.push(entry);
+                    setPromotionShorts(arr);
+                    setToast('Promotion saved. Total budget: $' + entry.totalBudget.toFixed(2), 'ok');
+                    setTimeout(function() { location.href = 'studio-promotion.html'; }, 500);
+                } else {
+                    var entry = {
+                        id: video.id,
+                        title: video.title,
+                        thumbData: video.thumbData,
+                        views: video.views || 0,
+                        likes: video.likes || 0,
+                        subscribers: (video.subscribers != null && video.subscribers !== '') ? video.subscribers : channelSubs,
+                        visibility: video.visibility || 'public',
+                        objective: objective,
+                        audience: audience,
+                        ageRange: ageRange,
+                        dailyBudget: dailyBudget,
+                        durationDays: durationDays,
+                        totalBudget: Math.max(0, dailyBudget * durationDays),
+                        startAt: startAt,
+                        endAt: endAt,
+                        status: 'promoting'
+                    };
+                    var arr = getPromotionVideos();
+                    var replaced = false;
+                    for (var k = 0; k < arr.length; k++) {
+                        if (String(arr[k].id) === String(video.id)) {
+                            arr[k] = Object.assign({}, arr[k], entry);
+                            replaced = true;
+                            break;
+                        }
+                    }
+                    if (!replaced) arr.push(entry);
+                    setPromotionVideos(arr);
+                    setToast('Promotion saved. Total budget: $' + entry.totalBudget.toFixed(2), 'ok');
+                    setTimeout(function() { location.href = 'studio-promotion.html'; }, 500);
+                }
+            });
+        }
+
+        if (removeBtn && item) {
+            removeBtn.addEventListener('click', function() {
+                if (isShort) {
+                    var arr = getPromotionShorts().filter(function(p) { return String(p.id) !== String(short.id); });
+                    setPromotionShorts(arr);
+                    setToast('Removed from promotion.', 'ok');
+                    setTimeout(function() { location.href = 'studio-shorts.html'; }, 350);
+                } else {
+                    var arr = getPromotionVideos().filter(function(p) { return String(p.id) !== String(video.id); });
+                    setPromotionVideos(arr);
+                    setToast('Removed from promotion.', 'ok');
+                    setTimeout(function() { location.href = 'studio-videos.html'; }, 350);
+                }
+            });
+        }
+    })();
+    </script>
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

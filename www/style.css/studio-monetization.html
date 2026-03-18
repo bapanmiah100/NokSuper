@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monetization - Studio - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <style>
+        body.studio-body { min-height: 100vh; }
+        .studio-layout { display: flex; min-height: 100vh; }
+        .studio-sidebar { width: 240px; background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%); flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .studio-sidebar__logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+        .studio-sidebar__logo-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .studio-sidebar__logo-icon svg { width: 20px; height: 20px; color: #fff; }
+        .studio-sidebar__logo-text { font-size: 1.25rem; font-weight: 700; color: #fff; }
+        .studio-sidebar__nav { display: flex; flex-direction: column; gap: 4px; }
+        .studio-sidebar__item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: background 0.2s, color 0.2s; border: none; background: none; cursor: pointer; width: 100%; text-align: left; }
+        .studio-sidebar__item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .studio-sidebar__item--active { background: rgba(255,255,255,0.15); color: #fff; }
+        .studio-sidebar__item svg { width: 22px; height: 22px; flex-shrink: 0; }
+        .studio-main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 24px 32px 100px; }
+        .studio-topbar__back { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; background: rgba(139,92,246,0.25); color: #e9d5ff; font-size: 0.9rem; font-weight: 600; text-decoration: none; margin-bottom: 20px; width: fit-content; transition: all 0.2s; }
+        .studio-topbar__back:hover { background: rgba(139,92,246,0.4); color: #fff; }
+        /* Monetization Controls */
+        .mono-title { font-size: 1.75rem; font-weight: 700; color: #fff; text-align: center; margin: 0 0 28px; }
+        .mono-grid { display: grid; grid-template-columns: 1fr 380px; gap: 28px; align-items: start; }
+        @media (max-width: 1024px) { .mono-grid { grid-template-columns: 1fr; } }
+        .mono-col-left { display: flex; flex-direction: column; gap: 20px; }
+        .mono-col-right { display: flex; flex-direction: column; gap: 20px; }
+        .mono-card { background: rgba(22,22,42,0.6); backdrop-filter: blur(12px); border: 1px solid rgba(139,92,246,0.4); border-radius: 16px; padding: 20px; box-shadow: 0 0 24px rgba(139,92,246,0.1); }
+        .mono-card__title { font-size: 0.95rem; font-weight: 700; color: #c4b5fd; margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
+        .mono-card__title svg { width: 18px; height: 18px; color: #a78bfa; }
+        .mono-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+        .mono-row:last-child { margin-bottom: 0; }
+        .mono-label { font-size: 0.9rem; color: rgba(255,255,255,0.9); display: flex; align-items: center; gap: 8px; }
+        .mono-label svg { width: 16px; height: 16px; color: rgba(255,255,255,0.6); }
+        .mono-switch { width: 48px; height: 26px; background: rgba(255,255,255,0.2); border-radius: 13px; position: relative; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
+        .mono-switch.on { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 0 12px rgba(34,197,94,0.4); }
+        .mono-switch::after { content: ''; position: absolute; width: 20px; height: 20px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: transform 0.2s; }
+        .mono-switch.on::after { transform: translateX(22px); }
+        .mono-badge { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 10px; background: linear-gradient(135deg, rgba(34,197,94,0.3), rgba(22,163,74,0.25)); border: 1px solid rgba(34,197,94,0.5); color: #86efac; font-size: 0.9rem; font-weight: 600; }
+        .mono-btns { display: flex; flex-wrap: wrap; gap: 10px; }
+        .mono-btn { padding: 10px 18px; border-radius: 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: inherit; border: 1px solid rgba(139,92,246,0.5); background: rgba(139,92,246,0.2); color: #e9d5ff; transition: all 0.2s; }
+        .mono-btn:hover { background: rgba(139,92,246,0.35); border-color: rgba(139,92,246,0.6); }
+        .mono-btn--primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; border-color: rgba(167,139,250,0.5); }
+        .mono-btn--primary:hover { box-shadow: 0 0 20px rgba(139,92,246,0.4); }
+        .mono-btn[aria-pressed="true"]:not(.mono-btn--primary) { background: rgba(139,92,246,0.35); border-color: rgba(139,92,246,0.6); color: #e9d5ff; }
+        .mono-reach { display: flex; flex-wrap: wrap; gap: 8px; }
+        .mono-reach span { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; background: rgba(34,197,94,0.2); border: 1px solid rgba(34,197,94,0.4); color: #86efac; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .mono-reach span::before { content: '✔'; margin-right: 2px; }
+        .mono-reach span.mono-reach--off { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); }
+        .mono-reach span.mono-reach--off::before { content: ''; }
+        .mono-badge.mono-badge--off { background: rgba(239,68,68,0.25); border-color: rgba(239,68,68,0.5); color: #fca5a5; }
+        .mono-toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(60px); background: rgba(34,197,94,0.95); color: #fff; padding: 12px 24px; border-radius: 12px; font-size: 0.9rem; font-weight: 600; z-index: 1000; opacity: 0; transition: transform 0.2s, opacity 0.2s; pointer-events: none; }
+        .mono-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .mono-list { list-style: none; padding: 0; margin: 0; }
+        .mono-list li { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 0.9rem; color: rgba(255,255,255,0.9); border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .mono-list li:last-child { border-bottom: none; }
+        .mono-list li span:first-child { color: #86efac; font-weight: 600; }
+        .mono-eligibility-item { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .mono-eligibility-item:last-of-type { border-bottom: none; }
+        .mono-eligibility-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; font-size: 0.9rem; color: rgba(255,255,255,0.9); }
+        .mono-eligibility-top .mono-eligibility-check { color: #86efac; font-weight: 600; }
+        .mono-eligibility-count { font-weight: 700; color: #c4b5fd; min-width: 4ch; text-align: right; }
+        .mono-eligibility-line { height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; overflow: hidden; }
+        .mono-eligibility-fill { height: 100%; width: 0%; border-radius: 3px; background: linear-gradient(90deg, #22c55e, #16a34a); box-shadow: 0 0 10px rgba(34,197,94,0.4); transition: width 0.4s ease-out; }
+        .mono-status { margin-top: 12px; padding: 10px 14px; border-radius: 10px; background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.35); color: #86efac; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
+        .mono-status.mono-status--blocked { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.5); color: #fca5a5; }
+        .mono-eligibility-strike { color: #fca5a5; font-weight: 600; }
+        .mono-eligibility-strike.mono-eligibility--ok { color: #86efac; }
+        .mono-subscribe { background: linear-gradient(145deg, rgba(234,179,8,0.25) 0%, rgba(139,92,246,0.2) 100%); border: 1px solid rgba(234,179,8,0.5); padding: 16px 20px; border-radius: 16px; box-shadow: 0 0 24px rgba(234,179,8,0.15); }
+        .mono-subscribe__head { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; cursor: pointer; }
+        .mono-subscribe__title { font-size: 1.25rem; font-weight: 800; color: #fbbf24; letter-spacing: 0.06em; text-shadow: 0 0 16px rgba(251,191,36,0.4); }
+        .mono-subscribe__arrow { font-size: 1rem; color: rgba(251,191,36,0.9); transition: transform 0.2s; }
+        .mono-subscribe__head.open .mono-subscribe__arrow { transform: rotate(180deg); }
+        .mono-subscribe__current { text-align: center; font-size: 1.1rem; font-weight: 700; color: #c4b5fd; margin-bottom: 10px; }
+        .mono-subscribe__current span { color: #fbbf24; }
+        .mono-subscribe__levels { display: none; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px; }
+        .mono-subscribe__levels.open { display: flex; }
+        .mono-subscribe__level { padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.6); transition: all 0.2s; }
+        .mono-subscribe__level--current { box-shadow: 0 0 12px rgba(255,255,255,0.2); }
+        .mono-subscribe__level--reached { color: rgba(255,255,255,0.85); }
+        .mono-subscribe__level--bronze { background: linear-gradient(135deg, rgba(205,127,50,0.5), rgba(139,90,43,0.4)); border-color: rgba(205,127,50,0.7); color: #e8c9a8; }
+        .mono-subscribe__level--bronze.mono-subscribe__level--current { background: linear-gradient(135deg, rgba(205,127,50,0.6), rgba(139,90,43,0.5)); box-shadow: 0 0 14px rgba(205,127,50,0.4); color: #f5dcc2; }
+        .mono-subscribe__level--silver { background: linear-gradient(135deg, rgba(192,192,192,0.4), rgba(128,128,128,0.35)); border-color: rgba(192,192,192,0.65); color: #e8e8e8; }
+        .mono-subscribe__level--silver.mono-subscribe__level--current { background: linear-gradient(135deg, rgba(192,192,192,0.55), rgba(160,160,160,0.45)); box-shadow: 0 0 14px rgba(192,192,192,0.45); color: #fff; }
+        .mono-subscribe__level--gold { background: linear-gradient(135deg, rgba(251,191,36,0.45), rgba(234,179,8,0.35)); border-color: rgba(251,191,36,0.7); color: #fde68a; }
+        .mono-subscribe__level--gold.mono-subscribe__level--current { background: linear-gradient(135deg, rgba(251,191,36,0.55), rgba(234,179,8,0.45)); box-shadow: 0 0 14px rgba(251,191,36,0.4); color: #fbbf24; }
+        .mono-subscribe__level--platinum { background: linear-gradient(135deg, rgba(229,228,226,0.5), rgba(180,178,176,0.4)); border-color: rgba(229,228,226,0.65); color: #e5e4e2; }
+        .mono-subscribe__level--platinum.mono-subscribe__level--current { background: linear-gradient(135deg, rgba(229,228,226,0.65), rgba(200,198,196,0.5)); box-shadow: 0 0 14px rgba(229,228,226,0.45); color: #fff; }
+        .mono-subscribe__level--diamond { background: linear-gradient(135deg, rgba(185,242,255,0.45), rgba(139,220,255,0.35)); border-color: rgba(185,242,255,0.65); color: #b8f0ff; }
+        .mono-subscribe__level--diamond.mono-subscribe__level--current { background: linear-gradient(135deg, rgba(185,242,255,0.6), rgba(139,220,255,0.5)); box-shadow: 0 0 14px rgba(185,242,255,0.5); color: #e0f7ff; }
+        .mono-subscribe__level--elite { background: linear-gradient(135deg, rgba(139,92,246,0.45), rgba(99,102,241,0.35)); border-color: rgba(139,92,246,0.65); color: #c4b5fd; }
+        .mono-subscribe__level--elite.mono-subscribe__level--current { background: linear-gradient(135deg, rgba(139,92,246,0.6), rgba(99,102,241,0.5)); box-shadow: 0 0 14px rgba(139,92,246,0.45); color: #e9d5ff; }
+        .mono-subscribe__level--master { background: linear-gradient(135deg, rgba(251,146,60,0.45), rgba(234,88,12,0.35)); border-color: rgba(251,146,60,0.65); color: #fed7aa; }
+        .mono-subscribe__level--master.mono-subscribe__level--current { background: linear-gradient(135deg, rgba(251,146,60,0.6), rgba(234,88,12,0.5)); box-shadow: 0 0 14px rgba(251,146,60,0.45); color: #fdba74; }
+        .mono-subscribe__level--legend { background: linear-gradient(135deg, rgba(253,224,71,0.5), rgba(250,204,21,0.4)); border-color: rgba(253,224,71,0.7); color: #fef08a; }
+        .mono-subscribe__level--legend.mono-subscribe__level--current { background: linear-gradient(135deg, rgba(253,224,71,0.65), rgba(250,204,21,0.55)); box-shadow: 0 0 16px rgba(253,224,71,0.5); color: #fef9c3; }
+        .mono-subscribe__next-wrap { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .mono-subscribe__next-label { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+        .mono-subscribe__next-line { height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden; }
+        .mono-subscribe__next-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #fbbf24, #22c55e); transition: width 0.3s ease-out; }
+        .mono-earning { font-size: 1.75rem; font-weight: 800; color: #86efac; margin: 8px 0 0; }
+        .mono-earning sub { font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.6); }
+        .mono-supporters { display: flex; flex-direction: column; gap: 12px; }
+        .mono-supporter { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .mono-supporter:last-child { border-bottom: none; }
+        .mono-supporter__avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
+        .mono-supporter__name { font-size: 0.95rem; font-weight: 600; color: #fff; }
+        .mono-supporter__rank { font-size: 0.8rem; color: #a78bfa; }
+        .mono-promo-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; font-size: 0.95rem; font-weight: 600; border: none; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+        .mono-promo-btn:hover { box-shadow: 0 0 24px rgba(139,92,246,0.45); }
+        .mono-promo-btn svg { width: 18px; height: 18px; }
+        .mono-icons { display: flex; gap: 8px; margin-left: auto; }
+        .mono-icons span { font-size: 1.1rem; }
+    </style>
+</head>
+<body class="home-body has-bottom-nav studio-body">
+    <div class="bg"></div>
+    <div class="studio-layout">
+        <aside class="studio-sidebar">
+            <div class="studio-sidebar__logo">
+                <div class="studio-sidebar__logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+                <span class="studio-sidebar__logo-text">Studio</span>
+            </div>
+            <nav class="studio-sidebar__nav">
+                <a href="studio.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+                <a href="studio-earning.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M15 9.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span>Earning</span></a>
+                <a href="studio-monetization.html" class="studio-sidebar__item studio-sidebar__item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><path d="M12 15h6"/></svg><span>Monetization</span></a>
+                <a href="studio-analytics.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Analytics</span></a>
+                <a href="studio-content-detection.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Content Detection</span></a>
+                <a href="studio-customization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Customization</span></a>
+                <a href="studio-content.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg><span>Content</span></a>
+                <a href="settings.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a>
+            </nav>
+        </aside>
+        <main class="studio-main">
+            <a href="studio.html" class="studio-topbar__back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                Back to Dashboard
+            </a>
+            <h1 class="mono-title">Monetization Controls</h1>
+
+            <div class="mono-grid">
+                <div class="mono-col-left">
+                    <div class="mono-card">
+                        <h2 class="mono-card__title">Monetization Status</h2>
+                        <div class="mono-row">
+                            <span class="mono-badge" id="mono-badge">Monetization Enabled</span>
+                            <div class="mono-switch on" id="mono-main-toggle" data-mono-key="enabled" role="switch" aria-checked="true" title="Toggle monetization"></div>
+                        </div>
+                    </div>
+                    <div class="mono-card">
+                        <h2 class="mono-card__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Ad Settings</h2>
+                        <div class="mono-row">
+                            <span class="mono-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Pre-Roll Ads</span>
+                            <div class="mono-switch on" data-mono-key="preRoll" role="switch" aria-checked="true"></div>
+                        </div>
+                        <div class="mono-row">
+                            <span class="mono-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>Mid-Roll Ads</span>
+                            <div class="mono-switch on" data-mono-key="midRoll" role="switch" aria-checked="true"></div>
+                        </div>
+                        <div class="mono-row">
+                            <span class="mono-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12"/><rect x="2" y="2" width="20" height="8" rx="1"/><path d="M12 12v10"/></svg>Banner Ads</span>
+                            <div class="mono-switch on" data-mono-key="banner" role="switch" aria-checked="true"></div>
+                        </div>
+                    </div>
+                    <div class="mono-card">
+                        <h2 class="mono-card__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12"/><rect x="2" y="2" width="20" height="8" rx="1"/></svg>Gifts & Coins</h2>
+                        <div class="mono-row">
+                            <span class="mono-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12"/><rect x="2" y="2" width="20" height="8" rx="1"/></svg>Enable Gifts & Tips</span>
+                            <div class="mono-icons"><span title="Heart">❤</span><span title="Like">👍</span><span title="Gift">🎁</span></div>
+                            <div class="mono-switch on" data-mono-key="giftsTips" role="switch" aria-checked="true"></div>
+                        </div>
+                    </div>
+                    <div class="mono-card">
+                        <h2 class="mono-card__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M15 9.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/></svg>Channel Membership</h2>
+                        <div class="mono-row">
+                            <span class="mono-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Memberships Enabled</span>
+                            <div class="mono-switch on" data-mono-key="memberships" role="switch" aria-checked="true"></div>
+                        </div>
+                        <div class="mono-btns mono-group-membership" style="margin-top:12px;" role="group" aria-label="Membership price">
+                            <button type="button" class="mono-btn mono-btn--primary" data-mono-value="49" aria-pressed="true">₹49 / Month</button>
+                            <button type="button" class="mono-btn" data-mono-value="99" aria-pressed="false">₹99 / Month</button>
+                        </div>
+                    </div>
+                    <div class="mono-card">
+                        <h2 class="mono-card__title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>Boost Video</h2>
+                        <button type="button" class="mono-promo-btn" id="mono-promo-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Promote Video</button>
+                        <div class="mono-reach" style="margin-top:14px;" role="group" aria-label="Boost reach">
+                            <span data-mono-reach="10" title="Toggle 10K">10K Reach</span><span data-mono-reach="50" title="Toggle 50K">50K Reach</span><span data-mono-reach="100" title="Toggle 100K">100K Reach</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mono-col-right">
+                    <div class="mono-card" id="mono-eligibility-card">
+                        <h2 class="mono-card__title">Eligibility Status</h2>
+                        <div class="mono-eligibility-list">
+                            <div class="mono-eligibility-item">
+                                <div class="mono-eligibility-top"><span class="mono-eligibility-check">✔</span> Subscribers: <span class="mono-eligibility-count" id="mono-count-subs" data-target="1000">0</span></div>
+                                <div class="mono-eligibility-line"><div class="mono-eligibility-fill" id="mono-fill-subs"></div></div>
+                            </div>
+                            <div class="mono-eligibility-item">
+                                <div class="mono-eligibility-top"><span class="mono-eligibility-check">✔</span> Watch Hours: <span class="mono-eligibility-count" id="mono-count-hours" data-target="2000">0</span></div>
+                                <div class="mono-eligibility-line"><div class="mono-eligibility-fill" id="mono-fill-hours"></div></div>
+                            </div>
+                            <div class="mono-eligibility-item">
+                                <div class="mono-eligibility-top"><span class="mono-eligibility-check">✔</span> Videos Uploaded: <span class="mono-eligibility-count" id="mono-count-videos" data-target="3">0</span></div>
+                                <div class="mono-eligibility-line"><div class="mono-eligibility-fill" id="mono-fill-videos"></div></div>
+                            </div>
+                            <div class="mono-eligibility-item">
+                                <div class="mono-eligibility-top"><span class="mono-eligibility-check" id="mono-strike-copyright-icon">✔</span> Copyright strike: <span class="mono-eligibility-count mono-eligibility-strike" id="mono-strike-copyright">0</span></div>
+                            </div>
+                            <div class="mono-eligibility-item">
+                                <div class="mono-eligibility-top"><span class="mono-eligibility-check" id="mono-strike-block-icon">✔</span> Block video strike: <span class="mono-eligibility-count mono-eligibility-strike" id="mono-strike-block">0</span></div>
+                            </div>
+                        </div>
+                        <p class="mono-status" id="mono-eligibility-status">Status: Monetization Approved ✔</p>
+                    </div>
+                    <div class="mono-card mono-subscribe" id="mono-subscribe-card">
+                        <div class="mono-subscribe__head" id="mono-subscribe-toggle" role="button" aria-expanded="false">
+                            <span class="mono-subscribe__title">SUBSCRIBE</span>
+                            <span class="mono-subscribe__arrow">▼</span>
+                        </div>
+                        <p class="mono-subscribe__current">Current level: <span id="mono-subscribe-current-level">Bronze (1k)</span></p>
+                        <div class="mono-subscribe__levels" id="mono-subscribe-levels">
+                            <span class="mono-subscribe__level mono-subscribe__level--bronze" data-value="1000" data-tier="bronze">1k · Bronze</span>
+                            <span class="mono-subscribe__level mono-subscribe__level--silver" data-value="10000" data-tier="silver">10k · Silver</span>
+                            <span class="mono-subscribe__level mono-subscribe__level--gold" data-value="100000" data-tier="gold">100k · Gold</span>
+                            <span class="mono-subscribe__level mono-subscribe__level--platinum" data-value="500000" data-tier="platinum">500k · Platinum</span>
+                            <span class="mono-subscribe__level mono-subscribe__level--diamond" data-value="1000000" data-tier="diamond">1m · Diamond</span>
+                            <span class="mono-subscribe__level mono-subscribe__level--elite" data-value="10000000" data-tier="elite">10m · Elite</span>
+                            <span class="mono-subscribe__level mono-subscribe__level--master" data-value="50000000" data-tier="master">50m · Master</span>
+                            <span class="mono-subscribe__level mono-subscribe__level--legend" data-value="100000000" data-tier="legend">100m · Legend</span>
+                        </div>
+                        <div class="mono-subscribe__next-wrap">
+                            <div class="mono-subscribe__next-label" id="mono-subscribe-next-label">Next: Silver (10k)</div>
+                            <div class="mono-subscribe__next-line"><div class="mono-subscribe__next-fill" id="mono-subscribe-next-fill" style="width:10%"></div></div>
+                        </div>
+                    </div>
+                    <div class="mono-card">
+                        <h2 class="mono-card__title">Earnings Estimate</h2>
+                        <p class="mono-earning" id="mono-earning-display">₹ 85,200 <sub>/ Month</sub></p>
+                    </div>
+                    <div class="mono-card">
+                        <h2 class="mono-card__title">Top Supporters</h2>
+                        <div class="mono-supporters">
+                            <div class="mono-supporter">
+                                <div class="mono-supporter__avatar">R</div>
+                                <div><span class="mono-supporter__name">Rahul</span><br><span class="mono-supporter__rank">1.</span></div>
+                            </div>
+                            <div class="mono-supporter">
+                                <div class="mono-supporter__avatar">P</div>
+                                <div><span class="mono-supporter__name">Priya</span><br><span class="mono-supporter__rank">2.</span></div>
+                            </div>
+                            <div class="mono-supporter">
+                                <div class="mono-supporter__avatar">A</div>
+                                <div><span class="mono-supporter__name">Ankit</span><br><span class="mono-supporter__rank">3.</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="mono-toast" id="mono-toast" aria-live="polite">Settings saved</div>
+
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+        <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+        <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+        <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+        <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+    </nav>
+
+    <script>
+(function() {
+        var STORAGE_KEY = 'nok_monetization_settings';
+        var EARNING_BASE = 85200;
+
+        function getState() {
+            try {
+                var raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) return JSON.parse(raw);
+            } catch (e) {}
+            return {
+                enabled: true, preRoll: true, midRoll: true, banner: true,
+                giftsTips: true, memberships: true,
+                membershipPrice: 49,
+                subscriberCount: 1000,
+                copyrightStrikes: 0,
+                blockVideoStrikes: 0,
+                copyrightVideos: [],
+                reach: { 10: true, 50: true, 100: true }
+            };
+        }
+
+        function saveState(s) {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch (e) {}
+        }
+
+        function showToast(msg) {
+            var t = document.getElementById('mono-toast');
+            if (!t) return;
+            t.textContent = msg || 'Settings saved';
+            t.classList.add('show');
+            clearTimeout(t._tid);
+            t._tid = setTimeout(function() { t.classList.remove('show'); }, 2500);
+        }
+
+        function updateBadge(on) {
+            var badge = document.getElementById('mono-badge');
+            if (!badge) return;
+            badge.textContent = on ? 'Monetization Enabled' : 'Monetization Disabled';
+            badge.classList.toggle('mono-badge--off', !on);
+        }
+
+        function updateEarningDisplay(state) {
+            var el = document.getElementById('mono-earning-display');
+            if (!el) return;
+            var mult = 0;
+            if (state.enabled) {
+                if (state.preRoll) mult += 0.2;
+                if (state.midRoll) mult += 0.35;
+                if (state.banner) mult += 0.1;
+                if (state.giftsTips) mult += 0.15;
+                if (state.memberships) mult += 0.1;
+            }
+            var totalWeights = 0.2 + 0.35 + 0.1 + 0.15 + 0.1;
+            var amount = totalWeights > 0 ? Math.round(EARNING_BASE * (mult / totalWeights)) : 0;
+            el.innerHTML = '₹ ' + amount.toLocaleString('en-IN') + ' <sub>/ Month</sub>';
+        }
+
+        var state = getState();
+
+        // Apply saved state to DOM
+        function applyState() {
+            var main = document.getElementById('mono-main-toggle');
+            if (main) {
+                main.classList.toggle('on', state.enabled);
+                main.setAttribute('aria-checked', state.enabled);
+            }
+            updateBadge(state.enabled);
+
+            document.querySelectorAll('.mono-switch[data-mono-key]').forEach(function(sw) {
+                var key = sw.getAttribute('data-mono-key');
+                if (state[key] !== undefined) {
+                    sw.classList.toggle('on', state[key]);
+                    sw.setAttribute('aria-checked', state[key]);
+                }
+            });
+
+            document.querySelectorAll('.mono-group-membership .mono-btn').forEach(function(btn) {
+                var v = parseInt(btn.getAttribute('data-mono-value'), 10);
+                var active = (v === state.membershipPrice);
+                btn.classList.toggle('mono-btn--primary', active);
+                btn.setAttribute('aria-pressed', active);
+            });
+
+            document.querySelectorAll('.mono-reach [data-mono-reach]').forEach(function(sp) {
+                var k = parseInt(sp.getAttribute('data-mono-reach'), 10);
+                var on = state.reach[k];
+                sp.classList.toggle('mono-reach--off', !on);
+            });
+
+            updateEarningDisplay(state);
+        }
+
+        function updateStrikesAndEligibility() {
+            var c = state.copyrightStrikes || 0;
+            var b = state.blockVideoStrikes || 0;
+            var hasStrike = c > 0 || b > 0;
+            var copyrightEl = document.getElementById('mono-strike-copyright');
+            var blockEl = document.getElementById('mono-strike-block');
+            var copyrightIcon = document.getElementById('mono-strike-copyright-icon');
+            var blockIcon = document.getElementById('mono-strike-block-icon');
+            var statusEl = document.getElementById('mono-eligibility-status');
+            if (copyrightEl) { copyrightEl.textContent = c; copyrightEl.classList.toggle('mono-eligibility--ok', c === 0); }
+            if (blockEl) { blockEl.textContent = b; blockEl.classList.toggle('mono-eligibility--ok', b === 0); }
+            if (copyrightIcon) { copyrightIcon.textContent = c === 0 ? '✔' : '✗'; copyrightIcon.classList.toggle('mono-eligibility-strike', c > 0); }
+            if (blockIcon) { blockIcon.textContent = b === 0 ? '✔' : '✗'; blockIcon.classList.toggle('mono-eligibility-strike', b > 0); }
+            if (statusEl) {
+                if (hasStrike) {
+                    statusEl.textContent = 'Not eligible – strikes active ✗';
+                    statusEl.classList.add('mono-status--blocked');
+                    state.enabled = false;
+                    saveState(state);
+                    var main = document.getElementById('mono-main-toggle');
+                    if (main) { main.classList.remove('on'); main.setAttribute('aria-checked', 'false'); }
+                    updateBadge(false);
+                    updateEarningDisplay(state);
+                } else {
+                    statusEl.textContent = 'Status: Monetization Approved ✔';
+                    statusEl.classList.remove('mono-status--blocked');
+                }
+            }
+        }
+
+        applyState();
+        updateStrikesAndEligibility();
+
+        // Toggle switches
+        document.querySelectorAll('.mono-switch[data-mono-key]').forEach(function(el) {
+            el.addEventListener('click', function() {
+                var key = this.getAttribute('data-mono-key');
+                if (key && state[key] !== undefined) {
+                    if (key === 'enabled') {
+                        var hasStrike = (state.copyrightStrikes || 0) > 0 || (state.blockVideoStrikes || 0) > 0;
+                        if (hasStrike && !state.enabled) {
+                            showToast('Clear copyright / block video strikes to enable monetization.');
+                            return;
+                        }
+                    }
+                    state[key] = !state[key];
+                    if (key === 'enabled') updateBadge(state.enabled);
+                    this.classList.toggle('on', state[key]);
+                    this.setAttribute('aria-checked', state[key]);
+                    saveState(state);
+                    updateEarningDisplay(state);
+                    showToast();
+                }
+            });
+        });
+
+        // Membership price group
+        document.querySelectorAll('.mono-group-membership .mono-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var v = parseInt(this.getAttribute('data-mono-value'), 10);
+                state.membershipPrice = v;
+                document.querySelectorAll('.mono-group-membership .mono-btn').forEach(function(b) {
+                    var active = parseInt(b.getAttribute('data-mono-value'), 10) === v;
+                    b.classList.toggle('mono-btn--primary', active);
+                    b.setAttribute('aria-pressed', active);
+                });
+                saveState(state);
+                showToast();
+            });
+        });
+
+        // Boost reach toggles
+        document.querySelectorAll('.mono-reach [data-mono-reach]').forEach(function(sp) {
+            sp.addEventListener('click', function() {
+                var k = parseInt(this.getAttribute('data-mono-reach'), 10);
+                state.reach[k] = !state.reach[k];
+                this.classList.toggle('mono-reach--off', !state.reach[k]);
+                saveState(state);
+                showToast();
+            });
+        });
+
+        // Promote Video
+        document.getElementById('mono-promo-btn').addEventListener('click', function() {
+            var reachOn = state.reach[10] || state.reach[50] || state.reach[100];
+            var msg = reachOn
+                ? 'Promote flow: pick a video from Content. Selected reach: ' + [10, 50, 100].filter(function(k) { return state.reach[k]; }).join('K, ') + 'K.'
+                : 'Turn on at least one reach (10K / 50K / 100K) to promote.';
+            showToast(msg);
+        });
+
+        // Subscribe level card: tiers Bronze → Legend + level-up logic
+        var SUBSCRIBE_LEVELS = [
+            { value: 1000, label: '1k', tier: 'Bronze' },
+            { value: 10000, label: '10k', tier: 'Silver' },
+            { value: 100000, label: '100k', tier: 'Gold' },
+            { value: 500000, label: '500k', tier: 'Platinum' },
+            { value: 1000000, label: '1m', tier: 'Diamond' },
+            { value: 10000000, label: '10m', tier: 'Elite' },
+            { value: 50000000, label: '50m', tier: 'Master' },
+            { value: 100000000, label: '100m', tier: 'Legend' }
+        ];
+        function getSubscribeLevelIndex(subs) {
+            var idx = 0;
+            for (var i = SUBSCRIBE_LEVELS.length - 1; i >= 0; i--) {
+                if (subs >= SUBSCRIBE_LEVELS[i].value) return i;
+            }
+            return 0;
+        }
+        function formatSubs(n) {
+            if (n >= 1000000) return (n / 1000000) + 'm';
+            if (n >= 1000) return (n / 1000) + 'k';
+            return String(n);
+        }
+        function updateSubscribeCard() {
+            var subs = state.subscriberCount || 1000;
+            var idx = getSubscribeLevelIndex(subs);
+            var current = SUBSCRIBE_LEVELS[idx];
+            var nextEl = document.getElementById('mono-subscribe-current-level');
+            if (nextEl) nextEl.textContent = current.tier + ' (' + current.label + ')';
+            var levelEls = document.querySelectorAll('#mono-subscribe-levels .mono-subscribe__level');
+            levelEls.forEach(function(el, i) {
+                el.classList.remove('mono-subscribe__level--current', 'mono-subscribe__level--reached');
+                if (i < idx) el.classList.add('mono-subscribe__level--reached');
+                else if (i === idx) el.classList.add('mono-subscribe__level--current');
+            });
+            var nextLabel = document.getElementById('mono-subscribe-next-label');
+            var nextFill = document.getElementById('mono-subscribe-next-fill');
+            if (idx >= SUBSCRIBE_LEVELS.length - 1) {
+                if (nextLabel) nextLabel.textContent = 'Max level: Legend';
+                if (nextFill) nextFill.style.width = '100%';
+            } else {
+                var nextLevel = SUBSCRIBE_LEVELS[idx + 1];
+                var low = current.value;
+                var high = nextLevel.value;
+                var pct = Math.min(100, Math.round(((subs - low) / (high - low)) * 100));
+                if (nextLabel) nextLabel.textContent = 'Next: ' + nextLevel.tier + ' (' + nextLevel.label + ')';
+                if (nextFill) nextFill.style.width = pct + '%';
+            }
+            var countSubsEl = document.getElementById('mono-count-subs');
+            if (countSubsEl) {
+                countSubsEl.setAttribute('data-target', subs);
+                countSubsEl.textContent = subs >= 1000 ? subs.toLocaleString('en-IN') : String(subs);
+            }
+            var fillSubs = document.getElementById('mono-fill-subs');
+            if (fillSubs) fillSubs.style.width = '100%';
+        }
+        document.getElementById('mono-subscribe-toggle').addEventListener('click', function() {
+            this.classList.toggle('open');
+            document.getElementById('mono-subscribe-levels').classList.toggle('open');
+            this.setAttribute('aria-expanded', this.classList.contains('open'));
+        });
+        document.querySelectorAll('#mono-subscribe-levels .mono-subscribe__level').forEach(function(el) {
+            el.addEventListener('click', function() {
+                var val = parseInt(this.getAttribute('data-value'), 10);
+                state.subscriberCount = val;
+                saveState(state);
+                updateSubscribeCard();
+                showToast('Level: ' + (SUBSCRIBE_LEVELS[getSubscribeLevelIndex(val)].tier));
+            });
+        });
+        updateSubscribeCard();
+
+        // Eligibility play-line: 0 theke count + progress bar fill
+        (function runEligibilityPlayLine() {
+            var duration = 1200;
+            var easeOut = function(t) { return 1 - (1 - t) * (1 - t); };
+            var pairs = [
+                { countEl: document.getElementById('mono-count-subs'), fillEl: document.getElementById('mono-fill-subs') },
+                { countEl: document.getElementById('mono-count-hours'), fillEl: document.getElementById('mono-fill-hours') },
+                { countEl: document.getElementById('mono-count-videos'), fillEl: document.getElementById('mono-fill-videos') }
+            ];
+            function formatVal(val, target) {
+                if (target >= 1000) return val.toLocaleString('en-IN');
+                return String(val);
+            }
+            function animate() {
+                var start = typeof performance !== 'undefined' ? performance.now() : Date.now();
+                function tick(now) {
+                    var elapsed = now - start;
+                    var t = elapsed >= duration ? 1 : easeOut(elapsed / duration);
+                    pairs.forEach(function(p) {
+                        var countEl = p.countEl;
+                        var fillEl = p.fillEl;
+                        if (!countEl || !fillEl) return;
+                        var target = parseInt(countEl.getAttribute('data-target'), 10) || 0;
+                        var current = Math.round(t * target);
+                        countEl.textContent = formatVal(current, target);
+                        fillEl.style.width = (t * 100) + '%';
+                    });
+                    if (t < 1) requestAnimationFrame(tick);
+                }
+                requestAnimationFrame(tick);
+            }
+            var card = document.getElementById('mono-eligibility-card');
+            if (card && typeof IntersectionObserver !== 'undefined') {
+                var obs = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(e) {
+                        if (e.isIntersecting) { animate(); obs.disconnect(); }
+                    });
+                }, { threshold: 0.2 });
+                obs.observe(card);
+            } else {
+                setTimeout(animate, 300);
+            }
+        })();
+    })();
+    </script>
+</body>
+</html>

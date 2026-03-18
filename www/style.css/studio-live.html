@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live - Studio - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <style>
+        body.studio-body { min-height: 100vh; }
+        .studio-layout { display: flex; min-height: 100vh; }
+        .studio-sidebar { width: 240px; background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%); flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .studio-sidebar__logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+        .studio-sidebar__logo-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .studio-sidebar__logo-icon svg { width: 20px; height: 20px; color: #fff; }
+        .studio-sidebar__logo-text { font-size: 1.25rem; font-weight: 700; color: #fff; }
+        .studio-sidebar__nav { display: flex; flex-direction: column; gap: 4px; }
+        .studio-sidebar__item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: background 0.2s, color 0.2s; }
+        .studio-sidebar__item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .studio-sidebar__item svg { width: 22px; height: 22px; flex-shrink: 0; }
+        .studio-main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 24px 32px 100px; }
+        .studio-topbar__back { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; background: rgba(139,92,246,0.25); color: #e9d5ff; font-size: 0.9rem; font-weight: 600; text-decoration: none; margin-bottom: 24px; width: fit-content; transition: all 0.2s; }
+        .studio-topbar__back:hover { background: rgba(139,92,246,0.4); color: #fff; }
+        .studio-topbar__title { font-size: 1.75rem; font-weight: 700; color: #fff; margin: 0; }
+        .studio-section { margin-bottom: 28px; }
+        .studio-section__title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 16px; }
+        .studio-overview { background: rgba(30,30,50,0.6); border: 1px solid rgba(139,92,246,0.15); border-radius: 16px; padding: 48px 24px; text-align: center; color: rgba(255,255,255,0.5); font-size: 0.95rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+        .studio-live-btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border-radius: 12px; background: rgba(239,68,68,0.25); color: #fca5a5; font-size: 1rem; font-weight: 700; text-decoration: none; border: 1px solid rgba(239,68,68,0.4); transition: all 0.2s; }
+        .studio-live-btn:hover { background: rgba(239,68,68,0.4); color: #fff; border-color: rgba(239,68,68,0.6); }
+        .studio-live-btn svg { width: 24px; height: 24px; }
+    </style>
+</head>
+<body class="home-body has-bottom-nav studio-body">
+    <div class="bg"></div>
+    <div class="studio-layout">
+        <aside class="studio-sidebar">
+            <div class="studio-sidebar__logo">
+                <div class="studio-sidebar__logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+                <span class="studio-sidebar__logo-text">Studio</span>
+            </div>
+            <nav class="studio-sidebar__nav">
+                <a href="studio.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+                <a href="studio-videos.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg><span>Video Analytics</span></a>
+                <a href="studio-monetization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><path d="M12 15h6"/></svg><span>Monetization</span></a>
+                <a href="settings.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a>
+            </nav>
+        </aside>
+        <main class="studio-main">
+            <a href="studio.html" class="studio-topbar__back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                Back to Dashboard
+            </a>
+            <h1 class="studio-topbar__title">Live</h1>
+            <div class="studio-section">
+                <h2 class="studio-section__title">Live stream</h2>
+                <div class="studio-overview">
+                    <p style="margin: 0;">Go live to stream to your audience. Live analytics will appear here when you are live.</p>
+                    <a href="live.html" class="studio-live-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/><circle cx="18" cy="12" r="2.5" fill="currentColor"/></svg>
+                        Go live
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+        <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+        <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+        <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+        <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+    </nav>
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

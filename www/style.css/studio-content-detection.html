@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Detection - Studio - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <style>
+        body.studio-body { min-height: 100vh; }
+        .studio-layout { display: flex; min-height: 100vh; }
+        .studio-sidebar { width: 240px; background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%); flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .studio-sidebar__logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+        .studio-sidebar__logo-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .studio-sidebar__logo-icon svg { width: 20px; height: 20px; color: #fff; }
+        .studio-sidebar__logo-text { font-size: 1.25rem; font-weight: 700; color: #fff; }
+        .studio-sidebar__nav { display: flex; flex-direction: column; gap: 4px; }
+        .studio-sidebar__item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: background 0.2s, color 0.2s; border: none; background: none; cursor: pointer; width: 100%; text-align: left; }
+        .studio-sidebar__item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .studio-sidebar__item--active { background: rgba(255,255,255,0.15); color: #fff; }
+        .studio-sidebar__item svg { width: 22px; height: 22px; flex-shrink: 0; }
+        .studio-main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 24px 32px 100px; }
+        .detect-back { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; background: rgba(139,92,246,0.25); color: #e9d5ff; font-size: 0.9rem; font-weight: 600; text-decoration: none; margin-bottom: 18px; width: fit-content; transition: all 0.2s; }
+        .detect-back:hover { background: rgba(139,92,246,0.4); color: #fff; }
+        .detect-topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; margin-bottom: 24px; }
+        .detect-title { margin: 0 0 8px; font-size: 1.95rem; font-weight: 800; color: #fff; letter-spacing: -0.03em; }
+        .detect-subtitle { margin: 0; max-width: 760px; color: rgba(220,228,255,0.74); line-height: 1.6; }
+        .detect-user { display: flex; align-items: center; gap: 12px; }
+        .detect-user__meta { display: grid; gap: 2px; text-align: right; }
+        .detect-user__label { color: rgba(220,228,255,0.56); font-size: 0.8rem; }
+        .detect-user__name { color: #fff; font-size: 0.95rem; font-weight: 700; }
+        .detect-user__avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; overflow: hidden; }
+        .detect-user__avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .detect-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 22px; }
+        .detect-card, .detect-panel { background: rgba(22,22,42,0.62); backdrop-filter: blur(12px); border: 1px solid rgba(139,92,246,0.24); border-radius: 18px; box-shadow: 0 0 24px rgba(139,92,246,0.08); }
+        .detect-card { padding: 18px; }
+        .detect-card__label { color: rgba(220,228,255,0.62); font-size: 0.82rem; font-weight: 600; margin-bottom: 10px; }
+        .detect-card__value { color: #fff; font-size: 1.7rem; font-weight: 800; letter-spacing: -0.03em; }
+        .detect-card__sub { margin-top: 6px; color: rgba(220,228,255,0.64); font-size: 0.82rem; }
+        .detect-card__value--warn { color: #fbbf24; }
+        .detect-card__value--danger { color: #fca5a5; }
+        .detect-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.92fr); gap: 24px; align-items: start; }
+        .detect-column { display: grid; gap: 18px; }
+        .detect-panel { padding: 20px; }
+        .detect-panel__title { margin: 0 0 8px; color: #fff; font-size: 1rem; font-weight: 700; }
+        .detect-panel__text { margin: 0 0 16px; color: rgba(220,228,255,0.7); font-size: 0.9rem; line-height: 1.55; }
+        .detect-form { display: grid; gap: 14px; }
+        .detect-field { display: grid; gap: 8px; }
+        .detect-label { color: rgba(235,239,255,0.86); font-size: 0.85rem; font-weight: 700; }
+        .detect-input, .detect-select, .detect-textarea { width: 100%; box-sizing: border-box; padding: 13px 14px; border-radius: 12px; border: 1px solid rgba(139,92,246,0.28); background: rgba(10,12,24,0.55); color: #fff; font: inherit; }
+        .detect-input:focus, .detect-select:focus, .detect-textarea:focus { outline: none; border-color: rgba(167,139,250,0.7); box-shadow: 0 0 0 3px rgba(139,92,246,0.16); }
+        .detect-textarea { min-height: 92px; resize: vertical; }
+        .detect-switches { display: grid; gap: 12px; }
+        .detect-switch { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); }
+        .detect-switch__meta { display: grid; gap: 4px; }
+        .detect-switch__title { color: #fff; font-size: 0.92rem; font-weight: 700; }
+        .detect-switch__hint { color: rgba(220,228,255,0.6); font-size: 0.8rem; line-height: 1.45; }
+        .detect-switch__toggle { position: relative; width: 54px; height: 31px; border-radius: 999px; background: rgba(148,163,184,0.34); border: 1px solid rgba(255,255,255,0.12); cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+        .detect-switch__toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 23px; height: 23px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+        .detect-switch__toggle.is-on { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+        .detect-switch__toggle.is-on::after { transform: translateX(23px); }
+        .detect-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+        .detect-btn { border: none; border-radius: 12px; padding: 11px 16px; font: inherit; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: transform 0.18s, box-shadow 0.18s, background 0.18s; }
+        .detect-btn:hover { transform: translateY(-1px); }
+        .detect-btn--primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; box-shadow: 0 10px 24px rgba(99,102,241,0.24); }
+        .detect-btn--secondary { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); color: #fff; }
+        .detect-status { min-height: 20px; color: rgba(220,228,255,0.72); font-size: 0.88rem; font-weight: 600; }
+        .detect-status.is-success { color: #86efac; }
+        .detect-status.is-error { color: #fca5a5; }
+        .detect-pills { display: flex; flex-wrap: wrap; gap: 10px; }
+        .detect-pill { display: inline-flex; align-items: center; gap: 8px; padding: 10px 13px; border-radius: 999px; background: rgba(255,255,255,0.06); color: rgba(235,239,255,0.88); font-size: 0.82rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.08); }
+        .detect-pill strong { color: #fff; }
+        .detect-queue, .detect-flag-list, .detect-policy-list { display: grid; gap: 12px; }
+        .detect-queue__item, .detect-flag, .detect-policy { padding: 14px; border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); }
+        .detect-queue__top, .detect-flag__top, .detect-policy__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+        .detect-queue__title, .detect-flag__title, .detect-policy__title { color: #fff; font-size: 0.92rem; font-weight: 700; margin: 0; }
+        .detect-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; font-size: 0.74rem; font-weight: 700; }
+        .detect-badge--video { background: rgba(59,130,246,0.16); color: #93c5fd; }
+        .detect-badge--short { background: rgba(249,115,22,0.16); color: #fdba74; }
+        .detect-badge--caption { background: rgba(20,184,166,0.16); color: #99f6e4; }
+        .detect-badge--live { background: rgba(239,68,68,0.16); color: #fca5a5; }
+        .detect-badge--safe { background: rgba(34,197,94,0.16); color: #86efac; }
+        .detect-badge--review { background: rgba(251,191,36,0.16); color: #fde68a; }
+        .detect-badge--blocked { background: rgba(239,68,68,0.16); color: #fca5a5; }
+        .detect-badge--copyright { background: rgba(245,158,11,0.16); color: #fbbf24; }
+        .detect-badge--policy { background: rgba(167,139,250,0.16); color: #c4b5fd; }
+        .detect-meta { display: flex; flex-wrap: wrap; gap: 12px; color: rgba(220,228,255,0.6); font-size: 0.8rem; }
+        .detect-progress { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; margin-top: 10px; }
+        .detect-progress__fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #22c55e, #f59e0b, #ef4444); }
+        .detect-risk-bars { display: grid; gap: 12px; }
+        .detect-risk-row { display: grid; gap: 8px; }
+        .detect-risk-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: rgba(235,239,255,0.88); font-size: 0.85rem; }
+        .detect-risk-line { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+        .detect-risk-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #22c55e, #6366f1); }
+        .detect-summary-list { display: grid; gap: 12px; }
+        .detect-summary__item { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+        .detect-summary__item:first-child { border-top: none; padding-top: 0; }
+        .detect-summary__title { color: #fff; font-size: 0.92rem; font-weight: 600; }
+        .detect-summary__meta { color: rgba(220,228,255,0.58); font-size: 0.8rem; margin-top: 4px; }
+        .detect-summary__value { color: #a5b4fc; font-size: 0.88rem; font-weight: 700; white-space: nowrap; }
+        .detect-empty { padding: 26px 16px; text-align: center; color: rgba(220,228,255,0.62); font-size: 0.92rem; background: rgba(255,255,255,0.03); border-radius: 14px; border: 1px dashed rgba(255,255,255,0.1); }
+        .detect-note { padding: 14px 16px; border-radius: 14px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.2); color: rgba(255,243,205,0.92); font-size: 0.87rem; line-height: 1.55; }
+        @media (max-width: 1180px) {
+            .detect-grid { grid-template-columns: 1fr; }
+            .detect-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 900px) {
+            .studio-layout { display: block; }
+            .studio-sidebar { width: 100%; padding-bottom: 12px; }
+            .studio-sidebar__nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 0 10px; }
+            .studio-main { padding: 20px 16px 100px; }
+            .detect-topbar { flex-direction: column; align-items: stretch; }
+        }
+        @media (max-width: 720px) {
+            .detect-cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="home-body has-bottom-nav studio-body">
+    <div class="bg"></div>
+    <div class="studio-layout">
+        <aside class="studio-sidebar">
+            <div class="studio-sidebar__logo">
+                <div class="studio-sidebar__logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+                <span class="studio-sidebar__logo-text">Studio</span>
+            </div>
+            <nav class="studio-sidebar__nav">
+                <a href="studio.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+                <a href="studio-earning.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M15 9.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span>Earning</span></a>
+                <a href="studio-monetization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><path d="M12 15h6"/></svg><span>Monetization</span></a>
+                <a href="studio-analytics.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Analytics</span></a>
+                <a href="studio-content-detection.html" class="studio-sidebar__item studio-sidebar__item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Content Detection</span></a>
+                <a href="studio-customization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Customization</span></a>
+                <a href="studio-content.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg><span>Content</span></a>
+                <a href="settings.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a>
+            </nav>
+        </aside>
+
+        <main class="studio-main">
+            <a href="studio.html" class="detect-back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                Back to Dashboard
+            </a>
+
+            <div class="detect-topbar">
+                <div>
+                    <h1 class="detect-title">Advanced Content Detection Center</h1>
+                    <p class="detect-subtitle">Monitor strikes, review risky uploads, tune auto detection rules, and keep your channel safe with a clearer moderation workflow.</p>
+                </div>
+                <div class="detect-user">
+                    <div class="detect-user__meta">
+                        <span class="detect-user__label">Studio creator</span>
+                        <span class="detect-user__name" id="detect-user-name">CREATOR</span>
+                    </div>
+                    <div class="detect-user__avatar" id="detect-user-avatar">C</div>
+                </div>
+            </div>
+
+            <div class="detect-cards">
+                <div class="detect-card">
+                    <div class="detect-card__label">Channel safety score</div>
+                    <div class="detect-card__value" id="detect-safety-score">100</div>
+                    <div class="detect-card__sub">Based on active strikes and current risk mix</div>
+                </div>
+                <div class="detect-card">
+                    <div class="detect-card__label">Copyright strikes</div>
+                    <div class="detect-card__value detect-card__value--warn" id="detect-strikes-count">0</div>
+                    <div class="detect-card__sub">Active policy windows affecting monetization</div>
+                </div>
+                <div class="detect-card">
+                    <div class="detect-card__label">Auto blocked</div>
+                    <div class="detect-card__value" id="detect-blocked-count">0</div>
+                    <div class="detect-card__sub">Content blocked by strict rules</div>
+                </div>
+            </div>
+
+            <div class="detect-grid">
+                <div class="detect-column">
+                    <section class="detect-panel">
+                        <h2 class="detect-panel__title">Strike Timeline And Policy Rules</h2>
+                        <p class="detect-panel__text">Your current warning ladder and the key automated rules that affect visibility and monetization.</p>
+                        <div class="detect-pills" id="detect-strike-pills"></div>
+                        <div class="detect-note" style="margin-top:16px;">Monetization remains disabled while any active copyright strike or blocked-video strike is open in your channel record.</div>
+                        <div class="detect-policy-list" id="detect-policy-list" style="margin-top:16px;"></div>
+                    </section>
+                </div>
+
+                <div class="detect-column">
+                    <section class="detect-panel">
+                        <h2 class="detect-panel__title">Risk Breakdown</h2>
+                        <p class="detect-panel__text">A quick view of the categories currently driving your channel safety score.</p>
+                        <div class="detect-risk-bars" id="detect-risk-bars"></div>
+                    </section>
+
+                    <section class="detect-panel">
+                        <h2 class="detect-panel__title">Review Summary</h2>
+                        <div class="detect-summary-list" id="detect-summary-list"></div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        (function() {
+            var MONETIZATION_KEY = 'nok_monetization_settings';
+            var SETTINGS_KEY = 'nokContentDetectionSettings';
+            var DEFAULT_MONETIZATION = {
+                copyrightStrikes: 0,
+                blockVideoStrikes: 0,
+                copyrightVideos: []
+            };
+            var DEFAULT_SETTINGS = {
+                scanMode: 'balanced',
+                confidenceThreshold: 72,
+                reviewNote: 'Review borderline uploads before publishing and confirm music ownership when attribution is unclear.',
+                autoScan: true,
+                blockAdult: true,
+                blockViolence: true,
+                manualReview: true,
+                showAttribution: true
+            };
+
+            function $(id) { return document.getElementById(id); }
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+            function readJson(key, fallback) {
+                try {
+                    var raw = localStorage.getItem(key);
+                    if (raw) return JSON.parse(raw);
+                } catch (_) {}
+                return fallback;
+            }
+            function writeJson(key, value) {
+                try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
+            }
+            function getVideos() { return readJson('nokUserVideos', []); }
+            function getShorts() { return readJson('nokShortsVideos', []); }
+            function getCaptions() { return readJson('nokCaptionPosts', []); }
+            function getLives() { return readJson('nokLiveSessions', []); }
+            function getMonetizationState() {
+                var data = readJson(MONETIZATION_KEY, DEFAULT_MONETIZATION);
+                if (typeof data !== 'object' || !data) return Object.assign({}, DEFAULT_MONETIZATION);
+                if (!Array.isArray(data.copyrightVideos)) data.copyrightVideos = [];
+                if (typeof data.copyrightStrikes !== 'number') data.copyrightStrikes = parseInt(data.copyrightStrikes || 0, 10) || 0;
+                if (typeof data.blockVideoStrikes !== 'number') data.blockVideoStrikes = parseInt(data.blockVideoStrikes || 0, 10) || 0;
+                return data;
+            }
+            function getSettings() {
+                var stored = readJson(SETTINGS_KEY, DEFAULT_SETTINGS);
+                var merged = {};
+                Object.keys(DEFAULT_SETTINGS).forEach(function(key) { merged[key] = DEFAULT_SETTINGS[key]; });
+                if (stored && typeof stored === 'object') {
+                    Object.keys(DEFAULT_SETTINGS).forEach(function(key) {
+                        if (stored[key] !== undefined) merged[key] = stored[key];
+                    });
+                }
+                return merged;
+            }
+            function compact(value) {
+                value = Number(value) || 0;
+                if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                if (value >= 1000) return (value / 1000).toFixed(1) + 'K';
+                return String(Math.round(value));
+            }
+            function parseCount(value) {
+                var raw = String(value || '0').trim().toUpperCase();
+                var match = raw.match(/^([\d.]+)\s*([KM]?)$/);
+                if (!match) return parseInt(raw, 10) || 0;
+                var amount = parseFloat(match[1]) || 0;
+                if (match[2] === 'M') return Math.round(amount * 1000000);
+                if (match[2] === 'K') return Math.round(amount * 1000);
+                return Math.round(amount);
+            }
+            function formatDate(value) {
+                if (!value) return 'Just now';
+                try {
+                    var d = typeof value === 'string' || typeof value === 'number' ? new Date(value) : value;
+                    if (isNaN(d.getTime())) return String(value);
+                    return d.toLocaleString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                } catch (_) {
+                    return String(value);
+                }
+            }
+            function typeBadgeClass(type) {
+                if (type === 'video') return 'detect-badge--video';
+                if (type === 'short') return 'detect-badge--short';
+                if (type === 'live') return 'detect-badge--live';
+                return 'detect-badge--caption';
+            }
+            function typeLabel(type) {
+                if (type === 'video') return 'Video';
+                if (type === 'short') return 'Short';
+                if (type === 'live') return 'Live';
+                return 'Caption';
+            }
+            function statusBadgeClass(status) {
+                if (status === 'blocked') return 'detect-badge--blocked';
+                if (status === 'copyright') return 'detect-badge--copyright';
+                if (status === 'review') return 'detect-badge--review';
+                return 'detect-badge--safe';
+            }
+            function buildContentPool() {
+                var pool = [];
+                getVideos().forEach(function(v, index) {
+                    pool.push({
+                        id: String(v.id || ('video-' + index)),
+                        type: 'video',
+                        title: v.title || 'Untitled video',
+                        views: parseCount(v.views || 0),
+                        createdAt: Number(v.createdAt || Date.now() - index * 1000),
+                        visibility: v.visibility || 'public',
+                        source: v
+                    });
+                });
+                getShorts().forEach(function(v, index) {
+                    pool.push({
+                        id: String(v.id || ('short-' + index)),
+                        type: 'short',
+                        title: v.title || 'Untitled short',
+                        views: parseCount(v.views || v.viewCount || 0),
+                        createdAt: Number(v.createdAt || Date.now() - index * 1300),
+                        visibility: v.visibility || 'public',
+                        source: v
+                    });
+                });
+                getCaptions().forEach(function(v, index) {
+                    var captionId = String(v.id || ('caption-' + (v.createdAt || index)));
+                    pool.push({
+                        id: captionId,
+                        type: 'caption',
+                        title: (v.caption || 'Caption post').slice(0, 72),
+                        views: 0,
+                        createdAt: Number(v.createdAt || Date.now() - index * 1700),
+                        visibility: v.visibility || 'public',
+                        source: v
+                    });
+                });
+                getLives().forEach(function(v, index) {
+                    var liveId = String(v.id || ('live-' + (v.startedAt || index)));
+                    pool.push({
+                        id: liveId,
+                        type: 'live',
+                        title: v.title || 'Untitled live stream',
+                        views: parseCount(v.peakViewers || v.totalViewers || v.viewers || 0),
+                        createdAt: Number(v.startedAt || v.createdAt || Date.now() - index * 1900),
+                        visibility: v.visibility || (v.status === 'live' ? 'live' : 'public'),
+                        source: v
+                    });
+                });
+                return pool.sort(function(a, b) { return b.createdAt - a.createdAt; });
+            }
+            function deriveItems() {
+                var monetization = getMonetizationState();
+                var settings = getSettings();
+                var content = buildContentPool();
+                var items = [];
+
+                (monetization.copyrightVideos || []).forEach(function(video, index) {
+                    items.push({
+                        id: 'copyright-' + index,
+                        title: video.title || 'Untitled video',
+                        type: 'video',
+                        createdAt: video.dateTime || video.datetime || Date.now() - index * 86400000,
+                        status: 'copyright',
+                        confidence: Math.min(98, 78 + index * 4),
+                        reason: video.reason || video.cause || 'Matched a copyright claimant reference.',
+                        action: 'Strike active',
+                        sourceLabel: 'Copyright history'
+                    });
+                });
+
+                content.slice(0, 10).forEach(function(item, index) {
+                    var lowered = (item.title || '').toLowerCase();
+                    var isSensitive = /fight|blood|adult|18\+|gun|violence|nsfw|leak|copyright|movie|clip|reaction|cover|remix/.test(lowered);
+                    var isBorderline = /music|song|match|highlights|official|trailer|stream|clip|gameplay|news/.test(lowered);
+                    var status = 'safe';
+                    var reason = 'No critical policy signal detected.';
+                    var confidence = 18 + (index * 6);
+
+                    if (isSensitive && settings.blockViolence) {
+                        status = 'blocked';
+                        reason = 'Detected a high-risk keyword pattern that falls under strict block rules.';
+                        confidence = 88;
+                    } else if (isSensitive || isBorderline) {
+                        status = settings.manualReview ? 'review' : 'safe';
+                        reason = settings.manualReview ? 'Borderline match requires manual review before full release.' : 'Borderline match logged for awareness.';
+                        confidence = isSensitive ? 79 : 64;
+                    } else if (item.visibility === 'deleted' || item.visibility === 'private') {
+                        status = 'review';
+                        reason = 'Visibility suggests the content may still need a final moderation pass.';
+                        confidence = 58;
+                    }
+
+                    items.push({
+                        id: item.id,
+                        title: item.title,
+                        type: item.type,
+                        createdAt: item.createdAt,
+                        status: status,
+                        confidence: confidence,
+                        reason: reason,
+                        action: status === 'blocked' ? 'Blocked by automation' : (status === 'review' ? 'Needs review' : 'Clear'),
+                        sourceLabel: compact(item.views) + ' views'
+                    });
+                });
+
+                return items.sort(function(a, b) { return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); });
+            }
+            function riskMix(items) {
+                var total = Math.max(items.length, 1);
+                var copyrightCount = items.filter(function(item) { return item.status === 'copyright'; }).length;
+                var blockedCount = items.filter(function(item) { return item.status === 'blocked'; }).length;
+                return [
+                    { label: 'Copyright', value: Math.round((copyrightCount / total) * 100) },
+                    { label: 'Policy', value: Math.round((blockedCount / total) * 100) },
+                    { label: 'Safe clearance', value: Math.max(0, 100 - Math.round(((copyrightCount + blockedCount) / total) * 100)) }
+                ];
+            }
+            function setStatus(message, kind) {
+                var el = $('detect-status');
+                el.textContent = message || '';
+                el.className = 'detect-status' + (kind ? ' is-' + kind : '');
+            }
+            function updateUserMeta() {
+                var name = (localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'Creator').toString().trim();
+                $('detect-user-name').textContent = name.toUpperCase().slice(0, 18);
+                var avatar = $('detect-user-avatar');
+                var photo = localStorage.getItem('nokUserPhotoUrl') || '';
+                if (!photo) {
+                    try {
+                        var channelData = JSON.parse(localStorage.getItem('nokChannelData') || '{}');
+                        if (channelData.photoUrl) photo = channelData.photoUrl;
+                    } catch (_) {}
+                }
+                if (photo) avatar.innerHTML = '<img src="' + photo.replace(/"/g, '&quot;') + '" alt="">';
+                else {
+                    avatar.innerHTML = '';
+                    avatar.textContent = name ? name.charAt(0).toUpperCase() : 'C';
+                }
+            }
+            function renderEverything() {
+                var settings = getSettings();
+                var monetization = getMonetizationState();
+                var items = deriveItems();
+                var blockedCount = items.filter(function(item) { return item.status === 'blocked'; }).length;
+                var strikeCount = (monetization.copyrightStrikes || 0) + (monetization.blockVideoStrikes || 0);
+                var safetyScore = Math.max(5, 100 - strikeCount * 18 - blockedCount * 9);
+
+                $('detect-safety-score').textContent = String(safetyScore);
+                $('detect-strikes-count').textContent = String(monetization.copyrightStrikes || 0);
+                $('detect-blocked-count').textContent = String(blockedCount);
+
+                $('detect-risk-bars').innerHTML = riskMix(items).map(function(entry) {
+                    return '<div class="detect-risk-row"><div class="detect-risk-top"><span>' + entry.label + '</span><strong>' + entry.value + '%</strong></div><div class="detect-risk-line"><div class="detect-risk-fill" style="width:' + entry.value + '%"></div></div></div>';
+                }).join('');
+
+                var strikeSteps = [
+                    '1 strike: 7-day warning period',
+                    '2nd strike inside 7 days: 30-day warning period',
+                    '3rd strike inside 30 days: 90-day warning period',
+                    '4th copyright-infringing video within 90 days: video uploads will be suspended for 90 days.',
+                    'During this 90-day suspension, you will not be allowed to upload any new videos.'
+                ];
+                $('detect-strike-pills').innerHTML = strikeSteps.map(function(step) {
+                    return '<span class="detect-pill">' + escapeHtml(step) + '</span>';
+                }).join('');
+
+                var policyRules = [
+                    { title: 'Sexual content', badge: 'Blocked', badgeClass: 'detect-badge--blocked', text: settings.blockAdult ? 'Automatically blocked under your current strict rule set.' : 'Currently not auto blocked, but still logged for review.' },
+                    { title: 'Real violence', badge: 'Blocked', badgeClass: 'detect-badge--blocked', text: settings.blockViolence ? 'Automatically blocked when high-confidence evidence is detected.' : 'Currently routed to review instead of auto blocking.' },
+                    { title: 'Creator media reuse', badge: 'Attribution', badgeClass: 'detect-badge--policy', text: settings.showAttribution ? 'Allowed with original creator attribution instead of being blocked.' : 'Manual review required before publish when ownership is unclear.' },
+                    { title: 'Borderline claims', badge: 'Manual review', badgeClass: 'detect-badge--review', text: settings.manualReview ? 'Held for review once confidence passes your selected threshold.' : 'Borderline items continue as logged warnings only.' }
+                ];
+                $('detect-policy-list').innerHTML = policyRules.map(function(rule) {
+                    return '<div class="detect-policy"><div class="detect-policy__top"><h3 class="detect-policy__title">' + escapeHtml(rule.title) + '</h3><span class="detect-badge ' + rule.badgeClass + '">' + escapeHtml(rule.badge) + '</span></div><p style="margin:0;color:rgba(220,228,255,0.72);font-size:0.86rem;line-height:1.55;">' + escapeHtml(rule.text) + '</p></div>';
+                }).join('');
+
+                var summaryRows = [
+                    { title: 'Copyright strikes', meta: 'Active policy windows affecting monetization', value: String(monetization.copyrightStrikes || 0) },
+                    { title: 'Blocked count', meta: 'Content blocked by timeline and policy rules', value: String(blockedCount) }
+                ];
+                $('detect-summary-list').innerHTML = summaryRows.map(function(row) {
+                    return '<div class="detect-summary__item"><div><div class="detect-summary__title">' + escapeHtml(row.title) + '</div><div class="detect-summary__meta">' + escapeHtml(row.meta) + '</div></div><div class="detect-summary__value">' + escapeHtml(row.value) + '</div></div>';
+                }).join('');
+            }
+
+            updateUserMeta();
+            renderEverything();
+        })();
+    </script>
+</body>
+</html>

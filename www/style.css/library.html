@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Library - NOK Super</title>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <style>
+        .library-list__row:hover, .library-list__row--create:hover { background: rgba(100,130,255,0.08); }
+    </style>
+    <script src="nok-video-db.js"></script>
+</head>
+<body class="home-body has-bottom-nav">
+    <div class="home-layout">
+        <div class="bg"></div>
+
+        <header class="long-video__header">
+            <div class="long-video__header-left">
+                <button type="button" class="long-video__back" id="header-back-btn" aria-label="Back" title="Back to previous page">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </button>
+                <button type="button" class="long-video__menu" id="header-menu-btn" aria-label="Menu" title="Menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <a href="home.html" class="long-video__logo">
+                    <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+                </a>
+            </div>
+            <div class="long-video__search">
+                <form class="home-search" action="search.html" method="get" role="search">
+                    <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" class="home-search__input" name="q" placeholder="Search" aria-label="Search">
+                    <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+                </form>
+            </div>
+            <div class="long-video__header-right">
+                <button type="button" class="long-video__header-icon" id="library-notification-btn" aria-label="Notifications"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                <a href="settings.html" class="long-video__profile-wrap" id="library-profile-wrap" style="display:flex;align-items:center;text-decoration:none;">
+                    <div class="long-video__avatar" id="library-avatar">?</div>
+                </a>
+            </div>
+        </header>
+
+        <div class="header-drawer-backdrop" id="header-drawer-backdrop" aria-hidden="true"></div>
+        <aside class="header-drawer" id="header-drawer" aria-label="Main menu" aria-hidden="true">
+            <div class="header-drawer__head">
+                <span class="header-drawer__title">Menu</span>
+                <button type="button" class="header-drawer__close" id="header-drawer-close" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+            <nav class="header-drawer__nav">
+                <a href="studio.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span><span>Studio</span></a>
+                <a href="library.html#watch-later" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Watch later</span></a>
+                <a href="library.html#saved" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span><span>Saved videos</span></a>
+                <a href="library.html#library-files" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span><span>Your files</span></a>
+                <a href="upload.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+                <div class="header-drawer__divider"></div>
+                <a href="settings.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+            </nav>
+        </aside>
+
+        <div class="home-below">
+            <aside class="long-video__left-nav">
+                <a href="home.html" class="long-video__nav-item" title="Home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="long-video__nav-label">Home</span></a>
+                <a href="trending.html" class="long-video__nav-item" title="Trending"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span class="long-video__nav-label">Trending</span></a>
+                <a href="#" class="long-video__nav-item" title="Subscriptions"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span class="long-video__nav-label">Subscriptions</span></a>
+                <a href="library.html" class="long-video__nav-item long-video__nav-item--active" title="Library"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M18.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12.5"/><path d="M12 11v6"/><path d="M9 14h6"/></svg><span class="long-video__nav-label">Library</span></a>
+                <a href="settings.html" class="long-video__nav-item" title="Settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="long-video__nav-label">Settings</span></a>
+            </aside>
+            <div class="home-center">
+                <div class="home-main" style="max-width:100%;">
+                    <main class="library-main" style="flex:1;padding:24px;position:relative;z-index:1;">
+                        <h1 class="library-page-title" style="font-size:1.5rem;font-weight:700;color:#fff;margin:0 0 8px;">Library</h1>
+                        <p class="library-page-sub" style="font-size:0.9rem;color:rgba(200,210,255,0.7);margin:0 0 24px;">Your videos, playlists and saved content</p>
+
+                        <div class="library-list" style="display:flex;flex-direction:column;gap:0;border-radius:12px;overflow:hidden;background:rgba(15,22,41,0.5);border:1px solid rgba(100,130,255,0.1);margin-bottom:32px;">
+                            <button type="button" class="library-list__row library-list__row--create" id="library-create-new" style="display:flex;align-items:center;gap:16px;padding:16px 20px;color:#fff;text-decoration:none;border:none;background:transparent;cursor:pointer;width:100%;text-align:left;transition:background 0.2s;">
+                                <span class="library-list__icon" style="width:40px;height:40px;border-radius:50%;background:rgba(80,200,120,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+                                <span class="library-list__label" style="font-weight:600;font-size:1rem;">Create new</span>
+                                <span style="margin-left:auto;font-size:0.85rem;color:rgba(200,210,255,0.6);">New playlist</span>
+                            </button>
+                        </div>
+
+                        <section id="history" class="library-section" style="margin-bottom:32px;">
+                            <h2 class="library-section__title" style="font-size:1.1rem;font-weight:600;color:#fff;margin:0 0 12px;display:flex;align-items:center;gap:10px;">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                History
+                            </h2>
+                            <div class="library-card" style="background:rgba(15,22,41,0.5);border-radius:12px;padding:24px;border:1px solid rgba(100,130,255,0.1);">
+                                <p style="margin:0;color:rgba(200,210,255,0.7);font-size:0.95rem;">Watch history appears here. Videos you watch will show up in this list.</p>
+                                <a href="home.html" style="display:inline-block;margin-top:16px;color:var(--accent-light);text-decoration:none;font-weight:600;">Browse videos</a>
+                            </div>
+                        </section>
+
+                        <section id="watch-later" class="library-section" style="margin-bottom:32px;">
+                            <h2 class="library-section__title" style="font-size:1.1rem;font-weight:600;color:#fff;margin:0 0 12px;display:flex;align-items:center;gap:10px;">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                Watch Later
+                            </h2>
+                            <div class="library-card" style="background:rgba(15,22,41,0.5);border-radius:12px;padding:24px;border:1px solid rgba(100,130,255,0.1);">
+                                <div id="watch-later-content"></div>
+                            </div>
+                        </section>
+
+                        <section id="saved" class="library-section" style="margin-bottom:32px;">
+                            <h2 class="library-section__title" style="font-size:1.1rem;font-weight:600;color:#fff;margin:0 0 12px;display:flex;align-items:center;gap:10px;">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                                Saved Videos
+                            </h2>
+                            <div class="library-card" style="background:rgba(15,22,41,0.5);border-radius:12px;padding:24px;border:1px solid rgba(100,130,255,0.1);">
+                                <div id="saved-content"></div>
+                            </div>
+                        </section>
+
+                        <section id="library-files" class="library-section" style="margin-bottom:32px;">
+                            <h2 class="library-section__title" style="font-size:1.1rem;font-weight:600;color:#fff;margin:0 0 12px;display:flex;align-items:center;gap:10px;">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                                Video library (your files)
+                            </h2>
+                            <div class="library-card" style="background:rgba(15,22,41,0.5);border-radius:12px;padding:24px;border:1px solid rgba(100,130,255,0.1);">
+                                <div id="library-files-content"></div>
+                            </div>
+                        </section>
+
+                        <div id="library-playlists-wrap">
+                            <section id="library-playlists-empty-section" class="library-section" style="margin-bottom:32px;">
+                                <h2 class="library-section__title" style="font-size:1.1rem;font-weight:600;color:#fff;margin:0 0 12px;display:flex;align-items:center;gap:10px;">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                                    Your playlists
+                                </h2>
+                                <div class="library-card" style="background:rgba(15,22,41,0.5);border-radius:12px;padding:24px;border:1px solid rgba(100,130,255,0.1);">
+                                    <p id="library-playlists-empty" style="margin:0;color:rgba(200,210,255,0.7);font-size:0.95rem;">No playlists yet. Tap "Create new" above to add one.</p>
+                                </div>
+                            </section>
+                            <div id="library-playlists-sections"></div>
+                        </div>
+                    </main>
+
+                    <div id="library-create-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;align-items:center;justify-content:center;padding:20px;">
+                        <div style="background:linear-gradient(180deg,#1a2332 0%,#0f1629 100%);border-radius:16px;padding:24px;max-width:360px;width:100%;border:1px solid rgba(100,130,255,0.2);">
+                            <h3 style="margin:0 0 16px;color:#fff;font-size:1.2rem;">Create new playlist</h3>
+                            <input type="text" id="library-playlist-name" placeholder="Playlist name" style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid rgba(100,130,255,0.3);background:rgba(15,22,41,0.6);color:#fff;font-size:1rem;box-sizing:border-box;margin-bottom:16px;">
+                            <div style="display:flex;gap:12px;justify-content:flex-end;">
+                                <button type="button" id="library-create-cancel" style="padding:10px 20px;border-radius:8px;border:1px solid rgba(100,130,255,0.3);background:transparent;color:rgba(200,210,255,0.9);cursor:pointer;">Cancel</button>
+                                <button type="button" id="library-create-save" style="padding:10px 20px;border-radius:8px;border:none;background:var(--accent-light, #6b8cff);color:#0f1629;font-weight:600;cursor:pointer;">Create</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="home-bottom-nav">
+            <a href="home.html" class="home-bottom-nav__item">
+                <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+                <span>Home</span>
+            </a>
+            <a href="shorts.html" class="home-bottom-nav__item">
+                <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                <span>Shorts</span>
+            </a>
+            <a href="upload.html" class="home-bottom-nav__item">
+                <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+                <span>Upload</span>
+            </a>
+            <a href="#" class="home-bottom-nav__item chat-trigger">
+                <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+                <span>Chats</span>
+            </a>
+            <a href="settings.html" class="home-bottom-nav__item">
+                <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Chat Overlay -->
+    <div class="chat-overlay" id="chat-overlay" aria-hidden="true">
+        <div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div>
+        <div class="chat-overlay__card">
+            <div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div>
+            <header class="nok-chat__header">
+                <a href="home.html" class="nok-chat__brand">
+                    <span class="nok-chat__logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                    <span class="nok-chat__logo-text">NOK Chat</span>
+                </a>
+                <div class="nok-chat__actions">
+                    <button type="button" class="nok-chat__action" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+                    <button type="button" class="nok-chat__action nok-chat__action--badge" aria-label="Notifications" data-badge="1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                    <button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize" title="Full screen"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><svg class="chat-resize-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                    <div class="nok-chat__menu-wrap">
+                        <button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+                        <div class="nok-chat__menu" id="chat-menu">
+                            <button type="button" class="nok-chat__menu-item">New chat</button>
+                            <button type="button" class="nok-chat__menu-item">New group</button>
+                            <a href="settings.html" class="nok-chat__menu-item">Settings</a>
+                            <button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="chat-login" id="chat-login">
+                <div class="chat-login__inner chat-login__step-login" id="chat-step-login">
+                    <h3 class="chat-login__title">Log in to Chat</h3>
+                    <p class="chat-login__sub">Sign in to start chatting</p>
+                    <a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a>
+                    <p class="chat-login__legal">Don't have an account? <a href="signup.html" class="chat-login__link">Sign Up</a></p>
+                </div>
+                <div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none">
+                    <h3 class="chat-login__title">Verify Mobile Number</h3>
+                    <p class="chat-login__sub">Verify your mobile number to use Chat</p>
+                    <form class="chat-login__form" id="chat-verify-form">
+                        <div class="chat-login__phone-row">
+                            <select id="chat-verify-country" class="chat-login__select"><option value="880">+880 BD</option><option value="91">+91 IN</option><option value="1">+1 US</option><option value="44">+44 UK</option></select>
+                            <input type="tel" id="chat-verify-phone" class="chat-login__input chat-login__input--phone" placeholder="Mobile number" required>
+                        </div>
+                        <button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button>
+                    </form>
+                    <div id="chat-otp-step" style="display:none">
+                        <p class="chat-login__sub" style="margin-bottom:12px">Enter 6-digit code sent to your number</p>
+                        <div class="chat-login__otp-inputs">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
+                        <button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-content" id="chat-content">
+                <nav class="nok-chat__tabs">
+                    <button type="button" class="nok-chat__tab">Status</button>
+                    <button type="button" class="nok-chat__tab">Groups</button>
+                    <button type="button" class="nok-chat__tab nok-chat__tab--active">Updates</button>
+                    <button type="button" class="nok-chat__tab">Contacts</button>
+                </nav>
+                <a href="#" class="nok-chat__archived"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg><span>Archived Chats</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+                <div class="nok-chat__list">
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar nok-chat__avatar--verified">AR</span><div class="nok-chat__info"><span class="nok-chat__name">Amella Roy</span><span class="nok-chat__preview">Typing...</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--blue"></span>1h ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AN</span><div class="nok-chat__info"><span class="nok-chat__name">Ayesha Noor</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">11:36 AM</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">SD</span><div class="nok-chat__info"><span class="nok-chat__name">Sandeep Das</span><span class="nok-chat__preview">Catch you later!</span></div><span class="nok-chat__meta">20 min ago</span></a>
+                </div>
+            </div>
+            <div class="chat-overlay__resize-handle" id="chat-resize-handle" aria-label="Resize"></div>
+            <nav class="nok-chat__bottom">
+                <a href="home.html" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+                <a href="#" class="nok-chat__bottom-item nok-chat__bottom-item--active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Chat</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Call</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="3"/><path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855"/></svg><span>You</span></a>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            function isLoggedIn() {
+                return (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn') || !!(localStorage.getItem('nokUserEmail') || sessionStorage.getItem('nokUserEmail'));
+            }
+            if (!isLoggedIn()) {
+                window.location.replace('login.html?next=' + encodeURIComponent('library.html'));
+                return;
+            }
+        })();
+
+        (function() {
+            var avatar = document.getElementById('library-avatar');
+            if (avatar) {
+                var name = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || '';
+                var photo = localStorage.getItem('nokUserPhotoUrl');
+                if (photo) avatar.innerHTML = '<img src="' + photo.replace(/"/g, '&quot;') + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
+                else avatar.textContent = (name && name.charAt(0)) ? name.charAt(0).toUpperCase() : '?';
+            }
+        })();
+
+        (function() {
+            var WATCH_LATER_KEY = 'nokWatchLater';
+            var SAVED_VIDEOS_KEY = 'nokSavedVideos';
+            var videoMeta = {
+                mountains: 'Dreamy Expedition', waterfall: 'Ocean Mysteries', city: 'Cyber City Lights', wild: 'Mystic Forest', portrait: 'Desert Adventure',
+                sunset: 'Sunset Vibes', river: 'River Journey', tech: 'Tech Review 2024', food: 'Street Food Tour', vlog: 'Day in My Life'
+            };
+            function getVideoTitle(id) {
+                if (videoMeta[id]) return videoMeta[id];
+                var user = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
+                for (var i = 0; i < user.length; i++) { if (user[i].id === id) return user[i].title || id; }
+                return id;
+            }
+            function getWatchLater() {
+                try { return JSON.parse(localStorage.getItem(WATCH_LATER_KEY) || '[]'); } catch (e) { return []; }
+            }
+            function getSavedVideos() {
+                try { return JSON.parse(localStorage.getItem(SAVED_VIDEOS_KEY) || '[]'); } catch (e) { return []; }
+            }
+            function escapeHtml(s) {
+                if (!s) return '';
+                var d = document.createElement('div');
+                d.textContent = s;
+                return d.innerHTML;
+            }
+            function renderLibraryVideos(ids, containerId, emptyMsg, browseLabel) {
+                var el = document.getElementById(containerId);
+                if (!el) return;
+                if (!ids || ids.length === 0) {
+                    el.innerHTML = '<p style="margin:0;color:rgba(200,210,255,0.7);font-size:0.95rem;">' + emptyMsg + '</p>' +
+                        '<a href="home.html" style="display:inline-block;margin-top:16px;color:var(--accent-light);text-decoration:none;font-weight:600;">' + browseLabel + '</a>';
+                    return;
+                }
+                var html = '<div class="library-video-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;">';
+                ids.forEach(function(vidId) {
+                    var title = getVideoTitle(vidId);
+                    var url = 'video.html?id=' + encodeURIComponent(vidId) + '&autoplay=1';
+                    html += '<a href="' + url + '" class="library-video-item" style="display:block;text-decoration:none;color:inherit;border-radius:8px;overflow:hidden;background:rgba(0,0,0,0.2);">' +
+                        '<div class="library-video-thumb" style="aspect-ratio:16/9;background:linear-gradient(135deg,rgba(80,100,180,0.4),rgba(40,60,120,0.5));"></div>' +
+                        '<p class="library-video-title" style="margin:8px 10px 10px;font-size:0.9rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(title) + '</p></a>';
+                });
+                html += '</div>';
+                el.innerHTML = html;
+            }
+            renderLibraryVideos(getWatchLater(), 'watch-later-content', 'Save videos to watch later. Click the clock icon on any video to add it here.', 'Browse videos');
+            renderLibraryVideos(getSavedVideos(), 'saved-content', 'Videos you save will appear here. Click the bookmark icon on any video to save it.', 'Browse videos');
+
+            var LIBRARY_FILES_KEY = 'nokLibraryFiles';
+            function getLibraryFiles() {
+                try { return JSON.parse(localStorage.getItem(LIBRARY_FILES_KEY) || '[]'); } catch (e) { return []; }
+            }
+            var filesList = getLibraryFiles();
+            var filesEl = document.getElementById('library-files-content');
+            if (filesEl) {
+                if (filesList.length === 0) {
+                    filesEl.innerHTML = '<p style="margin:0;color:rgba(200,210,255,0.7);font-size:0.95rem;">যেকোনো ভিডিও পেজে গিয়ে file আইকনে ক্লিক করে ভিডিও/অডিও বা যেকোনো ফাইল সিলেক্ট করুন – সেটা এখানে যোগ হবে। তারপর কার্ডে ক্লিক করে চালাতে পারবেন।</p>' +
+                        '<a href="video.html" style="display:inline-block;margin-top:16px;color:var(--accent-light);text-decoration:none;font-weight:600;">ভিডিও পেজে যান</a>';
+                } else {
+                    var html = '<div class="library-video-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;">';
+                    filesList.forEach(function(f) {
+                        var vid = f.id || f.name;
+                        var name = f.name || vid;
+                        var url = 'video.html?id=' + encodeURIComponent(vid) + '&autoplay=1';
+                        html += '<a href="' + url + '" class="library-video-item" style="display:block;text-decoration:none;color:inherit;border-radius:8px;overflow:hidden;background:rgba(0,0,0,0.2);">' +
+                            '<div class="library-video-thumb" style="aspect-ratio:16/9;background:linear-gradient(135deg,rgba(80,100,180,0.4),rgba(40,60,120,0.5));"></div>' +
+                            '<p class="library-video-title" style="margin:8px 10px 10px;font-size:0.9rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(name) + '</p></a>';
+                    });
+                    html += '</div>';
+                    filesEl.innerHTML = html;
+                }
+            }
+        })();
+
+        (function() {
+            var PLAYLISTS_KEY = 'nokPlaylists';
+            var playlistIconSvg = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
+            function getPlaylists() {
+                try { return JSON.parse(localStorage.getItem(PLAYLISTS_KEY) || '[]'); } catch (e) { return []; }
+            }
+            function setPlaylists(arr) {
+                localStorage.setItem(PLAYLISTS_KEY, JSON.stringify(arr));
+            }
+            function renderPlaylists() {
+                var emptySection = document.getElementById('library-playlists-empty-section');
+                var sectionsContainer = document.getElementById('library-playlists-sections');
+                if (!emptySection || !sectionsContainer) return;
+                var playlists = getPlaylists();
+                if (playlists.length === 0) {
+                    emptySection.style.display = 'block';
+                    sectionsContainer.innerHTML = '';
+                    return;
+                }
+                emptySection.style.display = 'none';
+                sectionsContainer.innerHTML = playlists.map(function(p, i) {
+                    var name = p.name || ('Playlist ' + (i + 1));
+                    var count = (p.videos && p.videos.length) ? p.videos.length : 0;
+                    var countText = count === 0 ? 'No videos yet' : (count + ' video' + (count !== 1 ? 's' : ''));
+                    return '<section id="playlist-' + (p.id || ('pl-' + i)) + '" class="library-section" style="margin-bottom:32px;">' +
+                        '<h2 class="library-section__title" style="font-size:1.1rem;font-weight:600;color:#fff;margin:0 0 12px;display:flex;align-items:center;gap:10px;">' +
+                        playlistIconSvg + name + '</h2>' +
+                        '<div class="library-card" style="background:rgba(15,22,41,0.5);border-radius:12px;padding:24px;border:1px solid rgba(100,130,255,0.1);">' +
+                        '<p style="margin:0;color:rgba(200,210,255,0.7);font-size:0.95rem;">' + countText + '. Add videos from the video page to this playlist.</p>' +
+                        '<a href="home.html" style="display:inline-block;margin-top:16px;color:var(--accent-light);text-decoration:none;font-weight:600;">Browse videos</a>' +
+                        '</div></section>';
+                }).join('');
+            }
+            var createBtn = document.getElementById('library-create-new');
+            var modal = document.getElementById('library-create-modal');
+            var nameInput = document.getElementById('library-playlist-name');
+            var cancelBtn = document.getElementById('library-create-cancel');
+            var saveBtn = document.getElementById('library-create-save');
+            if (createBtn) createBtn.addEventListener('click', function() {
+                if (modal) {
+                    modal.style.display = 'flex';
+                    if (nameInput) { nameInput.value = ''; nameInput.focus(); }
+                }
+            });
+            if (cancelBtn) cancelBtn.addEventListener('click', function() {
+                if (modal) modal.style.display = 'none';
+            });
+            if (modal) modal.addEventListener('click', function(e) {
+                if (e.target === modal) modal.style.display = 'none';
+            });
+            if (saveBtn && nameInput) saveBtn.addEventListener('click', function() {
+                var name = (nameInput.value || '').trim();
+                if (!name) return;
+                var playlists = getPlaylists();
+                playlists.push({ id: 'pl_' + Date.now(), name: name, videos: [] });
+                setPlaylists(playlists);
+                renderPlaylists();
+                modal.style.display = 'none';
+                nameInput.value = '';
+            });
+            renderPlaylists();
+        })();
+    </script>
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <style>
+        body.studio-body { min-height: 100vh; }
+        .studio-layout { display: flex; min-height: 100vh; }
+        .studio-sidebar { width: 240px; background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%); flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .studio-sidebar__logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+        .studio-sidebar__logo-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .studio-sidebar__logo-icon svg { width: 20px; height: 20px; color: #fff; }
+        .studio-sidebar__logo-text { font-size: 1.25rem; font-weight: 700; color: #fff; }
+        .studio-sidebar__nav { display: flex; flex-direction: column; gap: 4px; }
+        .studio-sidebar__item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: background 0.2s, color 0.2s; border: none; background: none; cursor: pointer; width: 100%; text-align: left; }
+        .studio-sidebar__item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .studio-sidebar__item--active { background: rgba(255,255,255,0.15); color: #fff; }
+        .studio-sidebar__item svg { width: 22px; height: 22px; flex-shrink: 0; }
+        .studio-main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 24px 32px 100px; }
+        .studio-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+        .studio-topbar__title { font-size: 1.75rem; font-weight: 700; color: #fff; margin: 0; }
+        .studio-topbar__user { display: flex; align-items: center; gap: 12px; }
+        .studio-topbar__actions { display: flex; align-items: center; gap: 8px; }
+        .studio-topbar__btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 10px; background: rgba(139,92,246,0.25); color: #e9d5ff; font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(139,92,246,0.4); text-decoration: none; cursor: pointer; transition: all 0.2s; }
+        .studio-topbar__btn:hover { background: rgba(139,92,246,0.4); color: #fff; border-color: rgba(139,92,246,0.6); }
+        .studio-topbar__btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+        .studio-topbar__name { font-size: 0.95rem; font-weight: 600; color: #fff; }
+        .studio-topbar__avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; }
+        a.studio-topbar__avatar { text-decoration: none; color: inherit; }
+        .studio-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+        .studio-tab { padding: 10px 18px; border-radius: 10px; background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); font-size: 0.9rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; pointer-events: auto; text-decoration: none; display: inline-block; }
+        .studio-tab:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .studio-tab--active { background: rgba(139,92,246,0.4); color: #fff; }
+        .studio-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; }
+        @media (max-width: 900px) { .studio-cards { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 500px) { .studio-cards { grid-template-columns: 1fr; } }
+        .studio-card { background: rgba(30,30,50,0.6); border: 1px solid rgba(139,92,246,0.2); border-radius: 16px; padding: 20px; }
+        .studio-card__icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+        .studio-card__icon--purple { background: rgba(139,92,246,0.3); color: #a78bfa; }
+        .studio-card__icon--green { background: rgba(34,197,94,0.3); color: #4ade80; }
+        .studio-card__icon--blue { background: rgba(59,130,246,0.3); color: #60a5fa; }
+        .studio-card__icon--violet { background: rgba(139,92,246,0.25); color: #c4b5fd; }
+        .studio-card__icon--orange { background: rgba(249,115,22,0.3); color: #fb923c; }
+        .studio-card__icon--teal { background: rgba(20,184,166,0.3); color: #2dd4bf; }
+        .studio-card__icon--red { background: rgba(239,68,68,0.3); color: #f87171; }
+        .studio-card__icon svg { width: 22px; height: 22px; }
+        .studio-card__value { font-size: 1.75rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .studio-card__label { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+        .studio-card__sub { font-size: 0.8rem; color: #8b5cf6; margin-top: 4px; }
+        .studio-card__change { font-size: 0.8rem; color: #4ade80; margin-top: 4px; }
+        .studio-card--clickable { cursor: pointer; transition: background 0.2s, border-color 0.2s; text-decoration: none; color: inherit; display: block; }
+        .studio-card--clickable:hover { background: rgba(40,40,70,0.8); border-color: rgba(139,92,246,0.4); }
+        .studio-section { margin-bottom: 28px; }
+        .studio-section__title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 16px; }
+        .studio-overview { background: rgba(30,30,50,0.6); border: 1px solid rgba(139,92,246,0.15); border-radius: 16px; padding: 48px 24px; text-align: center; color: rgba(255,255,255,0.5); font-size: 0.95rem; margin-bottom: 28px; min-height: 200px; display: flex; align-items: center; justify-content: center; }
+        .studio-table-wrap { background: rgba(30,30,50,0.6); border: 1px solid rgba(139,92,246,0.15); border-radius: 16px; overflow: hidden; }
+        .studio-table { width: 100%; border-collapse: collapse; }
+        .studio-table th { text-align: left; padding: 14px 20px; font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .studio-table td { padding: 14px 20px; font-size: 0.9rem; color: rgba(255,255,255,0.9); border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .studio-table tr:last-child td { border-bottom: none; }
+        .studio-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+        .studio-table__empty { padding: 40px 20px; text-align: center; color: rgba(255,255,255,0.4); font-size: 0.9rem; }
+        .studio-panel { display: none; }
+        .studio-panel.studio-panel--active { display: block; }
+        .studio-table .studio-table__link { color: #a78bfa; text-decoration: none; font-weight: 600; }
+        .studio-table .studio-table__link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body class="home-body has-bottom-nav studio-body">
+    <div class="bg"></div>
+    <div class="studio-layout">
+        <aside class="studio-sidebar">
+            <div class="studio-sidebar__logo">
+                <div class="studio-sidebar__logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+                <span class="studio-sidebar__logo-text">Studio</span>
+            </div>
+            <nav class="studio-sidebar__nav">
+                <a href="studio.html" class="studio-sidebar__item studio-sidebar__item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+                <a href="studio-analytics.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Analytics</span></a>
+                <a href="studio-earning.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M15 9.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span>Earning</span></a>
+                <a href="studio-monetization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><path d="M12 15h6"/></svg><span>Monetization</span></a>
+                <a href="studio-content-detection.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Content Detection</span></a>
+                <a href="studio-customization.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Customization</span></a>
+                <a href="studio-content.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg><span>Content</span></a>
+                <a href="settings.html" class="studio-sidebar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a>
+            </nav>
+        </aside>
+        <main class="studio-main">
+            <div class="studio-topbar">
+                <h1 class="studio-topbar__title">Dashboard</h1>
+                <div class="studio-topbar__user">
+                    <div class="studio-topbar__actions">
+                        <a href="live.html" class="studio-topbar__btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/><circle cx="18" cy="12" r="2.5" fill="currentColor"/></svg><span>Live</span></a>
+                        <a href="upload.html" class="studio-topbar__btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Upload</span></a>
+                        <a href="upload.html?type=photo" class="studio-topbar__btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Caption</span></a>
+                    </div>
+                    <span class="studio-topbar__name" id="studio-user-name">SAKIL</span>
+                    <a href="channel.html" class="studio-topbar__avatar" id="studio-avatar" title="Channel">S</a>
+                </div>
+            </div>
+            <div class="studio-tabs" id="studio-tabs">
+                <button type="button" class="studio-tab studio-tab--active" data-panel="overview" id="studio-tab-overview">Overview</button>
+                <a href="studio-videos.html" class="studio-tab" id="studio-tab-videos">Videos</a>
+                <a href="studio-shorts.html" class="studio-tab">Short</a>
+                <a href="studio-captions.html" class="studio-tab">Captions</a>
+                <a href="studio-live.html" class="studio-tab">Live</a>
+                <a href="studio-promotion.html" class="studio-tab" id="studio-tab-promotion">Promotion</a>
+            </div>
+            <div id="studio-panel-overview" class="studio-panel studio-panel--active"><span id="analytics" aria-hidden="true"></span>
+            <div class="studio-cards">
+                <div class="studio-card">
+                    <div class="studio-card__icon studio-card__icon--teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                    <div class="studio-card__value" id="studio-total-subscribers">0</div>
+                    <div class="studio-card__label">Total Subscriber</div>
+                </div>
+                <a href="studio-earning.html" class="studio-card studio-card--clickable" title="Open Earnings">
+                    <div class="studio-card__icon studio-card__icon--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M15 9.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/></svg></div>
+                    <div class="studio-card__value" id="studio-total-earning">0</div>
+                    <div class="studio-card__label">Total Earning</div>
+                </a>
+                <div class="studio-card">
+                    <div class="studio-card__icon studio-card__icon--purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+                    <div class="studio-card__value" id="studio-total-views">0</div>
+                    <div class="studio-card__label">Total View</div>
+                </div>
+                <a href="studio-videos.html" class="studio-card studio-card--clickable" id="studio-card-videos" title="Click to open Video Analytics">
+                    <div class="studio-card__icon studio-card__icon--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></div>
+                    <div class="studio-card__value" id="studio-videos-count">0</div>
+                    <div class="studio-card__label">Total Video</div>
+                </a>
+                <a href="studio-shorts.html" class="studio-card studio-card--clickable" title="Click to open Short Analytics">
+                    <div class="studio-card__icon studio-card__icon--orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 6h6M9 10h6M9 14h4"/></svg></div>
+                    <div class="studio-card__value" id="studio-shorts-count">0</div>
+                    <div class="studio-card__label">Total Short</div>
+                </a>
+                <a href="studio-captions.html" class="studio-card studio-card--clickable" title="Click to open Caption Analytics">
+                    <div class="studio-card__icon studio-card__icon--violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+                    <div class="studio-card__value" id="studio-captions-count">0</div>
+                    <div class="studio-card__label">Total Caption</div>
+                </a>
+                <div class="studio-card">
+                    <div class="studio-card__icon studio-card__icon--teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                    <div class="studio-card__value" id="studio-total-comments">0</div>
+                    <div class="studio-card__label">Total Comment</div>
+                </div>
+                <div class="studio-card">
+                    <div class="studio-card__icon studio-card__icon--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+                    <div class="studio-card__value" id="studio-total-likes">0</div>
+                    <div class="studio-card__label">Total Like</div>
+                </div>
+                <div class="studio-card">
+                    <div class="studio-card__icon studio-card__icon--purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+                    <div class="studio-card__value" id="studio-super-comments">0</div>
+                    <div class="studio-card__label">Total Super Comment</div>
+                </div>
+                <a href="studio-live.html" class="studio-card studio-card--clickable" title="Click to open Live">
+                    <div class="studio-card__icon studio-card__icon--red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/><circle cx="18" cy="12" r="2.5" fill="currentColor"/></svg></div>
+                    <div class="studio-card__value" id="studio-live-count">0</div>
+                    <div class="studio-card__label">Live</div>
+                </a>
+                <a href="studio-promotion.html" class="studio-card studio-card--clickable" id="studio-card-promotion" title="Click to open Promotion">
+                    <div class="studio-card__icon studio-card__icon--orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/><path d="M12 9v6M9 12h6"/></svg></div>
+                    <div class="studio-card__value" id="studio-promotion-video-count">0</div>
+                    <div class="studio-card__label">Promotion</div>
+                </a>
+            </div>
+            <div class="studio-section">
+                <h2 class="studio-section__title">Content overview</h2>
+                <div class="studio-overview">Charts and analytics will appear here when you have more content.</div>
+            </div>
+            <div class="studio-section">
+                <h2 class="studio-section__title">Recent content</h2>
+                <div class="studio-table-wrap">
+                    <table class="studio-table">
+                        <thead><tr><th>Title</th><th>Type</th><th>Views</th><th>Likes</th><th>Status</th></tr></thead>
+                        <tbody id="studio-recent-body">
+                            <tr><td colspan="5" class="studio-table__empty">No recent content yet. Upload a video or share a caption.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
+            <div id="studio-panel-videos" class="studio-panel">
+                <div class="studio-section">
+                    <h2 class="studio-section__title">Your uploaded videos – Analytics</h2>
+                    <div class="studio-table-wrap">
+                        <table class="studio-table">
+                            <thead><tr><th>Video</th><th>Views</th><th>Likes</th><th>Comments</th><th>Status</th><th></th></tr></thead>
+                            <tbody id="studio-videos-body">
+                                <tr><td colspan="6" class="studio-table__empty">No videos yet. Upload a video to see analytics here.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="studio-panel-short" class="studio-panel">
+                <div class="studio-section">
+                    <h2 class="studio-section__title">Your Shorts – Analytics</h2>
+                    <div class="studio-table-wrap">
+                        <table class="studio-table">
+                            <thead><tr><th>Short</th><th>Views</th><th>Likes</th><th>Comments</th><th>Status</th><th></th></tr></thead>
+                            <tbody id="studio-shorts-body">
+                                <tr><td colspan="6" class="studio-table__empty">No shorts yet. Upload a short to see analytics here.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="studio-panel-captions" class="studio-panel">
+                <div class="studio-section">
+                    <h2 class="studio-section__title">Your Captions – Analytics</h2>
+                    <div class="studio-table-wrap">
+                        <table class="studio-table">
+                            <thead><tr><th>Caption</th><th>Likes</th><th>Comments</th><th>Status</th><th></th></tr></thead>
+                            <tbody id="studio-captions-body">
+                                <tr><td colspan="5" class="studio-table__empty">No captions yet. Share a caption to see analytics here.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="studio-panel-live" class="studio-panel">
+                <div class="studio-section">
+                    <h2 class="studio-section__title">Live</h2>
+                    <div class="studio-overview">Live stream analytics will appear here when you go live.</div>
+                </div>
+            </div>
+            <div id="studio-panel-promotion" class="studio-panel">
+                <div class="studio-section">
+                    <h2 class="studio-section__title">Promotion</h2>
+                    <div class="studio-overview">Promotion analytics will appear here.</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Chat overlay -->
+    <div class="chat-overlay" id="chat-overlay" aria-hidden="true">
+        <div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div>
+        <div class="chat-overlay__card">
+            <div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div>
+            <header class="nok-chat__header">
+                <a href="home.html" class="nok-chat__brand">
+                    <span class="nok-chat__logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                    <span class="nok-chat__logo-text">NOK Chat</span>
+                </a>
+                <div class="nok-chat__actions">
+                    <button type="button" class="nok-chat__action" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+                    <button type="button" class="nok-chat__action nok-chat__action--badge" aria-label="Notifications" data-badge="1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                    <button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize" title="Full screen"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><svg class="chat-resize-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                    <div class="nok-chat__menu-wrap">
+                        <button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+                        <div class="nok-chat__menu" id="chat-menu">
+                            <button type="button" class="nok-chat__menu-item">New chat</button>
+                            <button type="button" class="nok-chat__menu-item">New group</button>
+                            <a href="settings.html" class="nok-chat__menu-item">Settings</a>
+                            <button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="chat-login" id="chat-login">
+                <div class="chat-login__inner chat-login__step-login" id="chat-step-login">
+                    <h3 class="chat-login__title">Log in to Chat</h3>
+                    <p class="chat-login__sub">Sign in to start chatting with your subscriptions</p>
+                    <a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a>
+                    <p class="chat-login__legal">Don't have an account? <a href="signup.html" class="chat-login__link">Sign Up</a></p>
+                </div>
+                <div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none">
+                    <h3 class="chat-login__title">Verify Mobile Number</h3>
+                    <p class="chat-login__sub">Verify your mobile number to use Chat</p>
+                    <form class="chat-login__form" id="chat-verify-form">
+                        <div class="chat-login__phone-row">
+                            <select id="chat-verify-country" class="chat-login__select"><option value="880">+880 BD</option><option value="91">+91 IN</option><option value="1">+1 US</option><option value="44">+44 UK</option></select>
+                            <input type="tel" id="chat-verify-phone" class="chat-login__input chat-login__input--phone" placeholder="Mobile number" required>
+                        </div>
+                        <button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button>
+                    </form>
+                    <div id="chat-otp-step" style="display:none">
+                        <p class="chat-login__sub" style="margin-bottom:12px">Enter 6-digit code sent to your number</p>
+                        <div class="chat-login__otp-inputs">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
+                        <button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-content" id="chat-content">
+                <nav class="nok-chat__tabs">
+                    <button type="button" class="nok-chat__tab">Status</button>
+                    <button type="button" class="nok-chat__tab">Groups</button>
+                    <button type="button" class="nok-chat__tab nok-chat__tab--active">Updates</button>
+                    <button type="button" class="nok-chat__tab">Contacts</button>
+                </nav>
+                <a href="#" class="nok-chat__archived">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+                    <span>Archived Chats</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+                <div class="nok-chat__list">
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar nok-chat__avatar--verified">AR</span><div class="nok-chat__info"><span class="nok-chat__name">Amella Roy</span><span class="nok-chat__preview">Typing...</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--blue"></span>1h ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AN</span><div class="nok-chat__info"><span class="nok-chat__name">Ayesha Noor</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">11:36 AM</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">SD</span><div class="nok-chat__info"><span class="nok-chat__name">Sandeep Das</span><span class="nok-chat__preview">Catch you later!</span></div><span class="nok-chat__meta">20 min ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">TG</span><div class="nok-chat__info"><span class="nok-chat__name">Tanisha Gupta</span><span class="nok-chat__preview">Missed voice call</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--yellow"></span>1 hour ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">RK</span><div class="nok-chat__info"><span class="nok-chat__name">Rohit Kumar</span><span class="nok-chat__preview">Hey what's up?</span></div><span class="nok-chat__meta">11 hours ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">LA</span><div class="nok-chat__info"><span class="nok-chat__name">Lucas Ahmed</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">Yesterday</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">PD</span><div class="nok-chat__info"><span class="nok-chat__name">Priya Das</span><span class="nok-chat__preview">Okay, thanks!</span></div><span class="nok-chat__meta">Yesterday</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">J</span><div class="nok-chat__info"><span class="nok-chat__name">Jonathen</span><span class="nok-chat__preview">Sure, see you</span></div><span class="nok-chat__meta">Yesterday</span></a>
+                </div>
+            </div>
+            <div class="chat-overlay__resize-handle" id="chat-resize-handle" aria-label="Resize"></div>
+            <nav class="nok-chat__bottom">
+                <a href="home.html" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+                <a href="#" class="nok-chat__bottom-item nok-chat__bottom-item--active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Chat</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Call</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="3"/><path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855"/></svg><span>You</span></a>
+            </nav>
+        </div>
+    </div>
+
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></a>
+        <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span>Shorts</span></a>
+        <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+        <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+        <a href="settings.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Settings</span></a>
+    </nav>
+
+    <script>
+    (function() {
+        var nameEl = document.getElementById('studio-user-name');
+        var avatarEl = document.getElementById('studio-avatar');
+        var name = (localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'User').toString().trim();
+        var displayName = name ? name.toUpperCase() : 'USER';
+        if (nameEl) nameEl.textContent = displayName.length > 6 ? displayName.substring(0, 6) : displayName;
+        if (avatarEl) {
+            var initial = name ? name.charAt(0).toUpperCase() : 'U';
+            var photoUrl = localStorage.getItem('nokUserPhotoUrl') || '';
+            if (photoUrl) avatarEl.innerHTML = '<img src="' + photoUrl.replace(/"/g, '&quot;') + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
+            else avatarEl.textContent = initial;
+        }
+        function getCaptionPosts() { try { return JSON.parse(localStorage.getItem('nokCaptionPosts') || '[]'); } catch (e) { return []; } }
+        function getUserVideos() { try { return JSON.parse(localStorage.getItem('nokUserVideos') || '[]'); } catch (e) { return []; } }
+        function getShorts() { try { return JSON.parse(localStorage.getItem('nokShortsVideos') || '[]'); } catch (e) { return []; } }
+        var videos = getUserVideos();
+        var shorts = getShorts();
+        var captions = getCaptionPosts();
+        var totalViews = 0;
+        videos.forEach(function(v) { totalViews += parseInt(v.views || 0, 10); });
+        shorts.forEach(function(s) { totalViews += parseInt(String((s.views || s.viewCount || '0')).replace(/K/g, '000').replace(/M/g, '000000'), 10) || 0; });
+        var totalLikes = 0;
+        videos.forEach(function(v) { totalLikes += parseInt(v.likes || 0, 10); });
+        shorts.forEach(function(s) { totalLikes += parseInt(String(s.likes || '0').replace(/K/g, '000').replace(/M/g, '000000'), 10) || 0; });
+        captions.forEach(function(c) { totalLikes += parseInt(c.likes || 0, 10); });
+        var totalComments = 0;
+        videos.forEach(function(v) { totalComments += parseInt(v.comments || 0, 10); });
+        shorts.forEach(function(s) { totalComments += parseInt(s.comments || 0, 10); });
+        captions.forEach(function(c) { totalComments += parseInt(c.comments || 0, 10); });
+        var totalEarning = parseFloat(localStorage.getItem('nokTotalEarning') || '0') || 0;
+        var totalSubscribers = parseInt(localStorage.getItem('nokTotalSubscribers') || '0', 10) || 0;
+        var superCommentsRaw = localStorage.getItem('nokSuperComments') || '0';
+        var totalSuperComments = 0;
+        try {
+            var parsed = JSON.parse(superCommentsRaw);
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                Object.keys(parsed).forEach(function(k) { totalSuperComments += (parsed[k] && parsed[k].length) ? parsed[k].length : 0; });
+            } else {
+                totalSuperComments = parseInt(parsed, 10) || 0;
+            }
+        } catch (e) {
+            totalSuperComments = parseInt(superCommentsRaw, 10) || 0;
+        }
+        function fmtNum(n) { n = Number(n); if (isNaN(n)) return '0'; return n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(1)+'K' : String(n); }
+        var el = document.getElementById;
+        if (el('studio-total-subscribers')) el('studio-total-subscribers').textContent = fmtNum(totalSubscribers);
+        if (el('studio-total-earning')) el('studio-total-earning').textContent = totalEarning > 0 ? (totalEarning >= 1000 ? (totalEarning/1000).toFixed(1)+'K' : totalEarning.toFixed(0)) : '0';
+        if (el('studio-total-views')) el('studio-total-views').textContent = fmtNum(totalViews);
+        if (el('studio-videos-count')) el('studio-videos-count').textContent = String(videos.length);
+        if (el('studio-shorts-count')) el('studio-shorts-count').textContent = String(shorts.length);
+        if (el('studio-captions-count')) el('studio-captions-count').textContent = String(captions.length);
+        if (el('studio-total-comments')) el('studio-total-comments').textContent = fmtNum(totalComments);
+        if (el('studio-total-likes')) el('studio-total-likes').textContent = fmtNum(totalLikes);
+        if (el('studio-super-comments')) el('studio-super-comments').textContent = fmtNum(totalSuperComments);
+        if (el('studio-live-count')) el('studio-live-count').textContent = fmtNum(parseInt(localStorage.getItem('nokLiveCount') || '0', 10));
+        var promotionVideos = []; try { promotionVideos = JSON.parse(localStorage.getItem('nokPromotionVideos') || '[]'); } catch (e) {}
+        var promotionCount = promotionVideos.length || parseInt(localStorage.getItem('nokPromotionVideoCount') || '0', 10);
+        if (el('studio-promotion-video-count')) el('studio-promotion-video-count').textContent = fmtNum(promotionCount);
+        var recentBody = document.getElementById('studio-recent-body');
+        if (recentBody) {
+            var recent = [];
+            videos.slice(0, 5).forEach(function(v) { recent.push({ title: v.title || v.id, type: 'Video', views: v.views || '0', likes: v.likes || '0', status: 'Published' }); });
+            shorts.slice(0, 5).forEach(function(s) { recent.push({ title: s.title || s.id, type: 'Short', views: '0', likes: s.likes || '0', status: 'Published' }); });
+            captions.slice(0, 5).forEach(function(c) { recent.push({ title: (c.caption || '').substring(0, 40) || 'Caption', type: 'Caption', views: '0', likes: (c.likes || 0) + '', status: 'Published' }); });
+            recent = recent.slice(0, 8);
+            if (recent.length === 0) {
+                recentBody.innerHTML = '<tr><td colspan="5" class="studio-table__empty">No recent content yet. Upload a video or share a caption.</td></tr>';
+            } else {
+                recentBody.innerHTML = recent.map(function(r) {
+                    return '<tr><td>' + (r.title || '').replace(/</g, '&lt;') + '</td><td>' + r.type + '</td><td>' + r.views + '</td><td>' + r.likes + '</td><td>' + r.status + '</td></tr>';
+                }).join('');
+            }
+        }
+        function renderVideosPanel() {
+            var body = document.getElementById('studio-videos-body');
+            if (!body) return;
+            var list = getUserVideos();
+            function fmtNum(n) { return n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(1)+'K' : n; }
+            if (list.length === 0) {
+                body.innerHTML = '<tr><td colspan="6" class="studio-table__empty">No videos yet. Upload a video to see analytics here.</td></tr>';
+                return;
+            }
+            body.innerHTML = list.map(function(v) {
+                var title = (v.title || v.id || 'Untitled').replace(/</g, '&lt;');
+                var views = fmtNum(parseInt(v.views || 0, 10));
+                var likes = fmtNum(parseInt(v.likes || 0, 10));
+                var comments = fmtNum(parseInt(v.comments || 0, 10));
+                var id = (v.id || '').toString().replace(/"/g, '&quot;');
+                var url = 'video.html?id=' + encodeURIComponent(v.id || '') + '&autoplay=1';
+                return '<tr><td><a href="' + url + '" class="studio-table__link">' + title + '</a></td><td>' + views + '</td><td>' + likes + '</td><td>' + comments + '</td><td>Published</td><td><a href="' + url + '" class="studio-table__link">Watch</a></td></tr>';
+            }).join('');
+        }
+        function renderShortsPanel() {
+            var body = document.getElementById('studio-shorts-body');
+            if (!body) return;
+            var list = getShorts();
+            function fmtNum(n) { return n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(1)+'K' : n; }
+            if (list.length === 0) {
+                body.innerHTML = '<tr><td colspan="6" class="studio-table__empty">No shorts yet. Upload a short to see analytics here.</td></tr>';
+                return;
+            }
+            body.innerHTML = list.map(function(s) {
+                var title = (s.title || s.id || 'Untitled').replace(/</g, '&lt;');
+                var views = fmtNum(parseInt(String(s.views || s.viewCount || '0').replace(/K/g, '000').replace(/M/g, '000000'), 10));
+                var likes = fmtNum(parseInt(String(s.likes || '0').replace(/K/g, '000').replace(/M/g, '000000'), 10));
+                var comments = fmtNum(parseInt(s.comments || 0, 10));
+                return '<tr><td>' + title + '</td><td>' + views + '</td><td>' + likes + '</td><td>' + comments + '</td><td>Published</td><td>—</td></tr>';
+            }).join('');
+        }
+        function renderCaptionsPanel() {
+            var body = document.getElementById('studio-captions-body');
+            if (!body) return;
+            var list = getCaptionPosts();
+            if (list.length === 0) {
+                body.innerHTML = '<tr><td colspan="5" class="studio-table__empty">No captions yet. Share a caption to see analytics here.</td></tr>';
+                return;
+            }
+            body.innerHTML = list.map(function(c) {
+                var text = ((c.caption || '').substring(0, 50) || 'Caption').replace(/</g, '&lt;');
+                var likes = (c.likes || 0) + '';
+                var comments = (c.comments || 0) + '';
+                return '<tr><td>' + text + '</td><td>' + likes + '</td><td>' + comments + '</td><td>Published</td><td>—</td></tr>';
+            }).join('');
+        }
+        function switchStudioPanel(panelName) {
+            var panelId = 'studio-panel-' + panelName;
+            var activePanel = document.getElementById(panelId);
+            if (!activePanel) return;
+            var tabs = document.querySelectorAll('.studio-tabs .studio-tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.toggle('studio-tab--active', tabs[i].getAttribute('data-panel') === panelName);
+            }
+            var panels = document.querySelectorAll('.studio-main .studio-panel');
+            for (var j = 0; j < panels.length; j++) {
+                var p = panels[j];
+                var isActive = p.id === panelId;
+                p.classList.toggle('studio-panel--active', isActive);
+                p.style.display = isActive ? 'block' : 'none';
+            }
+            if (activePanel && activePanel.style.display === 'block') {
+                activePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            try {
+                if (panelId === 'studio-panel-videos') renderVideosPanel();
+                else if (panelId === 'studio-panel-short') renderShortsPanel();
+                else if (panelId === 'studio-panel-captions') renderCaptionsPanel();
+            } catch (err) { console.error(err); }
+        }
+        window.openStudioVideos = function() { switchStudioPanel('videos'); };
+        function bindStudioTabs() {
+            document.querySelectorAll('.studio-tabs .studio-tab[data-panel]').forEach(function(tab) {
+                var panelName = tab.getAttribute('data-panel');
+                if (panelName) {
+                    tab.addEventListener('click', function() { switchStudioPanel(panelName); });
+                }
+            });
+        }
+        function applyAnalyticsHash() {
+            if (window.location.hash === '#analytics') {
+                switchStudioPanel('overview');
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                bindStudioTabs();
+                applyAnalyticsHash();
+            });
+        } else {
+            bindStudioTabs();
+            applyAnalyticsHash();
+        }
+        window.addEventListener('hashchange', applyAnalyticsHash);
+    })();
+    </script>
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

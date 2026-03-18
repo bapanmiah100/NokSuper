@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Settings - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .settings-page { font-family: 'Outfit', -apple-system, sans-serif; min-height: 100vh; padding: 24px 16px 100px; padding-top: calc(24px + 56px); position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+        .settings-hero { margin-bottom: 28px; }
+        .settings-title { font-size: 1.75rem; font-weight: 800; color: #fff; margin: 0 0 6px 0; letter-spacing: -0.02em; }
+        .settings-subtitle { font-size: 0.9rem; color: rgba(200,210,255,0.6); margin: 0; }
+        .settings-profile-card { background: linear-gradient(135deg, rgba(99,102,241,0.2) 0%, rgba(139,92,246,0.15) 100%); backdrop-filter: blur(20px); border: 1px solid rgba(139,92,246,0.25); border-radius: 20px; padding: 24px; margin-bottom: 28px; display: flex; align-items: center; gap: 20px; }
+        .settings-profile-card__avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; color: #fff; }
+        .settings-profile-card__avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .settings-profile-card__info { flex: 1; min-width: 0; }
+        .settings-profile-card__name { font-size: 1.2rem; font-weight: 700; color: #fff; margin: 0 0 4px 0; }
+        .settings-profile-card__meta { font-size: 0.85rem; color: rgba(200,210,255,0.7); margin: 0 0 12px 0; }
+        .settings-profile-card__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .settings-profile-card__btn { padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; font-family: inherit; border: none; cursor: pointer; }
+        .settings-profile-card__btn--primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: #fff; }
+        .settings-profile-card__btn--secondary { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+        .settings-section { margin-bottom: 28px; }
+        .settings-section__title { font-size: 0.75rem; font-weight: 700; color: rgba(200,210,255,0.55); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; padding-left: 4px; }
+        .settings-card { background: rgba(15,22,41,0.55); backdrop-filter: blur(20px); border: 1px solid rgba(100,130,255,0.12); border-radius: 18px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
+        .settings-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid rgba(100,130,255,0.06); text-decoration: none; color: inherit; transition: background 0.2s; }
+        .settings-item:last-child { border-bottom: none; }
+        .settings-item:hover { background: rgba(255,255,255,0.05); }
+        .settings-item__left { display: flex; align-items: center; gap: 14px; }
+        .settings-item__icon { width: 42px; height: 42px; border-radius: 12px; background: rgba(99,102,241,0.18); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .settings-item__icon svg { width: 20px; height: 20px; color: var(--accent-light); }
+        .settings-item__icon.settings-item__icon--green { background: rgba(34,197,94,0.2); }
+        .settings-item__icon.settings-item__icon--green svg { color: #4ade80; }
+        .settings-item__icon.settings-item__icon--amber { background: rgba(245,158,11,0.2); }
+        .settings-item__icon.settings-item__icon--amber svg { color: #fbbf24; }
+        .settings-item__icon.settings-item__icon--red { background: rgba(239,68,68,0.2); }
+        .settings-item__icon.settings-item__icon--red svg { color: #f87171; }
+        .settings-item__label { font-size: 0.95rem; font-weight: 600; color: rgba(255,255,255,0.95); }
+        .settings-item__hint { font-size: 0.8rem; color: rgba(200,210,255,0.55); margin-top: 2px; }
+        .settings-item__arrow { color: rgba(200,210,255,0.4); flex-shrink: 0; }
+        .settings-toggle { width: 50px; height: 28px; border-radius: 14px; background: rgba(100,130,255,0.3); border: none; cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0; }
+        .settings-toggle.settings-toggle--on { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); }
+        .settings-toggle::after { content: ''; position: absolute; width: 24px; height: 24px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+        .settings-toggle.settings-toggle--on::after { transform: translateX(22px); }
+        .settings-theme-select { padding: 8px 12px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(100,130,255,0.25); color: #fff; font-size: 0.9rem; font-family: inherit; cursor: pointer; }
+        html[data-theme="light"] .settings-item__icon { background: rgba(79,109,216,0.2); }
+        html[data-theme="light"] .settings-item__icon svg { color: #4338ca; }
+        html[data-theme="light"] .settings-item__icon.settings-item__icon--green svg { color: #15803d; }
+        html[data-theme="light"] .settings-item__icon.settings-item__icon--amber svg { color: #b45309; }
+        html[data-theme="light"] .settings-item__icon.settings-item__icon--red svg { color: #b91c1c; }
+        .settings-btn-secondary { padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+        .settings-btn-secondary:hover { background: rgba(255,255,255,0.15); }
+        .settings-version { text-align: center; font-size: 0.8rem; color: rgba(200,210,255,0.4); margin-top: 36px; padding-bottom: 20px; }
+        #settings-auth-btns.auth-hidden { display: none !important; }
+        #settings-profile-wrap.auth-hidden { display: none !important; }
+        #settings-profile-wrap.auth-visible { display: flex !important; }
+    </style>
+</head>
+<body class="home-body has-bottom-nav">
+    <div class="home-layout">
+    <div class="bg"></div>
+    <header class="long-video__header">
+        <div class="long-video__header-left">
+            <button type="button" class="long-video__back" id="header-back-btn" aria-label="Back" title="Back to previous page">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <button type="button" class="long-video__menu" id="header-menu-btn" aria-label="Menu" title="Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <a href="home.html" class="long-video__logo">
+                <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+            </a>
+        </div>
+        <div class="long-video__search">
+            <form class="home-search" action="search.html" method="get" role="search">
+                <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input type="text" class="home-search__input" name="q" placeholder="Search" aria-label="Search" data-i18n-placeholder="common.search" data-i18n-aria-label="common.search">
+                <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+            </form>
+        </div>
+        <div class="long-video__header-right">
+            <button type="button" class="long-video__header-icon" id="settings-notification-btn" aria-label="Notifications" title="Notifications">
+                <span class="long-video__icon-bell-wrap"><svg class="long-video__icon-bell" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+                <span class="long-video__icon-bell-off-wrap" style="display:none"><svg class="long-video__icon-bell-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="1" y1="1" x2="23" y2="23"/></svg></span>
+            </button>
+            <a href="channel.html" class="long-video__profile-wrap" id="settings-profile-wrap" style="display:none;text-decoration:none;color:inherit;" title="Channel">
+                <div class="long-video__avatar" id="settings-avatar">?</div>
+            </a>
+            <div class="long-video__auth-btns" id="settings-auth-btns">
+                <a href="login.html?next=settings.html" class="home-header__btn home-header__btn--ghost">Log In</a>
+                <a href="signup.html?next=settings.html" class="home-header__btn home-header__btn--primary">Sign Up</a>
+            </div>
+        </div>
+    </header>
+    <!-- Header menu drawer (same on all pages) -->
+    <div class="header-drawer-backdrop" id="header-drawer-backdrop" aria-hidden="true"></div>
+    <aside class="header-drawer" id="header-drawer" aria-label="Main menu" aria-hidden="true">
+        <div class="header-drawer__head">
+            <span class="header-drawer__title" data-i18n="common.menu">Menu</span>
+            <button type="button" class="header-drawer__close" id="header-drawer-close" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <nav class="header-drawer__nav">
+            <a href="studio.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span><span>Studio</span></a>
+            <a href="library.html#watch-later" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Watch later</span></a>
+            <a href="library.html#saved" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span><span>Saved videos</span></a>
+            <a href="library.html#library-files" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span><span>Your files</span></a>
+            <a href="upload.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>Upload</span></a>
+            <div class="header-drawer__divider"></div>
+            <a href="settings.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span data-i18n="common.settings">Settings</span></a>
+        </nav>
+    </aside>
+
+    <main class="settings-page" style="position:relative;z-index:1;">
+        <div class="settings-hero">
+            <h1 class="settings-title" data-i18n="settings.title">Settings</h1>
+            <p class="settings-subtitle" data-i18n="settings.subtitle">Manage your account, preferences & privacy</p>
+        </div>
+
+        <div class="settings-profile-card" id="settings-profile-card" style="display:none;">
+            <div class="settings-profile-card__avatar" id="settings-profile-card-avatar">?</div>
+            <div class="settings-profile-card__info">
+                <h2 class="settings-profile-card__name" id="settings-profile-card-name">Your Name</h2>
+                <p class="settings-profile-card__meta" id="settings-profile-card-meta" data-i18n="settings.profileMeta">Channel creator</p>
+                <div class="settings-profile-card__actions">
+                    <a href="channel.html" class="settings-profile-card__btn settings-profile-card__btn--primary" data-i18n="settings.viewChannel">View Channel</a>
+                    <a href="profile-setup.html" class="settings-profile-card__btn settings-profile-card__btn--secondary" data-i18n="settings.editProfile">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <section class="settings-section" id="settings-account-section">
+            <h2 class="settings-section__title" data-i18n="settings.account">Account</h2>
+            <div class="settings-card">
+                <a href="account-settings.html" class="settings-item" id="settings-account-settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.accountSettings">Account settings</span>
+                            <p class="settings-item__hint" data-i18n="settings.accountSettingsHint">Email, password & security</p>
+                        </div>
+                    </div>
+                    <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+                <a href="channel.html" class="settings-item" id="settings-channel-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.channel">Channel</span>
+                            <p class="settings-item__hint" id="settings-channel-hint" data-i18n="settings.channelHint">Manage your channel</p>
+                        </div>
+                    </div>
+                    <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+                <a href="wallet.html" class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--amber">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.wallet">Wallet & Coins</span>
+                        </div>
+                    </div>
+                    <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title" data-i18n="settings.preferences">Preferences</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.autoplay">Autoplay</span>
+                            <p class="settings-item__hint" data-i18n="settings.autoplayHint">Play next video automatically</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle" id="toggle-autoplay" aria-label="Toggle autoplay"></button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.soundEffects">Sound effects</span>
+                            <p class="settings-item__hint" data-i18n="settings.soundEffectsHint">UI sounds & feedback</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle settings-toggle--on" id="toggle-sound" aria-label="Toggle sound"></button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.commentsDefault">Show comments by default</span>
+                            <p class="settings-item__hint" data-i18n="settings.commentsDefaultHint">Expand comments on video pages</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle settings-toggle--on" id="toggle-comments-default" aria-label="Toggle comments default"></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title" data-i18n="settings.playback">Playback</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.videoQuality">Default video quality</span>
+                            <p class="settings-item__hint" data-i18n="settings.videoQualityHint">Preferred quality when available</p>
+                        </div>
+                    </div>
+                    <select id="settings-quality-select" class="settings-theme-select" aria-label="Video quality">
+                        <option value="auto">Auto</option>
+                        <option value="1080">1080p</option>
+                        <option value="720">720p</option>
+                        <option value="480">480p</option>
+                        <option value="360">360p</option>
+                    </select>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.playbackSpeed">Default playback speed</span>
+                            <p class="settings-item__hint" id="settings-speed-hint">1x</p>
+                        </div>
+                    </div>
+                    <select id="settings-speed-select" class="settings-theme-select" aria-label="Playback speed">
+                        <option value="0.25">0.25x</option><option value="0.5">0.5x</option><option value="0.75">0.75x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.25">1.25x</option><option value="1.5">1.5x</option><option value="1.75">1.75x</option>
+                        <option value="2">2x</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title" data-i18n="settings.notifications">Notifications</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.pushNotifications">Push notifications</span>
+                            <p class="settings-item__hint" data-i18n="settings.pushNotificationsHint">Video & channel updates</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle settings-toggle--on" id="toggle-notifications" aria-label="Toggle notifications"></button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.emailNotifications">Email notifications</span>
+                            <p class="settings-item__hint" data-i18n="settings.emailNotificationsHint">Updates & newsletters</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle" id="toggle-email-notif" aria-label="Toggle email notifications"></button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.subUploads">New uploads from subscriptions</span>
+                            <p class="settings-item__hint" data-i18n="settings.subUploadsHint">When creators you follow post</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle settings-toggle--on" id="toggle-sub-uploads" aria-label="Toggle subscription uploads"></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title" data-i18n="settings.appearance">Appearance</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--amber">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.theme">Theme</span>
+                            <p class="settings-item__hint" id="settings-theme-hint" data-i18n="settings.themeHintSystem">Normal (default)</p>
+                        </div>
+                    </div>
+                    <select id="settings-theme-select" class="settings-theme-select" aria-label="Theme">
+                        <option value="system" data-i18n="settings.themeSystem">System</option>
+                        <option value="light" data-i18n="settings.themeLight">Light</option>
+                        <option value="dark" data-i18n="settings.themeDark">Dark</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title" data-i18n="settings.dataStorage">Data & Storage</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.watchHistory">Watch history</span>
+                            <p class="settings-item__hint" data-i18n="settings.watchHistoryHint">Clear your watch & search history</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-btn-secondary" id="settings-clear-history-btn" data-i18n="common.clear">Clear</button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.cache">Cache & temporary data</span>
+                            <p class="settings-item__hint" data-i18n="settings.cacheHint">Free up space</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-btn-secondary" id="settings-clear-cache-btn" data-i18n="common.clear">Clear</button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.dataSaver">Data saver</span>
+                            <p class="settings-item__hint" data-i18n="settings.dataSaverHint">Reduce data usage for videos</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle" id="toggle-data-saver" aria-label="Toggle data saver"></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section" id="settings-privacy-section">
+            <h2 class="settings-section__title" data-i18n="settings.privacySecurity">Privacy & Security</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.profileVisibility">Profile visibility</span>
+                            <p class="settings-item__hint" data-i18n="settings.profileVisibilityHint">Who can see your channel</p>
+                        </div>
+                    </div>
+                    <select id="settings-privacy-profile" class="settings-theme-select" aria-label="Profile visibility">
+                        <option value="public" data-i18n="settings.profilePublic">Public</option>
+                        <option value="private" data-i18n="settings.profilePrivate">Private</option>
+                    </select>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.whoCanComment">Who can comment</span>
+                            <p class="settings-item__hint" data-i18n="settings.whoCanCommentHint">On your videos</p>
+                        </div>
+                    </div>
+                    <select id="settings-privacy-comments" class="settings-theme-select" aria-label="Who can comment">
+                        <option value="everyone" data-i18n="settings.commentEveryone">Everyone</option>
+                        <option value="subscribers" data-i18n="settings.commentSubscribers">Subscribers only</option>
+                        <option value="none" data-i18n="settings.commentNobody">No one</option>
+                    </select>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.showWatchHistory">Show watch history</span>
+                            <p class="settings-item__hint" data-i18n="settings.showWatchHistoryHint">Save and show videos you watched</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle settings-toggle--on" id="toggle-privacy-watch-history" aria-label="Toggle watch history"></button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.showLikedVideos">Show liked videos</span>
+                            <p class="settings-item__hint" data-i18n="settings.showLikedVideosHint">Show liked videos on your profile</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle settings-toggle--on" id="toggle-privacy-liked" aria-label="Toggle show liked videos"></button>
+                </div>
+                <a href="#" class="settings-item" id="settings-blocked-accounts">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--red">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.blockedAccounts">Blocked accounts</span>
+                            <p class="settings-item__hint" data-i18n="settings.blockedAccountsHint">Manage blocked users</p>
+                        </div>
+                    </div>
+                    <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title" data-i18n="settings.languageRegion">Language & Region</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.language">Language</span>
+                            <p class="settings-item__hint" data-i18n="settings.languageHint">App language</p>
+                        </div>
+                    </div>
+                    <select id="settings-language-select" class="settings-theme-select" aria-label="Language">
+                        <option value="en">English</option>
+                        <option value="af">Afrikaans</option>
+                        <option value="sq">Albanian</option>
+                        <option value="am">Amharic</option>
+                        <option value="ar">العربية (Arabic)</option>
+                        <option value="hy">Armenian</option>
+                        <option value="az">Azerbaijani</option>
+                        <option value="eu">Basque</option>
+                        <option value="be">Belarusian</option>
+                        <option value="bn">বাংলা (Bengali)</option>
+                        <option value="bs">Bosnian</option>
+                        <option value="bg">Bulgarian</option>
+                        <option value="my">Burmese</option>
+                        <option value="ca">Catalan</option>
+                        <option value="zh">中文 (Chinese)</option>
+                        <option value="hr">Croatian</option>
+                        <option value="cs">Czech</option>
+                        <option value="da">Danish</option>
+                        <option value="nl">Dutch</option>
+                        <option value="et">Estonian</option>
+                        <option value="fi">Finnish</option>
+                        <option value="fr">Français (French)</option>
+                        <option value="gl">Galician</option>
+                        <option value="ka">Georgian</option>
+                        <option value="de">Deutsch (German)</option>
+                        <option value="el">Greek</option>
+                        <option value="gu">Gujarati</option>
+                        <option value="he">Hebrew</option>
+                        <option value="hi">हिन्दी (Hindi)</option>
+                        <option value="hu">Hungarian</option>
+                        <option value="is">Icelandic</option>
+                        <option value="id">Indonesian</option>
+                        <option value="ga">Irish</option>
+                        <option value="it">Italiano (Italian)</option>
+                        <option value="ja">日本語 (Japanese)</option>
+                        <option value="kn">Kannada</option>
+                        <option value="kk">Kazakh</option>
+                        <option value="km">Khmer</option>
+                        <option value="ko">한국어 (Korean)</option>
+                        <option value="ky">Kyrgyz</option>
+                        <option value="lo">Lao</option>
+                        <option value="lv">Latvian</option>
+                        <option value="lt">Lithuanian</option>
+                        <option value="mk">Macedonian</option>
+                        <option value="ms">Malay</option>
+                        <option value="ml">Malayalam</option>
+                        <option value="mt">Maltese</option>
+                        <option value="mr">Marathi</option>
+                        <option value="mn">Mongolian</option>
+                        <option value="ne">Nepali</option>
+                        <option value="no">Norwegian</option>
+                        <option value="fa">Persian</option>
+                        <option value="pl">Polish</option>
+                        <option value="pt">Português (Portuguese)</option>
+                        <option value="pa">Punjabi</option>
+                        <option value="ro">Romanian</option>
+                        <option value="ru">Русский (Russian)</option>
+                        <option value="sr">Serbian</option>
+                        <option value="si">Sinhala</option>
+                        <option value="sk">Slovak</option>
+                        <option value="sl">Slovenian</option>
+                        <option value="es">Español (Spanish)</option>
+                        <option value="sw">Swahili</option>
+                        <option value="sv">Swedish</option>
+                        <option value="tl">Tagalog</option>
+                        <option value="ta">Tamil</option>
+                        <option value="te">Telugu</option>
+                        <option value="th">Thai</option>
+                        <option value="tr">Türkçe (Turkish)</option>
+                        <option value="uk">Ukrainian</option>
+                        <option value="ur">Urdu</option>
+                        <option value="uz">Uzbek</option>
+                        <option value="vi">Vietnamese</option>
+                        <option value="cy">Welsh</option>
+                        <option value="xh">Xhosa</option>
+                        <option value="zu">Zulu</option>
+                    </select>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.countryRegion">Country / Region</span>
+                            <p class="settings-item__hint" id="settings-region-hint">Bangladesh</p>
+                        </div>
+                    </div>
+                    <select id="settings-region-select" class="settings-theme-select" aria-label="Region">
+                        <option value="AF">🇦🇫 Afghanistan</option>
+                        <option value="AL">🇦🇱 Albania</option>
+                        <option value="DZ">🇩🇿 Algeria</option>
+                        <option value="AD">🇦🇩 Andorra</option>
+                        <option value="AO">🇦🇴 Angola</option>
+                        <option value="AG">🇦🇬 Antigua and Barbuda</option>
+                        <option value="AR">🇦🇷 Argentina</option>
+                        <option value="AM">🇦🇲 Armenia</option>
+                        <option value="AU">🇦🇺 Australia</option>
+                        <option value="AT">🇦🇹 Austria</option>
+                        <option value="AZ">🇦🇿 Azerbaijan</option>
+                        <option value="BS">🇧🇸 Bahamas</option>
+                        <option value="BH">🇧🇭 Bahrain</option>
+                        <option value="BD">🇧🇩 Bangladesh</option>
+                        <option value="BB">🇧🇧 Barbados</option>
+                        <option value="BY">🇧🇾 Belarus</option>
+                        <option value="BE">🇧🇪 Belgium</option>
+                        <option value="BZ">🇧🇿 Belize</option>
+                        <option value="BJ">🇧🇯 Benin</option>
+                        <option value="BT">🇧🇹 Bhutan</option>
+                        <option value="BO">🇧🇴 Bolivia</option>
+                        <option value="BA">🇧🇦 Bosnia and Herzegovina</option>
+                        <option value="BW">🇧🇼 Botswana</option>
+                        <option value="BR">🇧🇷 Brazil</option>
+                        <option value="BN">🇧🇳 Brunei</option>
+                        <option value="BG">🇧🇬 Bulgaria</option>
+                        <option value="BF">🇧🇫 Burkina Faso</option>
+                        <option value="BI">🇧🇮 Burundi</option>
+                        <option value="KH">🇰🇭 Cambodia</option>
+                        <option value="CM">🇨🇲 Cameroon</option>
+                        <option value="CA">🇨🇦 Canada</option>
+                        <option value="CV">🇨🇻 Cape Verde</option>
+                        <option value="CF">🇨🇫 Central African Republic</option>
+                        <option value="TD">🇹🇩 Chad</option>
+                        <option value="CL">🇨🇱 Chile</option>
+                        <option value="CN">🇨🇳 China</option>
+                        <option value="CO">🇨🇴 Colombia</option>
+                        <option value="KM">🇰🇲 Comoros</option>
+                        <option value="CG">🇨🇬 Congo</option>
+                        <option value="CR">🇨🇷 Costa Rica</option>
+                        <option value="HR">🇭🇷 Croatia</option>
+                        <option value="CU">🇨🇺 Cuba</option>
+                        <option value="CY">🇨🇾 Cyprus</option>
+                        <option value="CZ">🇨🇿 Czech Republic</option>
+                        <option value="DK">🇩🇰 Denmark</option>
+                        <option value="DJ">🇩🇯 Djibouti</option>
+                        <option value="DM">🇩🇲 Dominica</option>
+                        <option value="DO">🇩🇴 Dominican Republic</option>
+                        <option value="EC">🇪🇨 Ecuador</option>
+                        <option value="EG">🇪🇬 Egypt</option>
+                        <option value="SV">🇸🇻 El Salvador</option>
+                        <option value="GQ">🇬🇶 Equatorial Guinea</option>
+                        <option value="ER">🇪🇷 Eritrea</option>
+                        <option value="EE">🇪🇪 Estonia</option>
+                        <option value="ET">🇪🇹 Ethiopia</option>
+                        <option value="FJ">🇫🇯 Fiji</option>
+                        <option value="FI">🇫🇮 Finland</option>
+                        <option value="FR">🇫🇷 France</option>
+                        <option value="GA">🇬🇦 Gabon</option>
+                        <option value="GM">🇬🇲 Gambia</option>
+                        <option value="GE">🇬🇪 Georgia</option>
+                        <option value="DE">🇩🇪 Germany</option>
+                        <option value="GH">🇬🇭 Ghana</option>
+                        <option value="GR">🇬🇷 Greece</option>
+                        <option value="GD">🇬🇩 Grenada</option>
+                        <option value="GT">🇬🇹 Guatemala</option>
+                        <option value="GN">🇬🇳 Guinea</option>
+                        <option value="GW">🇬🇼 Guinea-Bissau</option>
+                        <option value="GY">🇬🇾 Guyana</option>
+                        <option value="HT">🇭🇹 Haiti</option>
+                        <option value="HN">🇭🇳 Honduras</option>
+                        <option value="HK">🇭🇰 Hong Kong</option>
+                        <option value="HU">🇭🇺 Hungary</option>
+                        <option value="IS">🇮🇸 Iceland</option>
+                        <option value="IN">🇮🇳 India</option>
+                        <option value="ID">🇮🇩 Indonesia</option>
+                        <option value="IR">🇮🇷 Iran</option>
+                        <option value="IQ">🇮🇶 Iraq</option>
+                        <option value="IE">🇮🇪 Ireland</option>
+                        <option value="IL">🇮🇱 Israel</option>
+                        <option value="IT">🇮🇹 Italy</option>
+                        <option value="JM">🇯🇲 Jamaica</option>
+                        <option value="JP">🇯🇵 Japan</option>
+                        <option value="JO">🇯🇴 Jordan</option>
+                        <option value="KZ">🇰🇿 Kazakhstan</option>
+                        <option value="KE">🇰🇪 Kenya</option>
+                        <option value="KI">🇰🇮 Kiribati</option>
+                        <option value="KP">🇰🇵 North Korea</option>
+                        <option value="KR">🇰🇷 South Korea</option>
+                        <option value="KW">🇰🇼 Kuwait</option>
+                        <option value="KG">🇰🇬 Kyrgyzstan</option>
+                        <option value="LA">🇱🇦 Laos</option>
+                        <option value="LV">🇱🇻 Latvia</option>
+                        <option value="LB">🇱🇧 Lebanon</option>
+                        <option value="LS">🇱🇸 Lesotho</option>
+                        <option value="LR">🇱🇷 Liberia</option>
+                        <option value="LY">🇱🇾 Libya</option>
+                        <option value="LI">🇱🇮 Liechtenstein</option>
+                        <option value="LT">🇱🇹 Lithuania</option>
+                        <option value="LU">🇱🇺 Luxembourg</option>
+                        <option value="MO">🇲🇴 Macau</option>
+                        <option value="MG">🇲🇬 Madagascar</option>
+                        <option value="MW">🇲🇼 Malawi</option>
+                        <option value="MY">🇲🇾 Malaysia</option>
+                        <option value="MV">🇲🇻 Maldives</option>
+                        <option value="ML">🇲🇱 Mali</option>
+                        <option value="MT">🇲🇹 Malta</option>
+                        <option value="MH">🇲🇭 Marshall Islands</option>
+                        <option value="MR">🇲🇷 Mauritania</option>
+                        <option value="MU">🇲🇺 Mauritius</option>
+                        <option value="MX">🇲🇽 Mexico</option>
+                        <option value="FM">🇫🇲 Micronesia</option>
+                        <option value="MD">🇲🇩 Moldova</option>
+                        <option value="MC">🇲🇨 Monaco</option>
+                        <option value="MN">🇲🇳 Mongolia</option>
+                        <option value="ME">🇲🇪 Montenegro</option>
+                        <option value="MA">🇲🇦 Morocco</option>
+                        <option value="MZ">🇲🇿 Mozambique</option>
+                        <option value="MM">🇲🇲 Myanmar</option>
+                        <option value="NA">🇳🇦 Namibia</option>
+                        <option value="NR">🇳🇷 Nauru</option>
+                        <option value="NP">🇳🇵 Nepal</option>
+                        <option value="NL">🇳🇱 Netherlands</option>
+                        <option value="NZ">🇳🇿 New Zealand</option>
+                        <option value="NI">🇳🇮 Nicaragua</option>
+                        <option value="NE">🇳🇪 Niger</option>
+                        <option value="NG">🇳🇬 Nigeria</option>
+                        <option value="MK">🇲🇰 North Macedonia</option>
+                        <option value="NO">🇳🇴 Norway</option>
+                        <option value="OM">🇴🇲 Oman</option>
+                        <option value="PK">🇵🇰 Pakistan</option>
+                        <option value="PW">🇵🇼 Palau</option>
+                        <option value="PS">🇵🇸 Palestine</option>
+                        <option value="PA">🇵🇦 Panama</option>
+                        <option value="PG">🇵🇬 Papua New Guinea</option>
+                        <option value="PY">🇵🇾 Paraguay</option>
+                        <option value="PE">🇵🇪 Peru</option>
+                        <option value="PH">🇵🇭 Philippines</option>
+                        <option value="PL">🇵🇱 Poland</option>
+                        <option value="PT">🇵🇹 Portugal</option>
+                        <option value="QA">🇶🇦 Qatar</option>
+                        <option value="RO">🇷🇴 Romania</option>
+                        <option value="RU">🇷🇺 Russia</option>
+                        <option value="RW">🇷🇼 Rwanda</option>
+                        <option value="KN">🇰🇳 Saint Kitts and Nevis</option>
+                        <option value="LC">🇱🇨 Saint Lucia</option>
+                        <option value="VC">🇻🇨 Saint Vincent and the Grenadines</option>
+                        <option value="WS">🇼🇸 Samoa</option>
+                        <option value="SM">🇸🇲 San Marino</option>
+                        <option value="ST">🇸🇹 São Tomé and Príncipe</option>
+                        <option value="SA">🇸🇦 Saudi Arabia</option>
+                        <option value="SN">🇸🇳 Senegal</option>
+                        <option value="RS">🇷🇸 Serbia</option>
+                        <option value="SC">🇸🇨 Seychelles</option>
+                        <option value="SL">🇸🇱 Sierra Leone</option>
+                        <option value="SG">🇸🇬 Singapore</option>
+                        <option value="SK">🇸🇰 Slovakia</option>
+                        <option value="SI">🇸🇮 Slovenia</option>
+                        <option value="SB">🇸🇧 Solomon Islands</option>
+                        <option value="SO">🇸🇴 Somalia</option>
+                        <option value="ZA">🇿🇦 South Africa</option>
+                        <option value="SS">🇸🇸 South Sudan</option>
+                        <option value="ES">🇪🇸 Spain</option>
+                        <option value="LK">🇱🇰 Sri Lanka</option>
+                        <option value="SD">🇸🇩 Sudan</option>
+                        <option value="SR">🇸🇷 Suriname</option>
+                        <option value="SE">🇸🇪 Sweden</option>
+                        <option value="CH">🇨🇭 Switzerland</option>
+                        <option value="SY">🇸🇾 Syria</option>
+                        <option value="TW">🇹🇼 Taiwan</option>
+                        <option value="TJ">🇹🇯 Tajikistan</option>
+                        <option value="TZ">🇹🇿 Tanzania</option>
+                        <option value="TH">🇹🇭 Thailand</option>
+                        <option value="TL">🇹🇱 Timor-Leste</option>
+                        <option value="TG">🇹🇬 Togo</option>
+                        <option value="TO">🇹🇴 Tonga</option>
+                        <option value="TT">🇹🇹 Trinidad and Tobago</option>
+                        <option value="TN">🇹🇳 Tunisia</option>
+                        <option value="TR">🇹🇷 Turkey</option>
+                        <option value="TM">🇹🇲 Turkmenistan</option>
+                        <option value="TV">🇹🇻 Tuvalu</option>
+                        <option value="UG">🇺🇬 Uganda</option>
+                        <option value="UA">🇺🇦 Ukraine</option>
+                        <option value="AE">🇦🇪 United Arab Emirates</option>
+                        <option value="GB">🇬🇧 United Kingdom</option>
+                        <option value="US">🇺🇸 United States</option>
+                        <option value="UY">🇺🇾 Uruguay</option>
+                        <option value="UZ">🇺🇿 Uzbekistan</option>
+                        <option value="VU">🇻🇺 Vanuatu</option>
+                        <option value="VA">🇻🇦 Vatican City</option>
+                        <option value="VE">🇻🇪 Venezuela</option>
+                        <option value="VN">🇻🇳 Vietnam</option>
+                        <option value="YE">🇾🇪 Yemen</option>
+                        <option value="ZM">🇿🇲 Zambia</option>
+                        <option value="ZW">🇿🇼 Zimbabwe</option>
+                        <option value="OTHER">🌐 Other</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title" data-i18n="settings.accessibility">Accessibility</h2>
+            <div class="settings-card">
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.captions">Captions by default</span>
+                            <p class="settings-item__hint" data-i18n="settings.captionsHint">Show subtitles when available</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle" id="toggle-captions" aria-label="Toggle captions"></button>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.reducedMotion">Reduced motion</span>
+                            <p class="settings-item__hint" data-i18n="settings.reducedMotionHint">Minimize animations</p>
+                        </div>
+                    </div>
+                    <button type="button" class="settings-toggle" id="toggle-reduced-motion" aria-label="Toggle reduced motion"></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title" data-i18n="settings.dangerZone">Danger zone</h2>
+            <div class="settings-card" style="border-color: rgba(239,68,68,0.2);">
+                <a href="channel-delete.html" class="settings-item" id="settings-delete-account-item" style="display:none;">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon settings-item__icon--red">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" style="color:#f87171" data-i18n="settings.deleteAccount">Delete account</span>
+                            <p class="settings-item__hint" data-i18n="settings.deleteAccountHint">Permanently delete your account & data</p>
+                        </div>
+                    </div>
+                    <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <div class="settings-card">
+                <button type="button" class="settings-item settings-item--logout" id="settings-logout-btn" style="display:none;width:100%;text-align:left;border:none;background:none;cursor:pointer;font-family:inherit;">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon" style="background:rgba(239,68,68,0.2);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#ef4444"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" style="color:#f87171" data-i18n="settings.logout">Log Out</span>
+                            <p class="settings-item__hint" data-i18n="settings.logoutHint">Sign out of your account</p>
+                        </div>
+                    </div>
+                    <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2 class="settings-section__title" data-i18n="settings.support">Support</h2>
+            <div class="settings-card">
+                <a href="#" class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.helpFaq">Help & FAQ</span>
+                            <p class="settings-item__hint" data-i18n="settings.helpFaqHint">Get support</p>
+                        </div>
+                    </div>
+                    <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+                <a href="#" class="settings-item">
+                    <div class="settings-item__left">
+                        <div class="settings-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        </div>
+                        <div>
+                            <span class="settings-item__label" data-i18n="settings.privacyPolicy">Privacy Policy</span>
+                            <p class="settings-item__hint" data-i18n="settings.privacyPolicyHint">Terms of service</p>
+                        </div>
+                    </div>
+                    <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+            </div>
+        </section>
+
+        <p class="settings-version">NOK Super v1.0</p>
+    </main>
+    </div>
+
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item">
+            <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+            <span data-i18n="common.home">Home</span>
+        </a>
+        <a href="shorts.html" class="home-bottom-nav__item">
+            <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span data-i18n="common.shorts">Shorts</span>
+        </a>
+        <a href="upload.html" class="home-bottom-nav__item">
+            <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            <span data-i18n="common.upload">Upload</span>
+        </a>
+        <a href="#" class="home-bottom-nav__item chat-trigger">
+            <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <span>Chats</span>
+        </a>
+        <a href="settings.html" class="home-bottom-nav__item home-bottom-nav__item--active">
+            <span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+            <span data-i18n="common.settings">Settings</span>
+        </a>
+    </nav>
+
+    <!-- Chat Overlay -->
+    <div class="chat-overlay" id="chat-overlay" aria-hidden="true">
+        <div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div>
+        <div class="chat-overlay__card">
+            <div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div>
+            <header class="nok-chat__header">
+                <a href="home.html" class="nok-chat__brand">
+                    <span class="nok-chat__logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                    <span class="nok-chat__logo-text">NOK Chat</span>
+                </a>
+                <div class="nok-chat__actions">
+                    <button type="button" class="nok-chat__action" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+                    <button type="button" class="nok-chat__action nok-chat__action--badge" aria-label="Notifications" data-badge="1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                    <button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize" title="Full screen"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><svg class="chat-resize-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                    <div class="nok-chat__menu-wrap">
+                        <button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+                        <div class="nok-chat__menu" id="chat-menu">
+                            <button type="button" class="nok-chat__menu-item">New chat</button>
+                            <button type="button" class="nok-chat__menu-item">New group</button>
+                            <a href="settings.html" class="nok-chat__menu-item">Settings</a>
+                            <button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="chat-login" id="chat-login">
+                <div class="chat-login__inner chat-login__step-login" id="chat-step-login">
+                    <h3 class="chat-login__title">Log in to Chat</h3>
+                    <p class="chat-login__sub">Sign in to start chatting</p>
+                    <a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a>
+                    <p class="chat-login__legal">Don't have an account? <a href="signup.html" class="chat-login__link">Sign Up</a></p>
+                </div>
+                <div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none">
+                    <h3 class="chat-login__title">Verify Mobile Number</h3>
+                    <p class="chat-login__sub">Verify your mobile number to use Chat</p>
+                    <form class="chat-login__form" id="chat-verify-form">
+                        <div class="chat-login__phone-row">
+                            <select id="chat-verify-country" class="chat-login__select"><option value="880">+880 BD</option><option value="91">+91 IN</option><option value="1">+1 US</option><option value="44">+44 UK</option></select>
+                            <input type="tel" id="chat-verify-phone" class="chat-login__input chat-login__input--phone" placeholder="Mobile number" required>
+                        </div>
+                        <button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button>
+                    </form>
+                    <div id="chat-otp-step" style="display:none">
+                        <p class="chat-login__sub" style="margin-bottom:12px">Enter 6-digit code sent to your number</p>
+                        <div class="chat-login__otp-inputs">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
+                        <button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-content" id="chat-content">
+                <nav class="nok-chat__tabs">
+                    <button type="button" class="nok-chat__tab">Status</button>
+                    <button type="button" class="nok-chat__tab">Groups</button>
+                    <button type="button" class="nok-chat__tab nok-chat__tab--active">Updates</button>
+                    <button type="button" class="nok-chat__tab">Contacts</button>
+                </nav>
+                <a href="#" class="nok-chat__archived"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg><span>Archived Chats</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+                <div class="nok-chat__list">
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar nok-chat__avatar--verified">AR</span><div class="nok-chat__info"><span class="nok-chat__name">Amella Roy</span><span class="nok-chat__preview">Typing...</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--blue"></span>1h ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AN</span><div class="nok-chat__info"><span class="nok-chat__name">Ayesha Noor</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">11:36 AM</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">SD</span><div class="nok-chat__info"><span class="nok-chat__name">Sandeep Das</span><span class="nok-chat__preview">Catch you later!</span></div><span class="nok-chat__meta">20 min ago</span></a>
+                </div>
+            </div>
+            <div class="chat-overlay__resize-handle" id="chat-resize-handle" aria-label="Resize"></div>
+            <nav class="nok-chat__bottom">
+                <a href="home.html" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+                <a href="#" class="nok-chat__bottom-item nok-chat__bottom-item--active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Chat</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Call</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="3"/><path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855"/></svg><span>You</span></a>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+            function updateSettingsAuthView() {
+                isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+                var profileWrap = document.getElementById('settings-profile-wrap');
+                var authBtns = document.getElementById('settings-auth-btns');
+                var avatarEl = document.getElementById('settings-avatar');
+                if (profileWrap && authBtns) {
+                    if (isLoggedIn) {
+                        profileWrap.classList.remove('auth-hidden');
+                        profileWrap.classList.add('auth-visible');
+                        authBtns.classList.add('auth-hidden');
+                        profileWrap.style.display = 'flex';
+                        authBtns.style.display = 'none';
+                        var name = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You';
+                        var initial = (name && name.charAt(0)) ? name.charAt(0).toUpperCase() : '?';
+                        var photoUrl = localStorage.getItem('nokUserPhotoUrl');
+                        try { var chData = JSON.parse(localStorage.getItem('nokChannelData') || '{}'); if (chData.photoUrl) photoUrl = chData.photoUrl; } catch (_) {}
+                        if (avatarEl) {
+                            if (photoUrl) avatarEl.innerHTML = '<img src="' + photoUrl.replace(/"/g, '&quot;') + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
+                            else avatarEl.textContent = initial;
+                        }
+                    } else {
+                        profileWrap.classList.add('auth-hidden');
+                        profileWrap.classList.remove('auth-visible');
+                        authBtns.classList.remove('auth-hidden');
+                        profileWrap.style.display = 'none';
+                        authBtns.style.display = 'flex';
+                        if (avatarEl) avatarEl.textContent = '?';
+                    }
+                }
+                var logoutBtn = document.getElementById('settings-logout-btn');
+                if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'flex' : 'none';
+                var deleteAccountItem = document.getElementById('settings-delete-account-item');
+                if (deleteAccountItem) deleteAccountItem.style.display = isLoggedIn ? 'flex' : 'none';
+                var accountSection = document.getElementById('settings-account-section');
+                var privacySection = document.getElementById('settings-privacy-section');
+                if (accountSection) accountSection.style.display = isLoggedIn ? '' : 'none';
+                if (privacySection) privacySection.style.display = isLoggedIn ? '' : 'none';
+                var profileCard = document.getElementById('settings-profile-card');
+                var profileCardAvatar = document.getElementById('settings-profile-card-avatar');
+                var profileCardName = document.getElementById('settings-profile-card-name');
+                var profileCardMeta = document.getElementById('settings-profile-card-meta');
+                if (profileCard) {
+                    if (isLoggedIn) {
+                        profileCard.style.display = 'flex';
+                        var name = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'Creator';
+                        if (profileCardName) profileCardName.textContent = name;
+                        if (profileCardMeta) profileCardMeta.textContent = 'Channel creator • NOK Super';
+                        var photoUrl = localStorage.getItem('nokUserPhotoUrl') || '';
+                        try { var cd = JSON.parse(localStorage.getItem('nokChannelData') || '{}'); if (cd.photoUrl) photoUrl = cd.photoUrl; } catch (_) {}
+                        if (profileCardAvatar) {
+                            if (photoUrl) profileCardAvatar.innerHTML = '<img src="' + photoUrl.replace(/"/g, '&quot;') + '" alt="">';
+                            else profileCardAvatar.textContent = (name && name.charAt(0)) ? name.charAt(0).toUpperCase() : '?';
+                        }
+                    } else profileCard.style.display = 'none';
+                }
+            }
+            updateSettingsAuthView();
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', updateSettingsAuthView);
+            }
+            window.addEventListener('pageshow', function() {
+                isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+                updateSettingsAuthView();
+            });
+            var logoutBtn = document.getElementById('settings-logout-btn');
+            if (logoutBtn) logoutBtn.addEventListener('click', function() {
+                sessionStorage.removeItem('nokAuth');
+                localStorage.removeItem('nokAuth');
+                sessionStorage.removeItem('nokUserEmail');
+                localStorage.removeItem('nokUserEmail');
+                localStorage.removeItem('nokAccountEmail');
+                sessionStorage.removeItem('nokSignupNext');
+                localStorage.removeItem('nokUserChannel');
+                localStorage.removeItem('nokUserPhotoUrl');
+                localStorage.removeItem('nokMobileVerified');
+                window.location.href = 'login.html?next=settings.html';
+            });
+            var notifBtn = document.getElementById('settings-notification-btn');
+            if (notifBtn) {
+                var onWrap = notifBtn.querySelector('.long-video__icon-bell-wrap');
+                var offWrap = notifBtn.querySelector('.long-video__icon-bell-off-wrap');
+                function updateNotifIcon() {
+                    var on = localStorage.getItem('nokNotificationOn') !== '0';
+                    if (onWrap) onWrap.style.display = on ? '' : 'none';
+                    if (offWrap) offWrap.style.display = on ? 'none' : '';
+                }
+                updateNotifIcon();
+                notifBtn.addEventListener('click', function() {
+                    var on = localStorage.getItem('nokNotificationOn') !== '0';
+                    localStorage.setItem('nokNotificationOn', on ? '0' : '1');
+                    updateNotifIcon();
+                });
+            }
+            var channelItem = document.getElementById('settings-channel-item');
+            var channelHint = document.getElementById('settings-channel-hint');
+            if (channelItem) channelItem.style.display = isLoggedIn ? '' : 'none';
+            var chan = localStorage.getItem('nokUserChannel');
+            if (chan && channelHint) channelHint.textContent = chan;
+
+            function applyTheme() {
+                var t = localStorage.getItem('nokTheme') || 'system';
+                if (t === 'system')
+                    document.documentElement.removeAttribute('data-theme');
+                else
+                    document.documentElement.setAttribute('data-theme', t);
+            }
+            function translateSettingText(key, fallback) {
+                return typeof window.nokT === 'function' ? window.nokT(key, fallback) : fallback;
+            }
+            function getThemeHintText(value) {
+                return value === 'system'
+                    ? translateSettingText('settings.themeHintSystem', 'Normal (default)')
+                    : (value === 'light'
+                        ? translateSettingText('settings.themeHintLight', 'Light')
+                        : translateSettingText('settings.themeHintDark', 'Dark'));
+            }
+            applyTheme();
+            var themeSelect = document.getElementById('settings-theme-select');
+            var themeHint = document.getElementById('settings-theme-hint');
+            if (themeSelect) {
+                var savedTheme = localStorage.getItem('nokTheme') || 'system';
+                themeSelect.value = savedTheme;
+                if (themeHint) themeHint.textContent = getThemeHintText(savedTheme);
+                themeSelect.addEventListener('change', function() {
+                    var v = this.value;
+                    localStorage.setItem('nokTheme', v);
+                    if (themeHint) themeHint.textContent = getThemeHintText(v);
+                    applyTheme();
+                });
+            }
+            var clearHistoryBtn = document.getElementById('settings-clear-history-btn');
+            if (clearHistoryBtn) clearHistoryBtn.addEventListener('click', function() {
+                if (!confirm(translateSettingText('settings.alertHistoryConfirm', 'Clear all watch and search history?'))) return;
+                try { localStorage.removeItem('nokWatchHistory'); localStorage.removeItem('nokSearchHistory'); sessionStorage.removeItem('nokWatchHistory'); } catch (_) {}
+                alert(translateSettingText('settings.alertHistoryDone', 'History cleared.'));
+            });
+            var clearCacheBtn = document.getElementById('settings-clear-cache-btn');
+            if (clearCacheBtn) clearCacheBtn.addEventListener('click', function() {
+                if (!confirm(translateSettingText('settings.alertCacheConfirm', 'Clear cached data? This may log you out of some sessions.'))) return;
+                try { sessionStorage.clear(); } catch (_) {}
+                alert(translateSettingText('settings.alertCacheDone', 'Cache cleared.'));
+            });
+            var toggleDataSaver = document.getElementById('toggle-data-saver');
+            if (toggleDataSaver) {
+                var dsOn = localStorage.getItem('nokDataSaver') === '1';
+                toggleDataSaver.classList.toggle('settings-toggle--on', dsOn);
+                toggleDataSaver.addEventListener('click', function() {
+                    this.classList.toggle('settings-toggle--on');
+                    localStorage.setItem('nokDataSaver', this.classList.contains('settings-toggle--on') ? '1' : '0');
+                });
+            }
+            function bindSettingToggle(id, key, defaultValue) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var on = defaultValue ? (localStorage.getItem(key) !== '0') : (localStorage.getItem(key) === '1');
+                el.classList.toggle('settings-toggle--on', on);
+                el.addEventListener('click', function() {
+                    this.classList.toggle('settings-toggle--on');
+                    localStorage.setItem(key, this.classList.contains('settings-toggle--on') ? '1' : '0');
+                });
+            }
+            function bindSettingSelect(id, key, hintId) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var saved = localStorage.getItem(key);
+                if (saved) el.value = saved;
+                el.addEventListener('change', function() {
+                    localStorage.setItem(key, this.value);
+                    if (hintId) {
+                        var hint = document.getElementById(hintId);
+                        if (hint) hint.textContent = this.options[this.selectedIndex].text;
+                    }
+                    if (key === 'nokLanguage' && typeof window.nokApplyLanguage === 'function') {
+                        window.nokApplyLanguage();
+                    }
+                });
+            }
+            bindSettingToggle('toggle-sound', 'nokSound', true);
+            bindSettingToggle('toggle-comments-default', 'nokCommentsDefault', true);
+            bindSettingToggle('toggle-email-notif', 'nokEmailNotif', false);
+            bindSettingToggle('toggle-sub-uploads', 'nokSubUploads', true);
+            bindSettingToggle('toggle-captions', 'nokCaptionsDefault', false);
+            bindSettingToggle('toggle-reduced-motion', 'nokReducedMotion', false);
+            bindSettingToggle('toggle-privacy-watch-history', 'nokPrivacyWatchHistory', true);
+            bindSettingToggle('toggle-privacy-liked', 'nokPrivacyLiked', true);
+            bindSettingSelect('settings-quality-select', 'nokVideoQuality');
+            bindSettingSelect('settings-privacy-profile', 'nokPrivacyProfile');
+            bindSettingSelect('settings-privacy-comments', 'nokPrivacyComments');
+            bindSettingSelect('settings-speed-select', 'nokPlaybackSpeed', 'settings-speed-hint');
+            bindSettingSelect('settings-language-select', 'nokLanguage');
+            bindSettingSelect('settings-region-select', 'nokRegion', 'settings-region-hint');
+            var speedHint = document.getElementById('settings-speed-hint');
+            var speedSelect = document.getElementById('settings-speed-select');
+            if (speedHint && speedSelect) speedHint.textContent = speedSelect.options[speedSelect.selectedIndex].text;
+            var regionHint = document.getElementById('settings-region-hint');
+            var regionSelect = document.getElementById('settings-region-select');
+            if (regionHint && regionSelect) regionHint.textContent = regionSelect.options[regionSelect.selectedIndex].text;
+
+            var toggleNotif = document.getElementById('toggle-notifications');
+            if (toggleNotif) {
+                var notifOn = localStorage.getItem('nokNotificationOn') !== '0';
+                toggleNotif.classList.toggle('settings-toggle--on', notifOn);
+                toggleNotif.addEventListener('click', function() {
+                this.classList.toggle('settings-toggle--on');
+                localStorage.setItem('nokNotificationOn', this.classList.contains('settings-toggle--on') ? '1' : '0');
+                if (notifBtn) {
+                    var on = localStorage.getItem('nokNotificationOn') !== '0';
+                    var ow = notifBtn.querySelector('.long-video__icon-bell-wrap');
+                    var ofw = notifBtn.querySelector('.long-video__icon-bell-off-wrap');
+                    if (ow) ow.style.display = on ? '' : 'none';
+                    if (ofw) ofw.style.display = on ? 'none' : '';
+                }
+            });
+            }
+            var toggleAutoplay = document.getElementById('toggle-autoplay');
+            if (toggleAutoplay) {
+                var apOn = localStorage.getItem('nokAutoplay') !== '0';
+                toggleAutoplay.classList.toggle('settings-toggle--on', apOn);
+                toggleAutoplay.addEventListener('click', function() {
+                this.classList.toggle('settings-toggle--on');
+                    localStorage.setItem('nokAutoplay', this.classList.contains('settings-toggle--on') ? '1' : '0');
+            });
+            }
+
+            // Chat overlay: handled by nok-chat-overlay.js (same card on all pages)
+            function updateChatView() {
+                var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+                var mobileVerified = localStorage.getItem('nokMobileVerified') === 'yes';
+                var chatLogin = document.getElementById('chat-login'), chatContent = document.getElementById('chat-content');
+                var chatStepLogin = document.getElementById('chat-step-login'), chatStepVerify = document.getElementById('chat-step-verify');
+                if (chatLogin) chatLogin.style.display = (!isLoggedIn || !mobileVerified) ? 'flex' : 'none';
+                if (chatContent) chatContent.style.display = (isLoggedIn && mobileVerified) ? 'flex' : 'none';
+                if (chatStepLogin) chatStepLogin.style.display = !isLoggedIn ? 'block' : 'none';
+                if (chatStepVerify) { chatStepVerify.style.display = (isLoggedIn && !mobileVerified) ? 'block' : 'none'; if (isLoggedIn && !mobileVerified) { document.getElementById('chat-verify-form').style.display = ''; document.getElementById('chat-otp-step').style.display = 'none'; document.querySelectorAll('.chat-login__otp-digit').forEach(function(d) { d.value = ''; }); } }
+            }
+            updateChatView();
+            document.getElementById('chat-verify-form').addEventListener('submit', function(e) { e.preventDefault(); var p = document.getElementById('chat-verify-phone').value.trim(); if (p) { this.style.display = 'none'; document.getElementById('chat-otp-step').style.display = 'block'; } });
+            document.getElementById('chat-verify-otp').addEventListener('click', function() { var d = document.querySelectorAll('.chat-login__otp-digit'); var code = Array.from(d).map(function(x) { return x.value; }).join(''); if (code.length === 6) { localStorage.setItem('nokMobileVerified', 'yes'); updateChatView(); } });
+            var od = document.querySelectorAll('.chat-login__otp-digit'); od.forEach(function(inp, i) { inp.addEventListener('input', function() { if (this.value.length === 1 && i < od.length - 1) od[i + 1].focus(); }); inp.addEventListener('keydown', function(e) { if (e.key === 'Backspace' && !this.value && i > 0) od[i - 1].focus(); }); });
+            document.querySelectorAll('.chat-overlay__card a[href="#"]').forEach(function(a) { a.addEventListener('click', function(e) { e.preventDefault(); }); });
+
+            document.querySelectorAll('.settings-item[href="#"]').forEach(function(a) {
+                a.addEventListener('click', function(e) { e.preventDefault(); });
+            });
+            var blockedEl = document.getElementById('settings-blocked-accounts');
+            if (blockedEl) blockedEl.addEventListener('click', function(e) { e.preventDefault(); alert(translateSettingText('settings.alertBlockedAccounts', 'Blocked accounts list – coming soon.')); });
+        })();
+    </script>
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

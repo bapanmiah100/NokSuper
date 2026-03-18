@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Email Security - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .email-page { font-family: 'Outfit', -apple-system, sans-serif; min-height: 100vh; padding: 24px 16px 100px; padding-top: calc(24px + 56px); position: relative; z-index: 1; max-width: 780px; margin: 0 auto; }
+        .email-hero { margin-bottom: 24px; }
+        .email-title { margin: 0 0 6px; font-size: 1.8rem; font-weight: 800; color: #fff; letter-spacing: -0.02em; }
+        .email-subtitle { margin: 0; color: rgba(200,210,255,0.72); font-size: 0.95rem; line-height: 1.5; }
+        .email-grid { display: grid; gap: 20px; }
+        .email-card { background: rgba(15,22,41,0.62); backdrop-filter: blur(18px); border: 1px solid rgba(100,130,255,0.16); border-radius: 22px; padding: 22px; box-shadow: 0 10px 36px rgba(0,0,0,0.2); }
+        .email-card--highlight { background: linear-gradient(135deg, rgba(79,109,216,0.18), rgba(99,102,241,0.12)); }
+        .email-card__title { margin: 0 0 8px; font-size: 1.05rem; font-weight: 700; color: #fff; }
+        .email-card__text { margin: 0; color: rgba(200,210,255,0.72); line-height: 1.6; font-size: 0.92rem; }
+        .email-form { display: grid; gap: 16px; }
+        .email-field { display: grid; gap: 8px; }
+        .email-label { font-size: 0.88rem; font-weight: 600; color: rgba(220,228,255,0.92); }
+        .email-input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(100,130,255,0.22);
+            background: rgba(8,12,24,0.48);
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+        .email-input::placeholder { color: rgba(200,210,255,0.45); }
+        .email-input:focus { outline: none; border-color: rgba(99,102,241,0.65); box-shadow: 0 0 0 3px rgba(99,102,241,0.18); background: rgba(8,12,24,0.7); }
+        .email-inline-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .email-btn {
+            border: none;
+            border-radius: 14px;
+            padding: 12px 18px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+        }
+        .email-btn:hover { transform: translateY(-1px); }
+        .email-btn--primary { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; box-shadow: 0 10px 24px rgba(99,102,241,0.28); }
+        .email-btn--secondary { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #fff; }
+        .email-otp-box { display: none; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+        .email-otp-box.is-visible { display: grid; }
+        .email-otp-digit {
+            width: 100%;
+            min-width: 0;
+            padding: 12px 0;
+            border-radius: 14px;
+            border: 1px solid rgba(100,130,255,0.22);
+            background: rgba(8,12,24,0.48);
+            color: #fff;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: inherit;
+        }
+        .email-otp-digit:focus { outline: none; border-color: rgba(99,102,241,0.65); box-shadow: 0 0 0 3px rgba(99,102,241,0.18); }
+        .email-status { min-height: 20px; font-size: 0.9rem; font-weight: 600; }
+        .email-status.is-error { color: #fca5a5; }
+        .email-status.is-success { color: #86efac; }
+        .email-option { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-top: 1px solid rgba(100,130,255,0.12); }
+        .email-option:first-child { border-top: none; padding-top: 0; }
+        .email-option__title { display: block; font-size: 0.95rem; font-weight: 600; color: #fff; }
+        .email-option__hint { display: block; margin-top: 4px; font-size: 0.84rem; color: rgba(200,210,255,0.62); }
+        .email-switch { width: 52px; height: 30px; border-radius: 999px; border: none; background: rgba(100,130,255,0.26); position: relative; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
+        .email-switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+        .email-switch.is-on { background: linear-gradient(135deg, #3b82f6, #6366f1); }
+        .email-switch.is-on::after { transform: translateX(22px); }
+        .email-meta { display: grid; gap: 12px; }
+        .email-meta__row { display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+        .email-meta__label { color: rgba(200,210,255,0.6); font-size: 0.84rem; }
+        .email-meta__value { color: #fff; font-size: 0.9rem; font-weight: 600; text-align: right; }
+        .email-tip-list { margin: 0; padding-left: 18px; color: rgba(200,210,255,0.72); display: grid; gap: 8px; line-height: 1.5; font-size: 0.9rem; }
+        html[data-theme="light"] .email-title { color: #1a1f38; }
+        html[data-theme="light"] .email-subtitle { color: #2d3a5c; }
+        html[data-theme="light"] .email-card { background: rgba(255,255,255,0.94); border-color: rgba(79,109,216,0.18); box-shadow: 0 12px 34px rgba(79,70,229,0.1); }
+        html[data-theme="light"] .email-card--highlight { background: linear-gradient(135deg, rgba(79,109,216,0.14), rgba(99,102,241,0.1)); }
+        html[data-theme="light"] .email-card__title,
+        html[data-theme="light"] .email-option__title,
+        html[data-theme="light"] .email-meta__value { color: #1a1f38; }
+        html[data-theme="light"] .email-card__text,
+        html[data-theme="light"] .email-option__hint,
+        html[data-theme="light"] .email-meta__label,
+        html[data-theme="light"] .email-tip-list { color: #2d3a5c; }
+        html[data-theme="light"] .email-input,
+        html[data-theme="light"] .email-otp-digit { background: rgba(255,255,255,0.98); color: #1a1f38; border-color: rgba(79,109,216,0.28); }
+        html[data-theme="light"] .email-input::placeholder { color: #94a3b8; }
+        html[data-theme="light"] .email-btn--secondary { background: rgba(79,109,216,0.1); border-color: rgba(79,109,216,0.25); color: #1e3a8a; }
+        @media (max-width: 620px) {
+            .email-otp-box { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (min-width: 860px) {
+            .email-grid { grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr); align-items: start; }
+        }
+    </style>
+</head>
+<body class="home-body has-bottom-nav">
+    <div class="home-layout">
+    <div class="bg"></div>
+    <header class="long-video__header">
+        <div class="long-video__header-left">
+            <a href="account-settings.html" class="long-video__back" aria-label="Back" title="Back to Account settings">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </a>
+            <button type="button" class="long-video__menu" id="header-menu-btn" aria-label="Menu" title="Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <a href="home.html" class="long-video__logo">
+                <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+            </a>
+        </div>
+        <div class="long-video__search">
+            <form class="home-search" action="search.html" method="get" role="search">
+                <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input type="text" class="home-search__input" name="q" placeholder="Search" aria-label="Search" data-i18n-placeholder="common.search" data-i18n-aria-label="common.search">
+                <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+            </form>
+        </div>
+        <div class="long-video__header-right">
+            <a href="settings.html" class="long-video__profile-wrap" style="text-decoration:none;color:inherit;" title="Settings">
+                <div class="long-video__avatar" id="email-avatar">?</div>
+            </a>
+        </div>
+    </header>
+    <div class="header-drawer-backdrop" id="header-drawer-backdrop" aria-hidden="true"></div>
+    <aside class="header-drawer" id="header-drawer" aria-label="Main menu" aria-hidden="true">
+        <div class="header-drawer__head">
+            <span class="header-drawer__title" data-i18n="common.menu">Menu</span>
+            <button type="button" class="header-drawer__close" id="header-drawer-close" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <nav class="header-drawer__nav">
+            <a href="settings.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span data-i18n="common.settings">Settings</span></a>
+        </nav>
+    </aside>
+
+    <main class="email-page">
+        <div class="email-hero">
+            <h1 class="email-title">Advanced Email Security</h1>
+            <p class="email-subtitle">Add or change your email with verification code confirmation, account password check and extra security delivery preferences.</p>
+        </div>
+
+        <div class="email-grid">
+            <section class="email-card email-card--highlight">
+                <h2 class="email-card__title">Email Setup</h2>
+                <p class="email-card__text">Your email is used for sign-in, password recovery and account notifications. Keep it verified and accessible.</p>
+
+                <form class="email-form" id="email-settings-form">
+                    <div class="email-field">
+                        <label class="email-label" for="current-email">Current email</label>
+                        <input id="current-email" class="email-input" type="email" placeholder="Current account email" readonly>
+                    </div>
+
+                    <div class="email-field">
+                        <label class="email-label" for="new-email">New email</label>
+                        <input id="new-email" class="email-input" type="email" placeholder="Enter new email address" autocomplete="email">
+                    </div>
+
+                    <div class="email-field">
+                        <label class="email-label" for="confirm-email">Confirm new email</label>
+                        <input id="confirm-email" class="email-input" type="email" placeholder="Re-enter new email address" autocomplete="email">
+                    </div>
+
+                    <div class="email-field">
+                        <label class="email-label" for="email-current-password">Current password</label>
+                        <input id="email-current-password" class="email-input" type="password" placeholder="Enter current password" autocomplete="current-password">
+                    </div>
+
+                    <div class="email-inline-actions">
+                        <button type="button" class="email-btn email-btn--secondary" id="email-send-code-btn">Send verification code</button>
+                        <button type="button" class="email-btn email-btn--secondary" id="email-clear-btn">Clear</button>
+                    </div>
+
+                    <div class="email-field">
+                        <label class="email-label">Verification code</label>
+                        <div class="email-otp-box" id="email-otp-box">
+                            <input type="text" class="email-otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="email-otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="email-otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="email-otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="email-otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" class="email-otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
+                    </div>
+
+                    <div class="email-card" style="padding:16px 18px;">
+                        <div class="email-option">
+                            <div>
+                                <span class="email-option__title">Use as primary sign-in email</span>
+                                <span class="email-option__hint">Replace your current email for future logins</span>
+                            </div>
+                            <button type="button" class="email-switch is-on" id="email-primary-toggle" aria-label="Toggle primary email"></button>
+                        </div>
+                        <div class="email-option">
+                            <div>
+                                <span class="email-option__title">Receive security alerts by email</span>
+                                <span class="email-option__hint">Login alerts, password changes and recovery notices</span>
+                            </div>
+                            <button type="button" class="email-switch is-on" id="email-alert-toggle" aria-label="Toggle email alerts"></button>
+                        </div>
+                        <div class="email-option">
+                            <div>
+                                <span class="email-option__title">Use email for account recovery</span>
+                                <span class="email-option__hint">Send recovery links and verification instructions here</span>
+                            </div>
+                            <button type="button" class="email-switch is-on" id="email-recovery-toggle" aria-label="Toggle email recovery"></button>
+                        </div>
+                    </div>
+
+                    <div class="email-status" id="email-status"></div>
+
+                    <div class="email-inline-actions">
+                        <button type="submit" class="email-btn email-btn--primary">Verify & Save email</button>
+                        <a href="account-settings.html" class="email-btn email-btn--secondary" style="text-decoration:none;">Back to account settings</a>
+                    </div>
+                </form>
+            </section>
+
+            <aside class="email-card">
+                <h2 class="email-card__title">Email Security Summary</h2>
+                <div class="email-meta">
+                    <div class="email-meta__row">
+                        <span class="email-meta__label">Current email</span>
+                        <span class="email-meta__value" id="email-current-value">Not added</span>
+                    </div>
+                    <div class="email-meta__row">
+                        <span class="email-meta__label">Verification status</span>
+                        <span class="email-meta__value" id="email-verified-value">Not verified</span>
+                    </div>
+                    <div class="email-meta__row">
+                        <span class="email-meta__label">Last update</span>
+                        <span class="email-meta__value" id="email-updated-value">Never</span>
+                    </div>
+                </div>
+
+                <div style="height:16px"></div>
+
+                <h3 class="email-card__title" style="font-size:0.98rem;">Advanced tips</h3>
+                <ul class="email-tip-list">
+                    <li>Use an email you personally control and check regularly for alerts and recovery links.</li>
+                    <li>Always verify your new email before depending on it for password reset or login security.</li>
+                    <li>Keep your current password ready when changing core sign-in details like email.</li>
+                    <li>If you use phone login too, your email can still be saved as a recovery and notification channel.</li>
+                </ul>
+            </aside>
+        </div>
+    </main>
+    </div>
+
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span data-i18n="common.home">Home</span></a>
+        <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span data-i18n="common.shorts">Shorts</span></a>
+        <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span data-i18n="common.upload">Upload</span></a>
+        <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+        <a href="settings.html" class="home-bottom-nav__item home-bottom-nav__item--active"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span data-i18n="common.settings">Settings</span></a>
+    </nav>
+
+    <div class="chat-overlay" id="chat-overlay" aria-hidden="true">
+        <div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div>
+        <div class="chat-overlay__card">
+            <div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div>
+            <header class="nok-chat__header">
+                <a href="home.html" class="nok-chat__brand">
+                    <span class="nok-chat__logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                    <span class="nok-chat__logo-text">NOK Chat</span>
+                </a>
+                <div class="nok-chat__actions">
+                    <button type="button" class="nok-chat__action" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+                    <button type="button" class="nok-chat__action nok-chat__action--badge" aria-label="Notifications" data-badge="1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                    <button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize" title="Full screen"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><svg class="chat-resize-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                    <div class="nok-chat__menu-wrap">
+                        <button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+                        <div class="nok-chat__menu" id="chat-menu">
+                            <button type="button" class="nok-chat__menu-item">New chat</button>
+                            <button type="button" class="nok-chat__menu-item">New group</button>
+                            <a href="settings.html" class="nok-chat__menu-item">Settings</a>
+                            <button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="chat-login" id="chat-login">
+                <div class="chat-login__inner chat-login__step-login" id="chat-step-login">
+                    <h3 class="chat-login__title">Log in to Chat</h3>
+                    <p class="chat-login__sub">Sign in to start chatting</p>
+                    <a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a>
+                    <p class="chat-login__legal">Don't have an account? <a href="signup.html" class="chat-login__link">Sign Up</a></p>
+                </div>
+                <div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none">
+                    <h3 class="chat-login__title">Verify Mobile Number</h3>
+                    <p class="chat-login__sub">Verify your mobile number to use Chat</p>
+                    <form class="chat-login__form" id="chat-verify-form">
+                        <div class="chat-login__phone-row">
+                            <select id="chat-verify-country" class="chat-login__select"><option value="880">+880 BD</option><option value="91">+91 IN</option><option value="1">+1 US</option><option value="44">+44 UK</option></select>
+                            <input type="tel" id="chat-verify-phone" class="chat-login__input chat-login__input--phone" placeholder="Mobile number" required>
+                        </div>
+                        <button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button>
+                    </form>
+                    <div id="chat-otp-step" style="display:none">
+                        <p class="chat-login__sub" style="margin-bottom:12px">Enter 6-digit code sent to your number</p>
+                        <div class="chat-login__otp-inputs">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
+                        <button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-content" id="chat-content">
+                <nav class="nok-chat__tabs">
+                    <button type="button" class="nok-chat__tab">Status</button>
+                    <button type="button" class="nok-chat__tab">Groups</button>
+                    <button type="button" class="nok-chat__tab nok-chat__tab--active">Updates</button>
+                    <button type="button" class="nok-chat__tab">Contacts</button>
+                </nav>
+                <a href="#" class="nok-chat__archived"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg><span>Archived Chats</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+                <div class="nok-chat__list">
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar nok-chat__avatar--verified">AR</span><div class="nok-chat__info"><span class="nok-chat__name">Amella Roy</span><span class="nok-chat__preview">Typing...</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--blue"></span>1h ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AN</span><div class="nok-chat__info"><span class="nok-chat__name">Ayesha Noor</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">11:36 AM</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">SD</span><div class="nok-chat__info"><span class="nok-chat__name">Sandeep Das</span><span class="nok-chat__preview">Catch you later!</span></div><span class="nok-chat__meta">20 min ago</span></a>
+                </div>
+            </div>
+            <div class="chat-overlay__resize-handle" id="chat-resize-handle" aria-label="Resize"></div>
+            <nav class="nok-chat__bottom">
+                <a href="home.html" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+                <a href="#" class="nok-chat__bottom-item nok-chat__bottom-item--active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Chat</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Call</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="3"/><path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855"/></svg><span>You</span></a>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            var USERS_KEY = 'nokUsers';
+            var EMAIL_UPDATED_KEY = 'nokEmailLastUpdatedAt';
+            var codeSent = false;
+
+            function getUsers() {
+                try { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); } catch (_) { return []; }
+            }
+            function saveUsers(users) {
+                localStorage.setItem(USERS_KEY, JSON.stringify(users));
+            }
+            function isEmailValue(value) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((value || '').trim());
+            }
+            function getAuthKey() {
+                return sessionStorage.getItem('nokUserEmail') || localStorage.getItem('nokUserEmail') || '';
+            }
+            function getActivePhoneKey() {
+                return localStorage.getItem('nokPhoneKey') || sessionStorage.getItem('nokPhoneKey') || '';
+            }
+            function getActiveUser() {
+                var authKey = getAuthKey().toLowerCase();
+                var phoneKey = getActivePhoneKey().toLowerCase();
+                return getUsers().find(function(user) {
+                    return (authKey && user.email && user.email.toLowerCase() === authKey) ||
+                        (authKey && user.phoneKey && user.phoneKey.toLowerCase() === authKey) ||
+                        (phoneKey && user.phoneKey && user.phoneKey.toLowerCase() === phoneKey);
+                }) || null;
+            }
+            function getPermanentEmail() {
+                var user = getActiveUser();
+                if (user && user.email) return user.email;
+                var accountEmail = (localStorage.getItem('nokAccountEmail') || '').trim();
+                if (isEmailValue(accountEmail)) return accountEmail;
+                var stored = localStorage.getItem('nokUserEmail') || sessionStorage.getItem('nokUserEmail') || '';
+                return isEmailValue(stored) ? stored : '';
+            }
+            function setStatus(message, type) {
+                var status = document.getElementById('email-status');
+                status.textContent = message || '';
+                status.className = 'email-status' + (type ? ' is-' + type : '');
+            }
+            function formatDate(value) {
+                if (!value) return 'Never';
+                var date = new Date(value);
+                if (isNaN(date.getTime())) return 'Never';
+                return date.toLocaleString();
+            }
+            function updateSummary() {
+                var currentEmail = getPermanentEmail() || 'Not added';
+                document.getElementById('email-current-value').textContent = currentEmail;
+                document.getElementById('email-verified-value').textContent = currentEmail !== 'Not added' ? 'Verified' : 'Not verified';
+                document.getElementById('email-updated-value').textContent = formatDate(localStorage.getItem(EMAIL_UPDATED_KEY));
+                document.getElementById('current-email').value = currentEmail === 'Not added' ? '' : currentEmail;
+            }
+            function updateAvatar() {
+                var avatar = document.getElementById('email-avatar');
+                var name = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You';
+                avatar.textContent = (name && name.charAt(0)) ? name.charAt(0).toUpperCase() : '?';
+            }
+            function bindSwitch(id, storageKey) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var isOn = localStorage.getItem(storageKey) !== '0';
+                el.classList.toggle('is-on', isOn);
+                el.addEventListener('click', function() {
+                    this.classList.toggle('is-on');
+                    localStorage.setItem(storageKey, this.classList.contains('is-on') ? '1' : '0');
+                });
+            }
+            function bindOtpInputs() {
+                var digits = document.querySelectorAll('.email-otp-digit');
+                digits.forEach(function(input, index) {
+                    input.addEventListener('input', function() {
+                        if (this.value.length === 1 && index < digits.length - 1) digits[index + 1].focus();
+                    });
+                    input.addEventListener('keydown', function(e) {
+                        if (e.key === 'Backspace' && !this.value && index > 0) digits[index - 1].focus();
+                    });
+                });
+            }
+            function bindChatView() {
+                function updateChatView() {
+                    var loggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+                    var mobileVerified = localStorage.getItem('nokMobileVerified') === 'yes';
+                    var chatLogin = document.getElementById('chat-login');
+                    var chatContent = document.getElementById('chat-content');
+                    var chatStepLogin = document.getElementById('chat-step-login');
+                    var chatStepVerify = document.getElementById('chat-step-verify');
+                    if (chatLogin) chatLogin.style.display = (!loggedIn || !mobileVerified) ? 'flex' : 'none';
+                    if (chatContent) chatContent.style.display = (loggedIn && mobileVerified) ? 'flex' : 'none';
+                    if (chatStepLogin) chatStepLogin.style.display = !loggedIn ? 'block' : 'none';
+                    if (chatStepVerify) {
+                        chatStepVerify.style.display = (loggedIn && !mobileVerified) ? 'block' : 'none';
+                        if (loggedIn && !mobileVerified) {
+                            document.getElementById('chat-verify-form').style.display = '';
+                            document.getElementById('chat-otp-step').style.display = 'none';
+                            document.querySelectorAll('.chat-login__otp-digit').forEach(function(d) { d.value = ''; });
+                        }
+                    }
+                }
+                updateChatView();
+                document.getElementById('chat-verify-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var phoneValue = document.getElementById('chat-verify-phone').value.trim();
+                    if (phoneValue) {
+                        this.style.display = 'none';
+                        document.getElementById('chat-otp-step').style.display = 'block';
+                    }
+                });
+                document.getElementById('chat-verify-otp').addEventListener('click', function() {
+                    var digits = document.querySelectorAll('.chat-login__otp-digit');
+                    var code = Array.from(digits).map(function(x) { return x.value; }).join('');
+                    if (code.length === 6) {
+                        localStorage.setItem('nokMobileVerified', 'yes');
+                        updateChatView();
+                    }
+                });
+                var otpDigits = document.querySelectorAll('.chat-login__otp-digit');
+                otpDigits.forEach(function(input, index) {
+                    input.addEventListener('input', function() {
+                        if (this.value.length === 1 && index < otpDigits.length - 1) otpDigits[index + 1].focus();
+                    });
+                    input.addEventListener('keydown', function(e) {
+                        if (e.key === 'Backspace' && !this.value && index > 0) otpDigits[index - 1].focus();
+                    });
+                });
+                document.querySelectorAll('.chat-overlay__card a[href="#"]').forEach(function(link) {
+                    link.addEventListener('click', function(e) { e.preventDefault(); });
+                });
+            }
+
+            updateAvatar();
+            updateSummary();
+            bindOtpInputs();
+            bindSwitch('email-primary-toggle', 'nokEmailPrimary');
+            bindSwitch('email-alert-toggle', 'nokEmailSecurityAlerts');
+            bindSwitch('email-recovery-toggle', 'nokEmailRecovery');
+            bindChatView();
+
+            document.getElementById('email-send-code-btn').addEventListener('click', function() {
+                var newEmail = (document.getElementById('new-email').value || '').trim().toLowerCase();
+                var confirmEmail = (document.getElementById('confirm-email').value || '').trim().toLowerCase();
+                if (!newEmail) {
+                    setStatus('Enter a new email first.', 'error');
+                    return;
+                }
+                if (newEmail !== confirmEmail) {
+                    setStatus('New email and confirm email must match before sending code.', 'error');
+                    return;
+                }
+                codeSent = true;
+                document.getElementById('email-otp-box').classList.add('is-visible');
+                document.querySelectorAll('.email-otp-digit').forEach(function(digit) { digit.value = ''; });
+                setStatus('Verification code sent to ' + newEmail + '. Use any 6-digit code for demo verification.', 'success');
+                document.querySelector('.email-otp-digit').focus();
+            });
+
+            document.getElementById('email-clear-btn').addEventListener('click', function() {
+                document.getElementById('new-email').value = '';
+                document.getElementById('confirm-email').value = '';
+                document.getElementById('email-current-password').value = '';
+                document.getElementById('email-otp-box').classList.remove('is-visible');
+                document.querySelectorAll('.email-otp-digit').forEach(function(digit) { digit.value = ''; });
+                codeSent = false;
+                setStatus('', '');
+            });
+
+            document.getElementById('email-settings-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                setStatus('', '');
+                var user = getActiveUser();
+                if (!user) {
+                    setStatus('No signed-in account found. Please log in again.', 'error');
+                    return;
+                }
+
+                var currentEmail = getPermanentEmail().toLowerCase();
+                var newEmail = (document.getElementById('new-email').value || '').trim().toLowerCase();
+                var confirmEmail = (document.getElementById('confirm-email').value || '').trim().toLowerCase();
+                var currentPassword = document.getElementById('email-current-password').value || '';
+                if (!newEmail) {
+                    setStatus('Enter the new email address first.', 'error');
+                    return;
+                }
+                if (newEmail === currentEmail) {
+                    setStatus('New email must be different from the current email.', 'error');
+                    return;
+                }
+                if (newEmail !== confirmEmail) {
+                    setStatus('New email and confirm email do not match.', 'error');
+                    return;
+                }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+                    setStatus('Enter a valid email address.', 'error');
+                    return;
+                }
+                if (!currentPassword) {
+                    setStatus('Enter your current password to continue.', 'error');
+                    return;
+                }
+                if ((user.password || '') !== currentPassword) {
+                    setStatus('Current password is incorrect.', 'error');
+                    return;
+                }
+                if (!codeSent) {
+                    setStatus('Send a verification code first.', 'error');
+                    return;
+                }
+                var code = Array.from(document.querySelectorAll('.email-otp-digit')).map(function(digit) { return digit.value; }).join('');
+                if (code.length !== 6) {
+                    setStatus('Enter the full 6-digit verification code.', 'error');
+                    return;
+                }
+
+                var users = getUsers();
+                var duplicate = users.find(function(item) {
+                    return item !== user && item.email && item.email.toLowerCase() === newEmail;
+                });
+                if (duplicate) {
+                    setStatus('This email is already in use by another account.', 'error');
+                    return;
+                }
+
+                var index = users.findIndex(function(item) {
+                    return currentEmail && item.email && item.email.toLowerCase() === currentEmail;
+                });
+                if (index === -1 && user.phoneKey) {
+                    index = users.findIndex(function(item) {
+                        return item.phoneKey && item.phoneKey.toLowerCase() === user.phoneKey.toLowerCase();
+                    });
+                }
+                if (index === -1) {
+                    setStatus('Could not update email. Try again.', 'error');
+                    return;
+                }
+
+                users[index].email = newEmail;
+                users[index].emailUpdatedAt = new Date().toISOString();
+                saveUsers(users);
+
+                sessionStorage.setItem('nokUserEmail', newEmail);
+                localStorage.setItem('nokUserEmail', newEmail);
+                localStorage.setItem('nokAccountEmail', newEmail);
+                localStorage.setItem(EMAIL_UPDATED_KEY, users[index].emailUpdatedAt);
+
+                codeSent = false;
+                document.getElementById('email-otp-box').classList.remove('is-visible');
+                setStatus('Email verified and updated successfully.', 'success');
+                updateSummary();
+            });
+        })();
+    </script>
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

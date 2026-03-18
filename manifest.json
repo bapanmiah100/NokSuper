@@ -1,0 +1,25 @@
+{
+  "name": "NOK Super",
+  "short_name": "NOK Super",
+  "description": "Chat, Call, Watch & Share - All in one platform",
+  "start_url": "/style.css/index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0f1e",
+  "theme_color": "#6366f1",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/noksuper.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/noksuper.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

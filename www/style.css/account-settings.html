@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Account settings - NOK Super</title>
+    <script src="nok-studio-auth.js"></script>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .settings-page { font-family: 'Outfit', -apple-system, sans-serif; min-height: 100vh; padding: 24px 16px 100px; padding-top: calc(24px + 56px); position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+        .settings-hero { margin-bottom: 28px; }
+        .settings-title { font-size: 1.75rem; font-weight: 800; color: #fff; margin: 0 0 6px 0; letter-spacing: -0.02em; }
+        .settings-subtitle { font-size: 0.9rem; color: rgba(200,210,255,0.6); margin: 0; }
+        .settings-section { margin-bottom: 28px; }
+        .settings-section__title { font-size: 0.75rem; font-weight: 700; color: rgba(200,210,255,0.55); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; padding-left: 4px; }
+        .settings-card { background: rgba(15,22,41,0.55); backdrop-filter: blur(20px); border: 1px solid rgba(100,130,255,0.12); border-radius: 18px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
+        .settings-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid rgba(100,130,255,0.06); text-decoration: none; color: inherit; transition: background 0.2s; }
+        .settings-item:last-child { border-bottom: none; }
+        .settings-item:hover { background: rgba(255,255,255,0.05); }
+        .settings-item__left { display: flex; align-items: center; gap: 14px; }
+        .settings-item__icon { width: 42px; height: 42px; border-radius: 12px; background: rgba(99,102,241,0.18); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .settings-item__icon svg { width: 20px; height: 20px; color: var(--accent-light); }
+        .settings-item__icon.settings-item__icon--green { background: rgba(34,197,94,0.2); }
+        .settings-item__icon.settings-item__icon--green svg { color: #4ade80; }
+        .settings-item__icon.settings-item__icon--amber { background: rgba(245,158,11,0.2); }
+        .settings-item__icon.settings-item__icon--amber svg { color: #fbbf24; }
+        .settings-item__label { font-size: 0.95rem; font-weight: 600; color: rgba(255,255,255,0.95); }
+        .settings-item__hint { font-size: 0.8rem; color: rgba(200,210,255,0.55); margin-top: 2px; }
+        .settings-item__arrow { color: rgba(200,210,255,0.4); flex-shrink: 0; }
+        .settings-item__value { font-size: 0.9rem; color: rgba(200,210,255,0.8); margin-right: 8px; }
+        .settings-toggle { width: 50px; height: 28px; border-radius: 14px; background: rgba(100,130,255,0.3); border: none; cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0; }
+        .settings-toggle.settings-toggle--on { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); }
+        .settings-toggle::after { content: ''; position: absolute; width: 24px; height: 24px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+        .settings-toggle.settings-toggle--on::after { transform: translateX(22px); }
+        .settings-btn-secondary { padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+        .settings-btn-secondary:hover { background: rgba(255,255,255,0.15); }
+        html[data-theme="light"] .settings-item__icon { background: rgba(79,109,216,0.2); }
+        html[data-theme="light"] .settings-item__icon svg { color: #4338ca; }
+        html[data-theme="light"] .settings-item__icon.settings-item__icon--green svg { color: #15803d; }
+        html[data-theme="light"] .settings-item__icon.settings-item__icon--amber svg { color: #b45309; }
+        html[data-theme="light"] .settings-title { color: #1a1f38; }
+        html[data-theme="light"] .settings-subtitle { color: #2d3a5c; }
+        html[data-theme="light"] .settings-item__label { color: #1a1f38; }
+        html[data-theme="light"] .settings-item__hint { color: #2d3a5c; }
+        html[data-theme="light"] .settings-item__value { color: #4338ca; }
+        .account-settings-login { text-align: center; padding: 32px 24px; }
+        .account-settings-login p { color: rgba(200,210,255,0.8); margin: 0 0 16px; font-size: 0.95rem; }
+        .account-settings-login a { color: var(--accent-light); font-weight: 600; text-decoration: none; }
+        #account-settings-content.auth-hidden { display: none !important; }
+        #account-settings-login.auth-hidden { display: none !important; }
+    </style>
+</head>
+<body class="home-body has-bottom-nav">
+    <div class="home-layout">
+    <div class="bg"></div>
+    <header class="long-video__header">
+        <div class="long-video__header-left">
+            <a href="settings.html" class="long-video__back" aria-label="Back" title="Back to Settings">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </a>
+            <button type="button" class="long-video__menu" id="header-menu-btn" aria-label="Menu" title="Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <a href="home.html" class="long-video__logo">
+                <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+            </a>
+        </div>
+        <div class="long-video__search">
+            <form class="home-search" action="search.html" method="get" role="search">
+                <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input type="text" class="home-search__input" name="q" placeholder="Search" aria-label="Search" data-i18n-placeholder="common.search" data-i18n-aria-label="common.search">
+                <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+            </form>
+        </div>
+        <div class="long-video__header-right">
+            <a href="settings.html" class="long-video__profile-wrap" style="text-decoration:none;color:inherit;" title="Settings">
+                <div class="long-video__avatar" id="account-avatar">?</div>
+            </a>
+        </div>
+    </header>
+    <div class="header-drawer-backdrop" id="header-drawer-backdrop" aria-hidden="true"></div>
+    <aside class="header-drawer" id="header-drawer" aria-label="Main menu" aria-hidden="true">
+        <div class="header-drawer__head">
+            <span class="header-drawer__title" data-i18n="common.menu">Menu</span>
+            <button type="button" class="header-drawer__close" id="header-drawer-close" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <nav class="header-drawer__nav">
+            <a href="settings.html" class="header-drawer__item"><span class="header-drawer__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span data-i18n="common.settings">Settings</span></a>
+        </nav>
+    </aside>
+
+    <main class="settings-page" style="position:relative;z-index:1;">
+        <div class="settings-hero">
+            <h1 class="settings-title" data-i18n="account.title">Account settings</h1>
+            <p class="settings-subtitle" data-i18n="account.subtitle">Manage email, password & security</p>
+        </div>
+
+        <div id="account-settings-login" class="settings-card account-settings-login auth-hidden">
+            <p data-i18n="account.loginPrompt">Log in to manage your account, email, password and security.</p>
+            <a href="login.html?next=account-settings.html" data-i18n="common.login">Log In</a>
+        </div>
+
+        <div id="account-settings-content">
+            <section class="settings-section">
+                <h2 class="settings-section__title" data-i18n="account.signInInfo">Sign-in info</h2>
+                <div class="settings-card">
+                    <a href="email-settings.html" class="settings-item">
+                        <div class="settings-item__left">
+                            <div class="settings-item__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            </div>
+                            <div>
+                                <span class="settings-item__label" data-i18n="account.email">Email</span>
+                                <p class="settings-item__hint" id="account-email-display" data-i18n="account.notSet">Not set</p>
+                            </div>
+                        </div>
+                        <span class="settings-btn-secondary" id="account-change-email-btn" data-i18n="common.change">Change</span>
+                    </a>
+                    <a href="password-change.html" class="settings-item">
+                        <div class="settings-item__left">
+                            <div class="settings-item__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            </div>
+                            <div>
+                                <span class="settings-item__label" data-i18n="account.password">Password</span>
+                                <p class="settings-item__hint" data-i18n="account.passwordHint">Change or reset your password</p>
+                            </div>
+                        </div>
+                        <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                    <a href="phone-settings.html" class="settings-item">
+                        <div class="settings-item__left">
+                            <div class="settings-item__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            </div>
+                            <div>
+                                <span class="settings-item__label" data-i18n="account.phone">Phone number</span>
+                                <p class="settings-item__hint" id="account-phone-display" data-i18n="account.phoneHint">Add phone for recovery & security</p>
+                            </div>
+                        </div>
+                        <span class="settings-btn-secondary" id="account-phone-btn" data-i18n="common.add">Add</span>
+                    </a>
+                </div>
+            </section>
+
+            <section class="settings-section">
+                <h2 class="settings-section__title" data-i18n="account.security">Security</h2>
+                <div class="settings-card">
+                    <div class="settings-item">
+                        <div class="settings-item__left">
+                            <div class="settings-item__icon settings-item__icon--green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            </div>
+                            <div>
+                                <span class="settings-item__label" data-i18n="account.twoFactor">Two-factor authentication</span>
+                                <p class="settings-item__hint" data-i18n="account.twoFactorHint">Extra step when signing in</p>
+                            </div>
+                        </div>
+                        <button type="button" class="settings-toggle" id="account-toggle-2fa" aria-label="Toggle two-factor"></button>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-item__left">
+                            <div class="settings-item__icon settings-item__icon--amber">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            </div>
+                            <div>
+                                <span class="settings-item__label" data-i18n="account.activeSessions">Active sessions</span>
+                                <p class="settings-item__hint" data-i18n="account.activeSessionsHint">Devices where you're signed in</p>
+                            </div>
+                        </div>
+                        <button type="button" class="settings-btn-secondary" id="account-sessions-btn" data-i18n="common.manage">Manage</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="settings-section">
+                <h2 class="settings-section__title" data-i18n="account.account">Account</h2>
+                <div class="settings-card">
+                    <a href="profile-setup.html" class="settings-item">
+                        <div class="settings-item__left">
+                            <div class="settings-item__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            </div>
+                            <div>
+                                <span class="settings-item__label" data-i18n="account.personalInfo">Personal info</span>
+                                <p class="settings-item__hint" data-i18n="account.personalInfoHint">Name, photo, bio</p>
+                            </div>
+                        </div>
+                        <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                    <a href="channel.html" class="settings-item">
+                        <div class="settings-item__left">
+                            <div class="settings-item__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            </div>
+                            <div>
+                                <span class="settings-item__label" data-i18n="settings.channel">Channel</span>
+                                <p class="settings-item__hint" data-i18n="settings.channelHint">Manage your channel</p>
+                            </div>
+                        </div>
+                        <svg class="settings-item__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+    </div>
+
+    <nav class="home-bottom-nav">
+        <a href="home.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span data-i18n="common.home">Home</span></a>
+        <a href="shorts.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span data-i18n="common.shorts">Shorts</span></a>
+        <a href="upload.html" class="home-bottom-nav__item"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span data-i18n="common.upload">Upload</span></a>
+        <a href="#" class="home-bottom-nav__item chat-trigger"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>Chats</span></a>
+        <a href="settings.html" class="home-bottom-nav__item home-bottom-nav__item--active"><span class="home-bottom-nav__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span data-i18n="common.settings">Settings</span></a>
+    </nav>
+
+    <!-- Chat Overlay -->
+    <div class="chat-overlay" id="chat-overlay" aria-hidden="true">
+        <div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div>
+        <div class="chat-overlay__card">
+            <div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div>
+            <header class="nok-chat__header">
+                <a href="home.html" class="nok-chat__brand">
+                    <span class="nok-chat__logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                    <span class="nok-chat__logo-text">NOK Chat</span>
+                </a>
+                <div class="nok-chat__actions">
+                    <button type="button" class="nok-chat__action" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+                    <button type="button" class="nok-chat__action nok-chat__action--badge" aria-label="Notifications" data-badge="1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                    <button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize" title="Full screen"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><svg class="chat-resize-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                    <div class="nok-chat__menu-wrap">
+                        <button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+                        <div class="nok-chat__menu" id="chat-menu">
+                            <button type="button" class="nok-chat__menu-item">New chat</button>
+                            <button type="button" class="nok-chat__menu-item">New group</button>
+                            <a href="settings.html" class="nok-chat__menu-item">Settings</a>
+                            <button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="chat-login" id="chat-login">
+                <div class="chat-login__inner chat-login__step-login" id="chat-step-login">
+                    <h3 class="chat-login__title">Log in to Chat</h3>
+                    <p class="chat-login__sub">Sign in to start chatting</p>
+                    <a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a>
+                    <p class="chat-login__legal">Don't have an account? <a href="signup.html" class="chat-login__link">Sign Up</a></p>
+                </div>
+                <div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none">
+                    <h3 class="chat-login__title">Verify Mobile Number</h3>
+                    <p class="chat-login__sub">Verify your mobile number to use Chat</p>
+                    <form class="chat-login__form" id="chat-verify-form">
+                        <div class="chat-login__phone-row">
+                            <select id="chat-verify-country" class="chat-login__select"><option value="880">+880 BD</option><option value="91">+91 IN</option><option value="1">+1 US</option><option value="44">+44 UK</option></select>
+                            <input type="tel" id="chat-verify-phone" class="chat-login__input chat-login__input--phone" placeholder="Mobile number" required>
+                        </div>
+                        <button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button>
+                    </form>
+                    <div id="chat-otp-step" style="display:none">
+                        <p class="chat-login__sub" style="margin-bottom:12px">Enter 6-digit code sent to your number</p>
+                        <div class="chat-login__otp-inputs">
+                            <input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*"><input type="text" class="chat-login__otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                        </div>
+                        <button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-content" id="chat-content">
+                <nav class="nok-chat__tabs">
+                    <button type="button" class="nok-chat__tab">Status</button>
+                    <button type="button" class="nok-chat__tab">Groups</button>
+                    <button type="button" class="nok-chat__tab nok-chat__tab--active">Updates</button>
+                    <button type="button" class="nok-chat__tab">Contacts</button>
+                </nav>
+                <a href="#" class="nok-chat__archived"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg><span>Archived Chats</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+                <div class="nok-chat__list">
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar nok-chat__avatar--verified">AR</span><div class="nok-chat__info"><span class="nok-chat__name">Amella Roy</span><span class="nok-chat__preview">Typing...</span></div><span class="nok-chat__meta"><span class="nok-chat__dot nok-chat__dot--blue"></span>1h ago</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AN</span><div class="nok-chat__info"><span class="nok-chat__name">Ayesha Noor</span><span class="nok-chat__preview">photo</span></div><span class="nok-chat__meta">11:36 AM</span></a>
+                    <a href="#" class="nok-chat__item"><span class="nok-chat__avatar">SD</span><div class="nok-chat__info"><span class="nok-chat__name">Sandeep Das</span><span class="nok-chat__preview">Catch you later!</span></div><span class="nok-chat__meta">20 min ago</span></a>
+                </div>
+            </div>
+            <div class="chat-overlay__resize-handle" id="chat-resize-handle" aria-label="Resize"></div>
+            <nav class="nok-chat__bottom">
+                <a href="home.html" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+                <a href="#" class="nok-chat__bottom-item nok-chat__bottom-item--active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Chat</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Call</span></a>
+                <a href="#" class="nok-chat__bottom-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="3"/><path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855"/></svg><span>You</span></a>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            function t(key, fallback) {
+                return typeof window.nokT === 'function' ? window.nokT(key, fallback) : fallback;
+            }
+            var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+            var content = document.getElementById('account-settings-content');
+            var loginPrompt = document.getElementById('account-settings-login');
+            function isEmailValue(value) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((value || '').trim());
+            }
+            function getUsers() {
+                try { return JSON.parse(localStorage.getItem('nokUsers') || '[]'); } catch (_) { return []; }
+            }
+            function getPermanentEmail() {
+                var authKey = (sessionStorage.getItem('nokUserEmail') || localStorage.getItem('nokUserEmail') || '').toLowerCase();
+                var phoneKey = (localStorage.getItem('nokPhoneKey') || sessionStorage.getItem('nokPhoneKey') || '').toLowerCase();
+                var user = getUsers().find(function(item) {
+                    return (authKey && item.email && item.email.toLowerCase() === authKey) ||
+                        (authKey && item.phoneKey && item.phoneKey.toLowerCase() === authKey) ||
+                        (phoneKey && item.phoneKey && item.phoneKey.toLowerCase() === phoneKey);
+                });
+                if (user && user.email) return user.email;
+                var accountEmail = (localStorage.getItem('nokAccountEmail') || '').trim();
+                if (isEmailValue(accountEmail)) return accountEmail;
+                var stored = localStorage.getItem('nokUserEmail') || sessionStorage.getItem('nokUserEmail') || '';
+                return isEmailValue(stored) ? stored : '';
+            }
+            function updateView() {
+                isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+                if (content) content.classList.toggle('auth-hidden', !isLoggedIn);
+                if (loginPrompt) {
+                    loginPrompt.classList.toggle('auth-hidden', isLoggedIn);
+                    if (!isLoggedIn) loginPrompt.style.display = 'block';
+                    else loginPrompt.style.display = 'none';
+                }
+                var emailEl = document.getElementById('account-email-display');
+                if (emailEl) emailEl.textContent = isLoggedIn ? (getPermanentEmail() || t('account.notSet', 'Not set')) : t('account.notSet', 'Not set');
+                var phoneEl = document.getElementById('account-phone-display');
+                var phoneBtn = document.getElementById('account-phone-btn');
+                if (phoneEl && phoneBtn) {
+                    var verified = localStorage.getItem('nokMobileVerified') === 'yes';
+                    var phone = localStorage.getItem('nokAccountPhone') || '';
+                    if (verified && phone) { phoneEl.textContent = phone; phoneBtn.textContent = t('common.change', 'Change'); }
+                    else { phoneEl.textContent = t('account.phoneHint', 'Add phone for recovery & security'); phoneBtn.textContent = t('common.add', 'Add'); }
+                }
+                var avatar = document.getElementById('account-avatar');
+                if (avatar && isLoggedIn) {
+                    var name = localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || t('account.you', 'You');
+                    avatar.textContent = (name && name.charAt(0)) ? name.charAt(0).toUpperCase() : '?';
+                }
+            }
+            updateView();
+            window.addEventListener('pageshow', updateView);
+
+            var toggle2fa = document.getElementById('account-toggle-2fa');
+            if (toggle2fa) {
+                var on = localStorage.getItem('nok2FA') === '1';
+                toggle2fa.classList.toggle('settings-toggle--on', on);
+                toggle2fa.addEventListener('click', function() {
+                    this.classList.toggle('settings-toggle--on');
+                    localStorage.setItem('nok2FA', this.classList.contains('settings-toggle--on') ? '1' : '0');
+                });
+            }
+
+            document.getElementById('account-sessions-btn').addEventListener('click', function() {
+                alert(t('account.sessionsAlert', 'Active sessions – you can sign out from other devices here. (Demo.)'));
+            });
+
+            function updateChatView() {
+                var loggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+                var mobileVerified = localStorage.getItem('nokMobileVerified') === 'yes';
+                var chatLogin = document.getElementById('chat-login');
+                var chatContent = document.getElementById('chat-content');
+                var chatStepLogin = document.getElementById('chat-step-login');
+                var chatStepVerify = document.getElementById('chat-step-verify');
+                if (chatLogin) chatLogin.style.display = (!loggedIn || !mobileVerified) ? 'flex' : 'none';
+                if (chatContent) chatContent.style.display = (loggedIn && mobileVerified) ? 'flex' : 'none';
+                if (chatStepLogin) chatStepLogin.style.display = !loggedIn ? 'block' : 'none';
+                if (chatStepVerify) {
+                    chatStepVerify.style.display = (loggedIn && !mobileVerified) ? 'block' : 'none';
+                    if (loggedIn && !mobileVerified) {
+                        document.getElementById('chat-verify-form').style.display = '';
+                        document.getElementById('chat-otp-step').style.display = 'none';
+                        document.querySelectorAll('.chat-login__otp-digit').forEach(function(d) { d.value = ''; });
+                    }
+                }
+            }
+            updateChatView();
+            document.getElementById('chat-verify-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var phoneValue = document.getElementById('chat-verify-phone').value.trim();
+                if (phoneValue) {
+                    this.style.display = 'none';
+                    document.getElementById('chat-otp-step').style.display = 'block';
+                }
+            });
+            document.getElementById('chat-verify-otp').addEventListener('click', function() {
+                var digits = document.querySelectorAll('.chat-login__otp-digit');
+                var code = Array.from(digits).map(function(x) { return x.value; }).join('');
+                if (code.length === 6) {
+                    localStorage.setItem('nokMobileVerified', 'yes');
+                    updateChatView();
+                }
+            });
+            var otpDigits = document.querySelectorAll('.chat-login__otp-digit');
+            otpDigits.forEach(function(input, index) {
+                input.addEventListener('input', function() {
+                    if (this.value.length === 1 && index < otpDigits.length - 1) otpDigits[index + 1].focus();
+                });
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && !this.value && index > 0) otpDigits[index - 1].focus();
+                });
+            });
+            document.querySelectorAll('.chat-overlay__card a[href="#"]').forEach(function(link) {
+                link.addEventListener('click', function(e) { e.preventDefault(); });
+            });
+        })();
+    </script>
+    <script src="nok-header-drawer.js"></script>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

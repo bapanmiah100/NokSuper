@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Setup - NOK Super</title>
+    <script src="nok-theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="video-long.css">
+</head>
+<body class="home-body">
+    <div class="home-layout">
+        <div class="bg"></div>
+
+        <header class="long-video__header">
+            <div class="long-video__header-left">
+                <button type="button" class="long-video__menu" aria-label="Menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <a href="home.html" class="long-video__logo">
+                    <img src="../noksuper.png" alt="NOK Super" class="long-video__logo-img">
+                </a>
+            </div>
+            <div class="long-video__search">
+                <form class="home-search" action="search.html" method="get" role="search">
+                    <svg class="home-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" class="home-search__input" name="q" placeholder="Search" aria-label="Search">
+                    <button type="button" class="home-search__mic" aria-label="Voice search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+                </form>
+            </div>
+            <div class="long-video__header-right">
+                <button type="button" class="long-video__header-icon" id="profile-notification-btn" aria-label="Notifications" title="Notifications">
+                    <span class="long-video__icon-bell-wrap"><svg class="long-video__icon-bell" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+                    <span class="long-video__icon-bell-off-wrap" style="display:none"><svg class="long-video__icon-bell-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="1" y1="1" x2="23" y2="23"/></svg></span>
+                </button>
+                <a href="settings.html" class="long-video__profile-wrap" id="profile-profile-wrap" style="display:flex;align-items:center;text-decoration:none;">
+                    <div class="long-video__avatar" id="profile-avatar">?</div>
+                </a>
+            </div>
+        </header>
+
+        <main class="content content--centered" style="position:relative;z-index:1;">
+            <div class="profile-setup-wrap">
+                <h2 class="profile-setup__title">Profile Setup</h2>
+                <div class="glass glass--login" style="max-width:420px;width:100%;">
+                    <img src="../noklogo.png" alt="NOK SUPER" class="glass__logo">
+                    <form class="glass__form profile-form" id="profile-form">
+                    <div class="profile-photo-wrap">
+                        <label class="profile-photo">
+                            <input type="file" id="profile-photo" accept="image/*" hidden>
+                            <span class="profile-photo__placeholder" id="photo-placeholder">
+                                <span class="profile-photo__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
+                                <span class="profile-photo__text">Upload Image</span>
+                                <small class="profile-photo__hint">400 × 400px</small>
+                            </span>
+                            <img src="" alt="" class="profile-photo__preview" id="photo-preview" style="display:none">
+                        </label>
+                    </div>
+                    <p class="profile-section-label">Basic Info</p>
+                    <input type="text" class="glass__input" name="fullName" placeholder="Full Name" id="profile-fullName">
+                    <input type="date" class="glass__input" name="dob" placeholder="Date of Birth" id="profile-dob">
+                    <select class="glass__input glass__select" id="profile-gender" name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <input type="text" class="glass__input" name="phone" placeholder="Phone Number" id="profile-phone">
+                    <input type="text" class="glass__input" name="email" placeholder="Email" id="profile-email">
+
+                    <p class="profile-section-label">Location</p>
+                    <input type="text" class="glass__input" name="village" placeholder="Village" id="profile-village">
+                    <input type="text" class="glass__input" name="city" placeholder="City" id="profile-city">
+                    <input type="text" class="glass__input" name="district" placeholder="District" id="profile-district">
+                    <input type="text" class="glass__input" name="country" placeholder="Country" id="profile-country">
+
+                    <p class="profile-section-label">Education</p>
+                    <input type="text" class="glass__input" name="school" placeholder="School" id="profile-school">
+                    <input type="text" class="glass__input" name="college" placeholder="College" id="profile-college">
+                    <input type="text" class="glass__input" name="education" placeholder="Education / Degree" id="profile-education">
+                    <input type="text" class="glass__input" name="university" placeholder="University" id="profile-university">
+
+                    <p class="profile-section-label">More About You</p>
+                    <input type="text" class="glass__input" name="profession" placeholder="Profession / Job" id="profile-profession">
+                    <input type="text" class="glass__input" name="hobbies" placeholder="Hobbies" id="profile-hobbies">
+                    <input type="text" class="glass__input" name="religion" placeholder="Religion" id="profile-religion">
+                    <select class="glass__input glass__select" id="profile-marital" name="marital">
+                        <option value="">Marital Status</option>
+                        <option value="single">Single</option>
+                        <option value="married">Married</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <select class="glass__input glass__select" id="profile-blood" name="bloodGroup">
+                        <option value="">Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                    <textarea class="glass__input" name="bio" placeholder="Bio / About You (short intro)" id="profile-bio" rows="3" style="min-height:80px;resize:vertical;"></textarea>
+
+                    <button type="submit" class="glass__btn glass__btn--primary">Save Profile</button>
+                </form>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        var PROFILE_KEYS = ['fullName','dob','gender','phone','email','village','city','district','country','school','college','education','university','profession','hobbies','religion','marital','bloodGroup','bio'];
+        function loadProfile() {
+            var data = JSON.parse(localStorage.getItem('nokProfileBio') || '{}');
+            PROFILE_KEYS.forEach(function(k) {
+                var el = document.getElementById('profile-' + k);
+                if (el && data[k]) el.value = data[k];
+            });
+            var photo = localStorage.getItem('nokUserPhotoUrl');
+            if (photo) {
+                document.getElementById('photo-preview').src = photo;
+                document.getElementById('photo-preview').style.display = 'block';
+                document.getElementById('photo-placeholder').style.display = 'none';
+            }
+        }
+        loadProfile();
+        document.getElementById('profile-photo').addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function() {
+                    document.getElementById('photo-preview').src = reader.result;
+                    document.getElementById('photo-preview').style.display = 'block';
+                    document.getElementById('photo-placeholder').style.display = 'none';
+                    localStorage.setItem('nokUserPhotoUrl', reader.result);
+                    var ch = (localStorage.getItem('nokUserChannel') || 'You').charAt(0).toUpperCase();
+                    localStorage.setItem('nokUserChannel', document.getElementById('profile-fullName').value || 'You');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        document.getElementById('profile-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var form = e.target;
+            var data = {};
+            PROFILE_KEYS.forEach(function(k) {
+                var el = form.querySelector('[name="' + k + '"]') || document.getElementById('profile-' + k);
+                if (el) data[k] = (el.value || '').trim();
+            });
+            localStorage.setItem('nokProfileBio', JSON.stringify(data));
+            if (data.fullName) localStorage.setItem('nokUserChannel', data.fullName);
+            var next = new URLSearchParams(window.location.search).get('next');
+            if (next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) { window.location.href = next; return; }
+            window.location.href = document.referrer && document.referrer.indexOf('settings') !== -1 ? 'settings.html' : 'interested.html';
+        });
+    </script>
+    <button type="button" class="chat-trigger chat-trigger--float" aria-label="Chat"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+    <div class="chat-overlay" id="chat-overlay" aria-hidden="true"><div class="chat-overlay__backdrop" id="chat-overlay-backdrop"></div><div class="chat-overlay__card"><div class="chat-overlay__drag-bar" id="chat-drag-handle" title="Drag to move"></div><header class="nok-chat__header"><a href="home.html" class="nok-chat__brand"><span class="nok-chat__logo-text">NOK Chat</span></a><div class="nok-chat__actions"><button type="button" class="nok-chat__action" id="chat-card-resize" aria-label="Resize"><svg class="chat-resize-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button><div class="nok-chat__menu-wrap"><button type="button" class="nok-chat__action" id="chat-menu-trigger" aria-label="Menu">&#8942;</button><div class="nok-chat__menu" id="chat-menu"><button type="button" class="nok-chat__menu-item" id="chat-menu-close">Close chat</button></div></div></div></header><div class="chat-login" id="chat-login"><div class="chat-login__inner chat-login__step-login" id="chat-step-login"><h3 class="chat-login__title">Log in to Chat</h3><a href="login.html" class="chat-login__btn chat-login__btn--link">Log In</a></div><div class="chat-login__inner chat-login__step-verify" id="chat-step-verify" style="display:none"><h3 class="chat-login__title">Verify Mobile</h3><form class="chat-login__form" id="chat-verify-form"><input type="tel" id="chat-verify-phone" class="chat-login__input" placeholder="Mobile number"><button type="submit" class="chat-login__btn" id="chat-send-otp">Send OTP</button></form><div id="chat-otp-step" style="display:none"><input type="text" class="chat-login__otp-digit" maxlength="1"><input type="text" class="chat-login__otp-digit" maxlength="1"><input type="text" class="chat-login__otp-digit" maxlength="1"><input type="text" class="chat-login__otp-digit" maxlength="1"><input type="text" class="chat-login__otp-digit" maxlength="1"><input type="text" class="chat-login__otp-digit" maxlength="1"><button type="button" class="chat-login__btn" id="chat-verify-otp">Verify</button></div></div></div><div class="chat-content" id="chat-content"><div class="nok-chat__list"><a href="#" class="nok-chat__item"><span class="nok-chat__avatar">AR</span><span class="nok-chat__name">Amella Roy</span></a></div></div><div class="chat-overlay__resize-handle" id="chat-resize-handle" aria-label="Resize"></div></div></div>
+    <script src="nok-chat-overlay.js"></script>
+</body>
+</html>

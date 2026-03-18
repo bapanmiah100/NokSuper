@@ -4,5 +4,10 @@
   "description": "NOK Super app",
   "scripts": {
     "start": "npx serve . -p 3000"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.2.0",
+    "@capacitor/cli": "^8.2.0",
+    "@capacitor/core": "^8.2.0"
   }
 }
