@@ -940,7 +940,7 @@ html[data-theme="light"] body.studio-body .bg { display: block !important; }
 }
 
 .left-panel__logo {
-    width: 216px;
+    width: 432px; /* 2x bigger */
     height: auto;
     display: block;
     margin-bottom: 20px;
@@ -1039,7 +1039,7 @@ html[data-theme="light"] body.main-page .line {
 }
 
 .glass__logo {
-    width: 216px;
+    width: 288px; /* back to previous size */
     height: auto;
     display: block;
     margin: -1.5cm auto 28px;
@@ -1048,10 +1048,10 @@ html[data-theme="light"] body.main-page .line {
 }
 
 .glass__btn {
-    height: 50px;
-    border-radius: 14px;
+    height: 56px;
+    border-radius: 16px;
     border: none;
-    font-size: 1rem;
+    font-size: 1.18rem;
     font-weight: 700;
     cursor: pointer;
     width: 100%;
@@ -1193,6 +1193,21 @@ body.main-page #index-auth-btns { display: none !important; }
 body.main-page #index-notification-btn { display: none !important; }
 body.main-page #index-profile-wrap { display: none !important; }
 body.main-page #index-avatar { display: none !important; }
+
+/* Welcome page: remove bottom/center logo */
+body.main-page .glass__logo { display: none !important; }
+
+/* Login/Signup pages (desktop/window): remove header Log In / Sign Up buttons */
+@media (min-width: 769px) {
+    body.home-body #login-auth-btns,
+    body.home-body #signup-auth-btns {
+        display: none !important;
+    }
+}
+
+/* Fallback (all widths) */
+body.home-body #login-auth-btns,
+body.home-body #signup-auth-btns { display: none !important; }
 
 /* Header: remove Log In / Sign Up buttons everywhere */
 header.long-video__header .long-video__auth-btns { display: none !important; }
@@ -4763,7 +4778,7 @@ html:has(.home-body.chat-overlay-open) {
     }
 
     .left-panel__logo {
-        width: 140px;
+        width: 280px; /* 2x bigger */
         margin-left: auto;
         margin-right: auto;
         margin-bottom: 16px;
@@ -4794,14 +4809,14 @@ html:has(.home-body.chat-overlay-open) {
     }
 
     .glass__logo {
-        width: 160px;
+        width: 213px; /* back to previous size */
         margin-left: auto;
         margin-right: auto;
     }
 
     .glass__btn {
-        height: 48px;
-        font-size: 0.95rem;
+        height: 52px;
+        font-size: 1.08rem;
     }
 
     /* Home feed: mobile padding */
@@ -4811,7 +4826,7 @@ html:has(.home-body.chat-overlay-open) {
     }
 
     .left-panel__logo {
-        width: 140px;
+        width: 280px; /* 2x bigger */
         margin-bottom: 16px;
     }
 
@@ -4831,7 +4846,7 @@ html:has(.home-body.chat-overlay-open) {
     }
 
     .glass__logo {
-        width: 160px;
+        width: 213px; /* back to previous size */
         margin-left: auto;
         margin-right: auto;
     }
@@ -4871,7 +4886,7 @@ html:has(.home-body.chat-overlay-open) {
     }
 
     .left-panel__logo {
-        width: 120px;
+        width: 240px; /* 2x bigger */
     }
 
     .greeting {

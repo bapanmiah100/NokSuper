@@ -589,3 +589,132 @@
         if (event.key === LANGUAGE_KEY) applyLanguage();
     });
 })();
+
+/* Global Android back button guard
+   - Prevent app exit on Android hardware back
+   - Go one step back in web history instead
+*/
+(function () {
+    try {
+        function ensureHistoryState() {
+            try {
+                // Put a marker so the user can go "one step back" inside WebView history.
+                if (!history.state || history.state.nokBackGuard !== true) {
+                    history.pushState({ nokBackGuard: true }, '', window.location.href);
+                }
+            } catch (e) { }
+        }
+
+        function installBackListener() {
+            try {
+                var cap = window.Capacitor;
+                var appPlugin = cap && cap.Plugins && cap.Plugins.App;
+                if (!appPlugin || typeof appPlugin.addListener !== 'function') return;
+
+                appPlugin.addListener('backButton', function () {
+                    // Hard redirect for auth pages:
+                    // login.html / signup.html -> index.html (welcome) on back.
+                    try {
+                        var href = (window.location && window.location.href) ? window.location.href : '';
+                        if (href && (href.indexOf('login.html') !== -1 || href.indexOf('signup.html') !== -1)) {
+                            try { sessionStorage.removeItem('nokAuth'); } catch (e) { }
+                            try { localStorage.removeItem('nokAuth'); } catch (e2) { }
+                            window.location.replace('index.html');
+                            return;
+                        }
+                    } catch (e) { }
+
+                    // Page-specific override.
+                    try {
+                        if (window && window.__nokBackOverride) {
+                            var target = window.__nokBackOverride;
+                            window.__nokBackOverride = null;
+                            if (typeof target === 'function') {
+                                target();
+                            } else {
+                                window.location.replace(String(target));
+                            }
+                            return;
+                        }
+                    } catch (e) { }
+
+                    // Prefer going back inside web history.
+                    try {
+                        if (history && history.length > 1) {
+                            history.back();
+                            return;
+                        }
+                    } catch (e) { }
+
+                    // Fallback: navigate to home instead of exiting the app.
+                    try { window.location.href = 'home.html'; } catch (e2) { }
+                });
+            } catch (e) { }
+        }
+
+        // WebView/legacy fallback.
+        try {
+            document.addEventListener('backbutton', function (ev) {
+                try { if (ev && ev.preventDefault) ev.preventDefault(); } catch (e) { }
+                try { if (ev && ev.stopImmediatePropagation) ev.stopImmediatePropagation(); } catch (e2) { }
+
+                // Hard redirect for auth pages:
+                // login.html / signup.html -> index.html (welcome) on back.
+                try {
+                    var href = (window.location && window.location.href) ? window.location.href : '';
+                    if (href && (href.indexOf('login.html') !== -1 || href.indexOf('signup.html') !== -1)) {
+                        try { sessionStorage.removeItem('nokAuth'); } catch (e) { }
+                        try { localStorage.removeItem('nokAuth'); } catch (e2) { }
+                        window.location.replace('index.html');
+                        return;
+                    }
+                } catch (e3) { }
+
+                // Page-specific override.
+                try {
+                    if (window && window.__nokBackOverride) {
+                        var target = window.__nokBackOverride;
+                        window.__nokBackOverride = null;
+                        if (typeof target === 'function') {
+                            target();
+                        } else {
+                            window.location.replace(String(target));
+                        }
+                        return;
+                    }
+                } catch (e3) { }
+
+                try {
+                    if (history && history.length > 1) history.back();
+                    else window.location.href = 'home.html';
+                } catch (e3) {
+                    try { window.location.href = 'home.html'; } catch (e4) { }
+                }
+            }, false);
+        } catch (e) { }
+
+        // Install on device ready (Capacitor-safe).
+        try {
+            document.addEventListener('deviceready', function () {
+                ensureHistoryState();
+                installBackListener();
+            }, { once: true });
+        } catch (e) { }
+
+        // Fallback in case deviceready already fired / slow plugin init.
+        try {
+            ensureHistoryState();
+            var start = Date.now();
+            var t = window.setInterval(function () {
+                try {
+                    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+                        installBackListener();
+                        window.clearInterval(t);
+                    } else if (Date.now() - start > 10000) {
+                        window.clearInterval(t);
+                    }
+                } catch (e) { }
+            }, 250);
+        } catch (e2) { }
+    } catch (outer) { }
+})();

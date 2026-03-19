@@ -239,6 +239,22 @@
             if(i.type==='password'){i.type='text';s.style.display='none';h.style.display='block'}
             else{i.type='password';s.style.display='block';h.style.display='none'}
         });
+
+        // Force hide header auth buttons (some browsers/app states override CSS).
+        try {
+            var signupAuth = document.getElementById('signup-auth-btns');
+            if (signupAuth) signupAuth.style.setProperty('display', 'none', 'important');
+        } catch (e) {}
+
+        // Back from signup should go to the welcome page (index.html).
+        // Also clear any stale logged-in flags so index.html doesn't redirect to home.html.
+        try {
+            window.__nokBackOverride = function () {
+                try { sessionStorage.removeItem('nokAuth'); } catch (e) { }
+                try { localStorage.removeItem('nokAuth'); } catch (e2) { }
+                window.location.replace('index.html');
+            };
+        } catch (e3) {}
     </script>
 </body>
 </html>

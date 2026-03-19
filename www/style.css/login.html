@@ -254,6 +254,22 @@
                 this.setAttribute('aria-label', 'Show password');
             }
         });
+
+        // Force hide header auth buttons (some browsers/app states override CSS).
+        try {
+            var loginAuth = document.getElementById('login-auth-btns');
+            if (loginAuth) loginAuth.style.setProperty('display', 'none', 'important');
+        } catch (e) {}
+
+        // Back from login should go to the welcome page (index.html).
+        // Also clear any stale logged-in flags so index.html doesn't redirect to home.html.
+        try {
+            window.__nokBackOverride = function () {
+                try { sessionStorage.removeItem('nokAuth'); } catch (e) { }
+                try { localStorage.removeItem('nokAuth'); } catch (e2) { }
+                window.location.replace('index.html');
+            };
+        } catch (e) {}
     </script>
 </body>
 </html>
