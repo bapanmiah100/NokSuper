@@ -38,7 +38,7 @@
         html[data-theme="light"] .signup-password-checklist li { color: #334155; }
     </style>
 </head>
-<body class="home-body">
+<body class="home-body auth-page">
     <div class="home-layout">
         <div class="bg"></div>
 
@@ -131,7 +131,7 @@
             var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
             if (isLoggedIn) {
                 var next = new URLSearchParams(window.location.search).get('next');
-                window.location.replace((next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'home.html');
+                window.location.replace((next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'shorts.html');
                 return;
             }
         })();
@@ -141,7 +141,7 @@
                 localStorage.setItem('nokAuth', 'loggedIn');
                 localStorage.removeItem('nokMobileVerified');
                 var next = new URLSearchParams(window.location.search).get('next');
-                window.location.href = (next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'home.html';
+                window.location.href = (next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'shorts.html';
             }
         };
         (function() {
@@ -247,14 +247,7 @@
         } catch (e) {}
 
         // Back from signup should go to the welcome page (index.html).
-        // Also clear any stale logged-in flags so index.html doesn't redirect to home.html.
-        try {
-            window.__nokBackOverride = function () {
-                try { sessionStorage.removeItem('nokAuth'); } catch (e) { }
-                try { localStorage.removeItem('nokAuth'); } catch (e2) { }
-                window.location.replace('index.html');
-            };
-        } catch (e3) {}
+        // (Handled globally in nok-theme.js back handler.)
     </script>
 </body>
 </html>

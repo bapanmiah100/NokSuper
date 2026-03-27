@@ -265,6 +265,28 @@
         all[videoId] = !!liked;
         try { localStorage.setItem(STORAGE_LIKES_KEY, JSON.stringify(all)); } catch (e) {}
     }
+    /** Per-video play counts (home feed + analytics); keyed by video id */
+    var STORAGE_VIDEO_VIEWS_KEY = 'nokVideoViewCounts';
+    function getVideoViewCounts() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_VIDEO_VIEWS_KEY) || '{}'); } catch (e) { return {}; }
+    }
+    function setVideoViewCounts(obj) {
+        try { localStorage.setItem(STORAGE_VIDEO_VIEWS_KEY, JSON.stringify(obj)); } catch (e) {}
+    }
+    function bumpVideoViewCount(videoId) {
+        if (!videoId) return;
+        var vc = getVideoViewCounts();
+        vc[videoId] = (parseInt(vc[videoId], 10) || 0) + 1;
+        setVideoViewCounts(vc);
+    }
+    /** One counted view per browser tab session per video (first play) */
+    function recordVideoViewOncePerSession(videoId) {
+        if (!videoId) return;
+        var k = 'nokViewedVideo_' + videoId;
+        if (sessionStorage.getItem(k)) return;
+        sessionStorage.setItem(k, '1');
+        bumpVideoViewCount(videoId);
+    }
     function getStoredReactions() {
         try { return JSON.parse(localStorage.getItem(STORAGE_REACTIONS_KEY) || '{}'); } catch (e) { return {}; }
     }
@@ -801,6 +823,7 @@
             videoEl.addEventListener('click', togglePlay);
             if (playerBg) playerBg.addEventListener('click', togglePlay);
             videoEl.addEventListener('play', function() { playBtn.style.display = 'none'; updatePlayPauseIcon(true); });
+            videoEl.addEventListener('play', function() { recordVideoViewOncePerSession(id); }, { once: true });
             videoEl.addEventListener('pause', function() { playBtn.style.display = 'flex'; updatePlayPauseIcon(false); });
             videoEl.addEventListener('ended', function() {
                 playBtn.style.display = 'flex';

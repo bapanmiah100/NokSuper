@@ -7,9 +7,9 @@
     <script>
         (function(){
             if (sessionStorage.getItem('nokAuth') === 'loggedIn' || localStorage.getItem('nokAuth') === 'loggedIn') {
-                var next = (new URLSearchParams(location.search).get('next') || 'home.html');
+                var next = (new URLSearchParams(location.search).get('next') || 'shorts.html');
                 if (/^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) window.location.replace(next);
-                else window.location.replace('home.html');
+                else window.location.replace('shorts.html');
             }
         })();
     </script>
@@ -19,7 +19,7 @@
     <script src="nok-config.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
-<body class="home-body">
+<body class="home-body auth-page">
     <div class="home-layout">
         <div class="bg"></div>
 
@@ -119,7 +119,7 @@
                 localStorage.setItem('nokAuth', 'loggedIn');
                 localStorage.removeItem('nokMobileVerified');
                 var next = new URLSearchParams(window.location.search).get('next');
-                window.location.href = (next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'home.html';
+                window.location.href = (next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'shorts.html';
             }
         };
         if (new URLSearchParams(window.location.search).get('reset') === '1') {
@@ -189,7 +189,7 @@
             sessionStorage.removeItem('otpFrom');
             localStorage.removeItem('nokMobileVerified');
             var next = new URLSearchParams(window.location.search).get('next');
-            window.location.href = (next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'home.html';
+            window.location.href = (next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) ? next : 'shorts.html';
         });
         var digits = document.querySelectorAll('.otp__digit');
         digits.forEach(function(input, i) {
@@ -262,14 +262,7 @@
         } catch (e) {}
 
         // Back from login should go to the welcome page (index.html).
-        // Also clear any stale logged-in flags so index.html doesn't redirect to home.html.
-        try {
-            window.__nokBackOverride = function () {
-                try { sessionStorage.removeItem('nokAuth'); } catch (e) { }
-                try { localStorage.removeItem('nokAuth'); } catch (e2) { }
-                window.location.replace('index.html');
-            };
-        } catch (e) {}
+        // (Handled globally in nok-theme.js back handler.)
     </script>
 </body>
 </html>

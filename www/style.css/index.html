@@ -68,10 +68,15 @@
     <script>
         (function() {
             function isLoggedIn() { return (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn'); }
-            if (isLoggedIn()) {
-                window.location.replace('home.html');
-                return;
-            }
+            // App open: first time, go directly to Shorts.
+            // Use `href` (not `replace`) so `index.html` stays in history for Back navigation.
+            try {
+                if (!sessionStorage.getItem('nokAutoShortsDone')) {
+                    sessionStorage.setItem('nokAutoShortsDone', '1');
+                    window.location.href = 'shorts.html';
+                    return;
+                }
+            } catch (e) { }
 
             function updateAuthView() {
                 var profileWrap = document.getElementById('index-profile-wrap');

@@ -14,11 +14,15 @@
                 }
             });
         }
-        var menuBtn = document.getElementById('header-menu-btn');
+        var menuBtns = [];
+        ['header-menu-btn', 'header-menu-btn-app'].forEach(function(id) {
+            var b = document.getElementById(id);
+            if (b) menuBtns.push(b);
+        });
         var drawer = document.getElementById('header-drawer');
         var backdrop = document.getElementById('header-drawer-backdrop');
         var closeBtn = document.getElementById('header-drawer-close');
-        if (!menuBtn || !drawer) return;
+        if (!menuBtns.length || !drawer) return;
         function openDrawer(e) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
             drawer.classList.add('header-drawer--open');
@@ -30,7 +34,7 @@
             drawer.setAttribute('aria-hidden', 'true');
             if (backdrop) { backdrop.classList.remove('header-drawer-backdrop--open'); backdrop.setAttribute('aria-hidden', 'true'); }
         }
-        menuBtn.addEventListener('click', openDrawer);
+        menuBtns.forEach(function(btn) { btn.addEventListener('click', openDrawer); });
         if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
         if (backdrop) backdrop.addEventListener('click', closeDrawer);
     }

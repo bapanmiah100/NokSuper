@@ -78,7 +78,7 @@
                 localStorage.setItem('nokAuth', 'loggedIn');
                 var next = sessionStorage.getItem('nokSignupNext') || new URLSearchParams(window.location.search).get('next');
                 if (next && /^[a-z0-9\-./]+\.html(\?.*)?$/i.test(next)) { sessionStorage.removeItem('nokSignupNext'); window.location.href = next; }
-                else window.location.href = 'home.html';
+                else window.location.href = 'shorts.html';
             } else {
                 sessionStorage.setItem('nokAuth', 'loggedIn');
                 localStorage.setItem('nokAuth', 'loggedIn');

@@ -1,5 +1,38 @@
 /* Shared theme and language preferences for the whole app. */
 (function() {
+    /* Capacitor Android WebView: lighter CSS + dynamic screen-fit vars */
+    function applyAndroidScreenMetrics() {
+        try {
+            if (typeof window.Capacitor === 'undefined') return;
+            var root = document.documentElement;
+            root.classList.add('android-webview');
+
+            var vv = window.visualViewport;
+            var vw = (vv && vv.width) ? vv.width : window.innerWidth;
+            var vh = (vv && vv.height) ? vv.height : window.innerHeight;
+            var shortSide = Math.min(vw, vh);
+            var longSide = Math.max(vw, vh);
+            var scale = shortSide / 390;
+            if (scale < 0.9) scale = 0.9;
+            if (scale > 1.08) scale = 1.08;
+
+            root.style.setProperty('--app-screen-width', vw + 'px');
+            root.style.setProperty('--app-screen-height', vh + 'px');
+            root.style.setProperty('--app-screen-short', shortSide + 'px');
+            root.style.setProperty('--app-screen-long', longSide + 'px');
+            root.style.setProperty('--app-ui-scale', scale.toFixed(3));
+
+            root.classList.toggle('screen-compact', shortSide < 360);
+            root.classList.toggle('screen-medium', shortSide >= 360 && shortSide < 420);
+            root.classList.toggle('screen-large', shortSide >= 420);
+        } catch (e) {}
+    }
+    applyAndroidScreenMetrics();
+    window.addEventListener('resize', applyAndroidScreenMetrics, { passive: true });
+    window.addEventListener('orientationchange', applyAndroidScreenMetrics, { passive: true });
+    if (window.visualViewport && window.visualViewport.addEventListener) {
+        window.visualViewport.addEventListener('resize', applyAndroidScreenMetrics, { passive: true });
+    }
     var THEME_KEY = 'nokTheme';
     var THEME_DEFAULT = 'system';
     var LANGUAGE_KEY = 'nokLanguage';

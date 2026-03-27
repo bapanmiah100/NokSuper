@@ -1223,7 +1223,19 @@
                         allShorts.unshift({ id: id, title: title, channel: channel, likes: '0', thumb: thumb, thumbData: thumbData, createdAt: createdAt });
                         localStorage.setItem('nokShortsVideos', JSON.stringify(allShorts));
                     } else {
-                        allVideos.unshift({ id: id, title: title, channel: channel, views: '0 views • Just now', thumb: thumb, thumbData: thumbData, isShorts: false, createdAt: createdAt });
+                        allVideos.unshift({
+                            id: id,
+                            title: title,
+                            channel: channel,
+                            views: 0,
+                            likeCount: 0,
+                            thumb: thumb,
+                            thumbData: thumbData,
+                            isShorts: false,
+                            createdAt: createdAt,
+                            publishedAt: createdAt,
+                            channelAvatarUrl: localStorage.getItem('nokUserPhotoUrl') || ''
+                        });
                         localStorage.setItem('nokUserVideos', JSON.stringify(allVideos));
                     }
                     localStorage.setItem('nokUserChannel', channel);

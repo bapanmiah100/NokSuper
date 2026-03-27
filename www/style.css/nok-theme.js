@@ -1,5 +1,38 @@
 /* Shared theme and language preferences for the whole app. */
 (function() {
+    /* Capacitor Android WebView: lighter CSS + dynamic screen-fit vars */
+    function applyAndroidScreenMetrics() {
+        try {
+            if (typeof window.Capacitor === 'undefined') return;
+            var root = document.documentElement;
+            root.classList.add('android-webview');
+
+            var vv = window.visualViewport;
+            var vw = (vv && vv.width) ? vv.width : window.innerWidth;
+            var vh = (vv && vv.height) ? vv.height : window.innerHeight;
+            var shortSide = Math.min(vw, vh);
+            var longSide = Math.max(vw, vh);
+            var scale = shortSide / 390;
+            if (scale < 0.9) scale = 0.9;
+            if (scale > 1.08) scale = 1.08;
+
+            root.style.setProperty('--app-screen-width', vw + 'px');
+            root.style.setProperty('--app-screen-height', vh + 'px');
+            root.style.setProperty('--app-screen-short', shortSide + 'px');
+            root.style.setProperty('--app-screen-long', longSide + 'px');
+            root.style.setProperty('--app-ui-scale', scale.toFixed(3));
+
+            root.classList.toggle('screen-compact', shortSide < 360);
+            root.classList.toggle('screen-medium', shortSide >= 360 && shortSide < 420);
+            root.classList.toggle('screen-large', shortSide >= 420);
+        } catch (e) {}
+    }
+    applyAndroidScreenMetrics();
+    window.addEventListener('resize', applyAndroidScreenMetrics, { passive: true });
+    window.addEventListener('orientationchange', applyAndroidScreenMetrics, { passive: true });
+    if (window.visualViewport && window.visualViewport.addEventListener) {
+        window.visualViewport.addEventListener('resize', applyAndroidScreenMetrics, { passive: true });
+    }
     var THEME_KEY = 'nokTheme';
     var THEME_DEFAULT = 'system';
     var LANGUAGE_KEY = 'nokLanguage';
@@ -590,131 +623,75 @@
     });
 })();
 
-/* Global Android back button guard
-   - Prevent app exit on Android hardware back
-   - Go one step back in web history instead
+/* Global Android back navigation
+   - Each page back goes one step back (web history)
+   - When you reach welcome page (`index.html`) and press back again, app closes
 */
 (function () {
+    function isWelcomePage() {
+        try {
+            var u = (window.location && window.location.href) ? window.location.href : '';
+            return /(?:^|\/)index\.html(?:\?|#|$)/i.test(u);
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function installBackListener() {
+        try {
+            var cap = window.Capacitor;
+            var appPlugin = cap && cap.Plugins && cap.Plugins.App;
+            if (!appPlugin || typeof appPlugin.addListener !== 'function') return;
+
+            appPlugin.addListener('backButton', function (evt) {
+                var canGoBack = !!(evt && evt.canGoBack);
+
+                // Welcome page: back again => close app
+                if (isWelcomePage()) {
+                    try {
+                        // First back: stay on welcome (arm). Second back: exit.
+                        if (!window.__nokWelcomeBackPressed) {
+                            window.__nokWelcomeBackPressed = true;
+                            // Keep it in history.
+                            try { history.pushState({}, '', window.location.href); } catch (e2) { }
+                            return;
+                        }
+                        window.__nokWelcomeBackPressed = false;
+                        if (typeof appPlugin.exitApp === 'function') appPlugin.exitApp();
+                    } catch (e) { }
+                    return;
+                }
+
+                // Normal pages: go back one step if web history allows
+                try { window.__nokWelcomeBackPressed = false; } catch (e0) { }
+                if (canGoBack) {
+                    try { history.back(); } catch (e2) { }
+                    return;
+                }
+
+                // If web history can't go back, jump to welcome page
+                try { window.location.replace('index.html'); } catch (e3) { window.location.href = 'index.html'; }
+            });
+        } catch (e) { }
+    }
+
+    // Install when Capacitor is ready
     try {
-        function ensureHistoryState() {
+        document.addEventListener('deviceready', installBackListener, { once: true });
+    } catch (e) { }
+    // Fallback for slow init
+    try { setTimeout(installBackListener, 600); } catch (e2) { }
+
+    // Legacy fallback (won't close app; only navigates)
+    try {
+        document.addEventListener('backbutton', function (ev) {
+            try { if (ev && ev.preventDefault) ev.preventDefault(); } catch (e) { }
+
+            if (isWelcomePage()) return; // allow native to handle/exit
             try {
-                // Put a marker so the user can go "one step back" inside WebView history.
-                if (!history.state || history.state.nokBackGuard !== true) {
-                    history.pushState({ nokBackGuard: true }, '', window.location.href);
-                }
-            } catch (e) { }
-        }
-
-        function installBackListener() {
-            try {
-                var cap = window.Capacitor;
-                var appPlugin = cap && cap.Plugins && cap.Plugins.App;
-                if (!appPlugin || typeof appPlugin.addListener !== 'function') return;
-
-                appPlugin.addListener('backButton', function () {
-                    // Hard redirect for auth pages:
-                    // login.html / signup.html -> index.html (welcome) on back.
-                    try {
-                        var href = (window.location && window.location.href) ? window.location.href : '';
-                        if (href && (href.indexOf('login.html') !== -1 || href.indexOf('signup.html') !== -1)) {
-                            try { sessionStorage.removeItem('nokAuth'); } catch (e) { }
-                            try { localStorage.removeItem('nokAuth'); } catch (e2) { }
-                            window.location.replace('index.html');
-                            return;
-                        }
-                    } catch (e) { }
-
-                    // Page-specific override.
-                    try {
-                        if (window && window.__nokBackOverride) {
-                            var target = window.__nokBackOverride;
-                            window.__nokBackOverride = null;
-                            if (typeof target === 'function') {
-                                target();
-                            } else {
-                                window.location.replace(String(target));
-                            }
-                            return;
-                        }
-                    } catch (e) { }
-
-                    // Prefer going back inside web history.
-                    try {
-                        if (history && history.length > 1) {
-                            history.back();
-                            return;
-                        }
-                    } catch (e) { }
-
-                    // Fallback: navigate to home instead of exiting the app.
-                    try { window.location.href = 'home.html'; } catch (e2) { }
-                });
-            } catch (e) { }
-        }
-
-        // WebView/legacy fallback.
-        try {
-            document.addEventListener('backbutton', function (ev) {
-                try { if (ev && ev.preventDefault) ev.preventDefault(); } catch (e) { }
-                try { if (ev && ev.stopImmediatePropagation) ev.stopImmediatePropagation(); } catch (e2) { }
-
-                // Hard redirect for auth pages:
-                // login.html / signup.html -> index.html (welcome) on back.
-                try {
-                    var href = (window.location && window.location.href) ? window.location.href : '';
-                    if (href && (href.indexOf('login.html') !== -1 || href.indexOf('signup.html') !== -1)) {
-                        try { sessionStorage.removeItem('nokAuth'); } catch (e) { }
-                        try { localStorage.removeItem('nokAuth'); } catch (e2) { }
-                        window.location.replace('index.html');
-                        return;
-                    }
-                } catch (e3) { }
-
-                // Page-specific override.
-                try {
-                    if (window && window.__nokBackOverride) {
-                        var target = window.__nokBackOverride;
-                        window.__nokBackOverride = null;
-                        if (typeof target === 'function') {
-                            target();
-                        } else {
-                            window.location.replace(String(target));
-                        }
-                        return;
-                    }
-                } catch (e3) { }
-
-                try {
-                    if (history && history.length > 1) history.back();
-                    else window.location.href = 'home.html';
-                } catch (e3) {
-                    try { window.location.href = 'home.html'; } catch (e4) { }
-                }
-            }, false);
-        } catch (e) { }
-
-        // Install on device ready (Capacitor-safe).
-        try {
-            document.addEventListener('deviceready', function () {
-                ensureHistoryState();
-                installBackListener();
-            }, { once: true });
-        } catch (e) { }
-
-        // Fallback in case deviceready already fired / slow plugin init.
-        try {
-            ensureHistoryState();
-            var start = Date.now();
-            var t = window.setInterval(function () {
-                try {
-                    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
-                        installBackListener();
-                        window.clearInterval(t);
-                    } else if (Date.now() - start > 10000) {
-                        window.clearInterval(t);
-                    }
-                } catch (e) { }
-            }, 250);
-        } catch (e2) { }
-    } catch (outer) { }
+                if (history && history.length > 1) history.back();
+                else window.location.replace('index.html');
+            } catch (e2) { window.location.replace('index.html'); }
+        }, false);
+    } catch (e3) { }
 })();

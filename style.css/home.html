@@ -74,14 +74,33 @@
         .home-login-banner__btns { display: flex; gap: 10px; flex-shrink: 0; }
         .home-login-banner__btns .home-header__btn { padding: 10px 18px; font-size: 0.9rem; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; }
         .home-login-banner__btns .home-header__btn:hover { transform: translateY(-1px); }
+        /* Website = full header + trending + sidebar. Android WebView adds <html class="android-app-home"> — compact bar only */
+        #home-header-app { display: none !important; }
+        html.android-app-home #home-header-web { display: none !important; }
+        html.android-app-home #home-header-app { display: flex !important; }
+        html.android-app-home .home-trending-btns,
+        html.android-app-home .home-sidebar--right { display: none !important; }
+        html.android-app-home .home-main { max-width: 100%; width: 100%; }
+        html.android-app-home .home-app-top__main { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        html.android-app-home .home-app-top__search { flex: 1; min-width: 0; }
+        html.android-app-home .home-app-top__search .home-search { margin: 0; }
+        html.android-app-home .home-app-top__search .home-search__mic { display: none !important; }
+        html.android-app-home .home-app-top__caption {
+            width: 44px; height: 44px; border-radius: 999px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(255,255,255,0.2); color: #fff;
+            background: rgba(255,255,255,0.04); text-decoration: none;
+        }
+        html.android-app-home .home-app-top__caption:hover { background: rgba(255,255,255,0.1); }
     </style>
 </head>
 <body class="home-body has-bottom-nav">
+    <script>(function(){ if (typeof window.Capacitor !== 'undefined') document.documentElement.classList.add('android-app-home'); })();</script>
     <div class="home-layout">
         <div class="bg"></div>
 
-        <!-- Top header -->
-        <header class="long-video__header">
+        <!-- Website: full top header -->
+        <header class="long-video__header" id="home-header-web">
             <div class="long-video__header-left">
                 <button type="button" class="long-video__menu" id="header-menu-btn" aria-label="Menu" title="Menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -109,6 +128,33 @@
                 <a href="channel.html" class="long-video__profile-wrap" id="home-profile-wrap" style="display:none;text-decoration:none;color:inherit;" title="Channel">
                     <div class="long-video__avatar" id="home-avatar">AZ</div>
                 </a>
+            </div>
+        </header>
+
+        <!-- Android app: one-line top bar (same file; shown only in WebView) -->
+        <header class="long-video__header" id="home-header-app" aria-label="Home top bar">
+            <div class="long-video__header-left">
+                <button type="button" class="long-video__menu" id="header-menu-btn-app" aria-label="Menu" title="Menu">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="home-app-top__main">
+                <div class="home-app-top__search">
+                    <form class="home-search" action="search.html" method="get" role="search">
+                        <svg class="home-search__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        <input type="text" class="home-search__input" name="q" placeholder="Search" aria-label="Search">
+                    </form>
+                </div>
+                <a href="captions.html" class="home-app-top__caption" aria-label="Caption" title="Caption">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M7 9h10"/><path d="M7 13h6"/></svg>
+                </a>
+                <a href="channel.html" class="long-video__profile-wrap" id="home-profile-wrap-app" style="display:none;text-decoration:none;color:inherit;" title="Profile">
+                    <div class="long-video__avatar" id="home-avatar-app">AZ</div>
+                </a>
+                <div class="long-video__auth-btns long-video__auth-btns--app" id="home-auth-btns-app" style="display:none;">
+                    <a href="login.html?next=home.html" class="home-header__btn home-header__btn--ghost home-header__btn--app-auth">Log In</a>
+                    <a href="signup.html?next=home.html" class="home-header__btn home-header__btn--primary home-header__btn--app-auth">Sign Up</a>
+                </div>
             </div>
         </header>
 
@@ -333,17 +379,22 @@
         (function() {
             function runHomeInit() {
                 var profileWrap = document.getElementById('home-profile-wrap');
+                var profileWrapApp = document.getElementById('home-profile-wrap-app');
                 var authBtns = document.getElementById('home-auth-btns');
+                var authBtnsApp = document.getElementById('home-auth-btns-app');
                 var chatLogin = document.getElementById('chat-login');
                 var chatContent = document.getElementById('chat-content');
                 var chatStepLogin = document.getElementById('chat-step-login');
                 var chatStepVerify = document.getElementById('chat-step-verify');
                 var channelLabel = document.getElementById('home-channel-label');
                 function updateAuthView() {
+                    var isApp = document.documentElement.classList.contains('android-app-home');
                     var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
                     var mobileVerified = localStorage.getItem('nokMobileVerified') === 'yes';
-                    if (profileWrap) profileWrap.style.display = isLoggedIn ? 'flex' : 'none';
-                    if (authBtns) authBtns.style.display = isLoggedIn ? 'none' : 'flex';
+                    if (profileWrap) profileWrap.style.display = (!isApp && isLoggedIn) ? 'flex' : 'none';
+                    if (profileWrapApp) profileWrapApp.style.display = (isApp && isLoggedIn) ? 'flex' : 'none';
+                    if (authBtns) authBtns.style.display = (!isApp && !isLoggedIn) ? 'flex' : 'none';
+                    if (authBtnsApp) authBtnsApp.style.display = (isApp && !isLoggedIn) ? 'flex' : 'none';
                     var loginBanner = document.getElementById('home-login-banner');
                     if (loginBanner) loginBanner.classList.toggle('home-login-banner--visible', !isLoggedIn);
                     if (chatLogin) chatLogin.style.display = (!isLoggedIn || !mobileVerified) ? 'flex' : 'none';
@@ -363,14 +414,16 @@
                         if (isLoggedIn) { var chan = localStorage.getItem('nokUserChannel'); channelLabel.textContent = chan || 'Upload'; }
                         else channelLabel.textContent = 'Upload';
                     }
-                    var homeAvatar = document.getElementById('home-avatar');
-                    if (homeAvatar && isLoggedIn) {
+                    function applyHomeAvatar(el) {
+                        if (!el || !isLoggedIn) return;
                         var name = (localStorage.getItem('nokUserChannel') || sessionStorage.getItem('nokUserEmail') || 'You').toString().trim();
                         var initial = name ? name.charAt(0).toUpperCase() : '?';
                         var photoUrl = localStorage.getItem('nokUserPhotoUrl') || '';
-                        if (photoUrl) homeAvatar.innerHTML = '<img src="' + photoUrl.replace(/"/g, '&quot;') + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
-                        else homeAvatar.textContent = initial;
+                        if (photoUrl) el.innerHTML = '<img src="' + photoUrl.replace(/"/g, '&quot;') + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
+                        else el.textContent = initial;
                     }
+                    applyHomeAvatar(document.getElementById('home-avatar'));
+                    applyHomeAvatar(document.getElementById('home-avatar-app'));
                 }
                 updateAuthView();
                 window.addEventListener('pageshow', function() { updateAuthView(); });
@@ -406,12 +459,140 @@
                 function getThumbStyle(v) { if (v.thumbData) return ' style="background-image:url(' + escapeHtml(v.thumbData) + ');background-size:cover;background-position:center"'; return ''; }
                 function getThumbClass(v) { if (v.thumbData) return 'long-video__more-thumb'; return 'long-video__more-thumb long-video__more-thumb--' + (thumbToMoreClass[v.thumb] || 'mountains'); }
                 function getViewsText(v) { var x = v.views || v.meta || '0 views'; if (typeof x === 'number' || (typeof x === 'string' && /^\d+$/.test(x))) return x + ' views'; return x; }
+                function formatCompactNumber(n) {
+                    n = Number(n);
+                    if (isNaN(n) || n < 0) n = 0;
+                    if (n >= 1000000) return (n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1).replace(/\.0$/, '') + 'M';
+                    if (n >= 1000) return (n / 1000).toFixed(n % 1000 === 0 ? 0 : 1).replace(/\.0$/, '') + 'K';
+                    return String(n);
+                }
+                function getStoredVideoViewExtra() {
+                    try { return JSON.parse(localStorage.getItem('nokVideoViewCounts') || '{}'); } catch (e) { return {}; }
+                }
+                function getVideoViewsNumericBase(v) {
+                    var x = v.views != null ? v.views : v.meta;
+                    if (typeof x === 'number' && !isNaN(x)) return x;
+                    if (typeof x === 'string' && /^\d+$/.test(String(x).trim())) return Number(x);
+                    if (typeof x === 'string' && x.trim()) {
+                        var m = x.match(/^(\d{1,12})/);
+                        if (m) return parseInt(m[1], 10);
+                    }
+                    return 0;
+                }
+                function formatViewsDisplay(v) {
+                    var x = v.views != null ? v.views : v.meta;
+                    if (typeof x === 'string' && /[kKmM]/.test(x)) return x.trim();
+                    var base = getVideoViewsNumericBase(v);
+                    var extra = 0;
+                    var vc = getStoredVideoViewExtra();
+                    if (v.id != null && vc[v.id] != null) extra = Math.max(0, parseInt(vc[v.id], 10) || 0);
+                    return formatCompactNumber(base + extra) + ' views';
+                }
+                function formatVideoTimeAgo(v) {
+                    var ts = v.createdAt != null ? v.createdAt : (v.publishedAt != null ? v.publishedAt : v.uploadedAt);
+                    if (ts == null || ts === '') return '';
+                    var n = typeof ts === 'number' ? ts : parseInt(ts, 10);
+                    if (isNaN(n)) return '';
+                    var d = Date.now() - n;
+                    if (d < 60000) return 'Just now';
+                    if (d < 3600000) return Math.floor(d / 60000) + 'm ago';
+                    if (d < 86400000) return Math.floor(d / 3600000) + 'h ago';
+                    if (d < 604800000) return Math.floor(d / 86400000) + 'd ago';
+                    if (d < 2592000000) return Math.floor(d / 604800000) + 'w ago';
+                    return new Date(n).toLocaleDateString();
+                }
+                var HOME_DEMO_VIDEO_EXTRA = {
+                    mountains: { channel: 'A2Zzen', likeCount: 120000 },
+                    waterfall: { channel: 'A2Zzen', likeCount: 85000 },
+                    city: { channel: 'A2Zzen', likeCount: 210000 },
+                    wild: { channel: 'A2Zzen', likeCount: 95000 },
+                    portrait: { channel: 'A2Zzen', likeCount: 62000 },
+                    sunset: { channel: 'NOK Demo', likeCount: 78000 },
+                    river: { channel: 'NOK Demo', likeCount: 54000 },
+                    tech: { channel: 'NOK Demo', likeCount: 125000 }
+                };
+                function getVideoChannelName(v) {
+                    if (v.channel && String(v.channel).trim()) return String(v.channel).trim();
+                    var ex = HOME_DEMO_VIDEO_EXTRA[v.id];
+                    if (ex && ex.channel) return ex.channel;
+                    return (localStorage.getItem('nokUserChannel') || 'You').trim() || 'You';
+                }
+                function getVideoLikeCount(v) {
+                    var base = 0;
+                    if (v.likeCount != null && v.likeCount !== '') base = Math.max(0, parseInt(v.likeCount, 10) || 0);
+                    else if (v.likes != null && v.likes !== '') base = Math.max(0, parseInt(String(v.likes).replace(/\D/g, ''), 10) || 0);
+                    else {
+                        var ex = HOME_DEMO_VIDEO_EXTRA[v.id];
+                        if (ex && ex.likeCount != null) base = ex.likeCount;
+                    }
+                    try {
+                        var lm = JSON.parse(localStorage.getItem('nokVideoLikes') || '{}');
+                        var isLoggedIn = (sessionStorage.getItem('nokAuth') === 'loggedIn') || (localStorage.getItem('nokAuth') === 'loggedIn');
+                        if (isLoggedIn && lm[v.id]) base += 1;
+                    } catch (e) {}
+                    return base;
+                }
+                function channelAvatarHtmlForVideo(v, channelName) {
+                    var url = v.channelAvatarUrl || v.channelPhoto || '';
+                    var myCh = (localStorage.getItem('nokUserChannel') || '').trim();
+                    if (!url && myCh && channelName === myCh) url = localStorage.getItem('nokUserPhotoUrl') || '';
+                    if (url) {
+                        return '<span class="long-video__creator-avatar long-video__creator-avatar--img"><img src="' + escapeHtml(url) + '" alt="" loading="lazy"/></span>';
+                    }
+                    var letter = (channelName || '?').trim().charAt(0).toUpperCase() || '?';
+                    return '<span class="long-video__creator-avatar">' + escapeHtml(letter) + '</span>';
+                }
+                function buildLongVideoCardInner(v) {
+                    var thumbClass = getThumbClass(v);
+                    var thumbStyle = getThumbStyle(v);
+                    var title = escapeHtml(v.title || 'Video');
+                    var ch = getVideoChannelName(v);
+                    var channelEsc = escapeHtml(ch);
+                    var viewsStr = escapeHtml(formatViewsDisplay(v));
+                    var likesN = getVideoLikeCount(v);
+                    var likesStr = escapeHtml(formatCompactNumber(likesN) + ' likes');
+                    var timeRaw = formatVideoTimeAgo(v);
+                    var timeStr = timeRaw ? escapeHtml(timeRaw) : escapeHtml('—');
+                    var avatarHtml = channelAvatarHtmlForVideo(v, ch);
+                    return '<div class="' + thumbClass + '"' + thumbStyle + '></div>' +
+                        '<div class="long-video__creator-body">' +
+                        '<div class="long-video__creator-row">' +
+                        avatarHtml +
+                        '<div class="long-video__creator-main">' +
+                        '<span class="long-video__more-title">' + title + '</span>' +
+                        '<span class="long-video__creator-channel">' + channelEsc + '</span>' +
+                        '<div class="long-video__creator-meta-line">' +
+                        '<span class="long-video__more-views">' + viewsStr + '</span>' +
+                        '<span class="long-video__meta-sep" aria-hidden="true">·</span>' +
+                        '<span class="long-video__more-likes">' + likesStr + '</span>' +
+                        '<span class="long-video__meta-sep" aria-hidden="true">·</span>' +
+                        '<span class="long-video__more-time">' + timeStr + '</span>' +
+                        '</div></div></div></div>';
+                }
                 var blocksEl = document.getElementById('home-feed-blocks');
                 if (blocksEl) {
                     blocksEl.innerHTML = '';
-                    /* No demo cards or demo videos – only uploaded content. */
+                    /* Website: only uploads. Android app (WebView): merge demo long videos for QA (ids match video-long.js `data`). */
                     var longVideos = userVideos.filter(function(v) { return !v.isShorts && !shortsIdsHome[v.id] && v.visibility !== 'private'; });
                     longVideos.sort(function(a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+                    if (document.documentElement.classList.contains('android-app-home')) {
+                        var HOME_DEMO_LONG_ANDROID = [
+                            { id: 'mountains', title: 'Dreamy Expedition', thumb: 'mountains', views: '120K views', createdAt: 2000000000000 },
+                            { id: 'waterfall', title: 'Ocean Mysteries', thumb: 'waterfall', views: '85K views', createdAt: 1999999999999 },
+                            { id: 'city', title: 'Cyber City Lights', thumb: 'city', views: '210K views', createdAt: 1999999999998 },
+                            { id: 'wild', title: 'Mystic Forest', thumb: 'wild', views: '95K views', createdAt: 1999999999997 },
+                            { id: 'portrait', title: 'Desert Adventure', thumb: 'portrait', views: '62K views', createdAt: 1999999999996 },
+                            { id: 'sunset', title: 'Sunset Vibes', thumb: 'mountains', views: '78K views', createdAt: 1999999999995 },
+                            { id: 'river', title: 'River Journey', thumb: 'waterfall', views: '54K views', createdAt: 1999999999994 },
+                            { id: 'tech', title: 'Tech Review 2024', thumb: 'city', views: '125K views', createdAt: 1999999999993 }
+                        ];
+                        var seenDemoIds = {};
+                        longVideos.forEach(function(v) { seenDemoIds[v.id] = true; });
+                        HOME_DEMO_LONG_ANDROID.forEach(function(d) {
+                            if (!seenDemoIds[d.id]) { seenDemoIds[d.id] = true; longVideos.push(d); }
+                        });
+                        longVideos.sort(function(a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+                    }
                     var thumbMap = { mountains: 'hike', waterfall: 'beach', city: 'citywalk', wild: 'hike', portrait: 'short-portrait', night: 'night', hike: 'hike', beach: 'beach', citywalk: 'citywalk', dance: 'dance', lights: 'lights' };
                     function shortCardHtml(s) {
                         var thumbClass = s.thumbData ? '' : ' home-short-card__thumb--' + (thumbMap[s.thumb] || 'night');
@@ -444,17 +625,13 @@
                                 var card = document.createElement('a');
                                 card.href = 'video.html?id=' + encodeURIComponent(v.id) + '&autoplay=1';
                                 card.className = 'long-video__creator-item';
-                                var thumbClass = getThumbClass(v);
-                                var thumbStyle = getThumbStyle(v);
-                                var title = escapeHtml(v.title || 'Video');
-                                var views = escapeHtml(getViewsText(v));
-                                card.innerHTML = '<div class="' + thumbClass + '"' + thumbStyle + '></div><span class="long-video__more-title">' + title + '</span><span class="long-video__more-views">' + views + '</span>';
+                                card.innerHTML = buildLongVideoCardInner(v);
                                 grid.appendChild(card);
                             });
                             longSec.appendChild(grid);
                             blocksEl.appendChild(longSec);
                         }
-                        /* All shorts: each gets a card, in rows of 6 (one line per row). */
+                        /* All shorts: website = rows of 6. Android app = one horizontal strip, 2 cards visible, swipe for more. */
                         if (displayShorts.length > 0) {
                             var shortsSec = document.createElement('section');
                             shortsSec.className = 'home-shorts-section';
@@ -462,12 +639,22 @@
                             shortsHeader.className = 'home-shorts__header';
                             shortsHeader.innerHTML = '<h3 class="home-shorts__title">Shorts</h3>';
                             shortsSec.appendChild(shortsHeader);
-                            for (var s = 0; s < displayShorts.length; s += SHORTS_PER_ROW) {
-                                var rowShorts = displayShorts.slice(s, s + SHORTS_PER_ROW);
-                                var rowEl = document.createElement('div');
-                                rowEl.className = 'home-shorts-row';
-                                rowEl.innerHTML = rowShorts.map(shortCardHtml).join('');
-                                shortsSec.appendChild(rowEl);
+                            var isAppHomeShorts = document.documentElement.classList.contains('android-app-home');
+                            if (isAppHomeShorts) {
+                                var carouselRow = document.createElement('div');
+                                carouselRow.className = 'home-shorts-row home-shorts-row--carousel';
+                                carouselRow.setAttribute('role', 'region');
+                                carouselRow.setAttribute('aria-label', 'Shorts');
+                                carouselRow.innerHTML = displayShorts.map(shortCardHtml).join('');
+                                shortsSec.appendChild(carouselRow);
+                            } else {
+                                for (var s = 0; s < displayShorts.length; s += SHORTS_PER_ROW) {
+                                    var rowShorts = displayShorts.slice(s, s + SHORTS_PER_ROW);
+                                    var rowEl = document.createElement('div');
+                                    rowEl.className = 'home-shorts-row';
+                                    rowEl.innerHTML = rowShorts.map(shortCardHtml).join('');
+                                    shortsSec.appendChild(rowEl);
+                                }
                             }
                             blocksEl.appendChild(shortsSec);
                         }

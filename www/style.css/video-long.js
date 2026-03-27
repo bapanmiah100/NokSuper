@@ -129,20 +129,40 @@
             { user: 'Viewer', avatar: 'V', text: 'Demo content for testing.' }
         ]}
     };
-    /* No demo: only user + library videos in list (related / next / prev). */
+    /* Long demo: sample MP4s (HTTPS) — used when id matches `data` and user did not upload this id */
+    var DEMO_LONG_SAMPLE_URLS = [
+        'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4'
+    ];
+    /* User uploads + library + built-in demo long videos (`data` keys) */
     var userVideos = JSON.parse(localStorage.getItem('nokUserVideos') || '[]');
     var userMap = {};
     userVideos.forEach(function(v) {
-        userMap[v.id] = { title: v.title, channel: v.channel || 'A2Zzen', category: v.category || 'general', likeCount: v.likeCount != null ? v.likeCount : 0, hashtags: v.hashtags || '', desc: v.desc || ('Watch ' + v.title + '...'), thumb: v.thumb || 'mountains', thumbData: v.thumbData, maxQuality: v.maxQuality || 1080 };
+        userMap[v.id] = { title: v.title, channel: v.channel || 'A2Zzen', category: v.category || 'general', likeCount: v.likeCount != null ? v.likeCount : 0, hashtags: v.hashtags || '', desc: v.desc || ('Watch ' + v.title + '...'), thumb: v.thumb || 'mountains', thumbData: v.thumbData, maxQuality: v.maxQuality || 1080, videoUrl: v.videoUrl };
     });
     var libraryFiles = (function() { try { return JSON.parse(localStorage.getItem('nokLibraryFiles') || '[]'); } catch (e) { return []; } })();
     libraryFiles.forEach(function(f) {
         var fid = f.id || f.name;
         if (fid) userMap[fid] = { title: f.name || fid, channel: 'My Library', category: 'library', likeCount: 0, hashtags: '', desc: 'Added from your device.', thumb: 'mountains', maxQuality: 1080 };
     });
+    Object.keys(data).forEach(function(k) {
+        if (!userMap[k]) {
+            var d = data[k];
+            userMap[k] = { title: d.title, channel: d.channel, category: d.category, likeCount: d.likeCount, hashtags: d.hashtags, desc: d.desc, thumb: d.thumb, maxQuality: d.maxQuality, comments: d.comments, sampleUrl: d.sampleUrl, isDemoLong: true };
+        }
+    });
+    function isUploadedLongVideo(vid) {
+        return userVideos.some(function(v) { return v.id === vid; });
+    }
     var userLongIds = userVideos.filter(function(v) { return !shortsIdSet[v.id]; }).map(function(v) { return v.id; });
     var libraryIds = libraryFiles.map(function(f) { return f.id || f.name; }).filter(Boolean);
     var fullVideoList = userLongIds.concat(libraryIds);
+    if (fullVideoList.length === 0) {
+        fullVideoList = Object.keys(data);
+    }
     var defaultVideoInfo = { title: 'Video', channel: 'User', category: 'general', likeCount: 0, hashtags: '', desc: '', thumb: 'mountains', thumbData: null, maxQuality: 1080, comments: [] };
     var playMode = (function() {
         try {
@@ -264,6 +284,28 @@
         var all = getStoredLikes();
         all[videoId] = !!liked;
         try { localStorage.setItem(STORAGE_LIKES_KEY, JSON.stringify(all)); } catch (e) {}
+    }
+    /** Per-video play counts (home feed + analytics); keyed by video id */
+    var STORAGE_VIDEO_VIEWS_KEY = 'nokVideoViewCounts';
+    function getVideoViewCounts() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_VIDEO_VIEWS_KEY) || '{}'); } catch (e) { return {}; }
+    }
+    function setVideoViewCounts(obj) {
+        try { localStorage.setItem(STORAGE_VIDEO_VIEWS_KEY, JSON.stringify(obj)); } catch (e) {}
+    }
+    function bumpVideoViewCount(videoId) {
+        if (!videoId) return;
+        var vc = getVideoViewCounts();
+        vc[videoId] = (parseInt(vc[videoId], 10) || 0) + 1;
+        setVideoViewCounts(vc);
+    }
+    /** One counted view per browser tab session per video (first play) */
+    function recordVideoViewOncePerSession(videoId) {
+        if (!videoId) return;
+        var k = 'nokViewedVideo_' + videoId;
+        if (sessionStorage.getItem(k)) return;
+        sessionStorage.setItem(k, '1');
+        bumpVideoViewCount(videoId);
     }
     function getStoredReactions() {
         try { return JSON.parse(localStorage.getItem(STORAGE_REACTIONS_KEY) || '{}'); } catch (e) { return {}; }
@@ -756,30 +798,54 @@
     function fmt(t) { var m = Math.floor(t / 60); var s = Math.floor(t % 60); return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s; }
 
     var currentBlobUrl = null;
-    function switchToVideo(newId) {
-        if (!videoEl || fullVideoList.indexOf(newId) < 0) return;
+    function applyLongVideoSrc(vid, onDone) {
+        if (!videoEl) return;
         if (currentBlobUrl) { URL.revokeObjectURL(currentBlobUrl); currentBlobUrl = null; }
-        id = newId;
-        updatePageForVideo();
-        if (window.history && window.history.replaceState) history.replaceState({}, '', 'video.html?id=' + encodeURIComponent(id));
-        var isUser = userMap[id];
-        var sampleInfo = userMap[id] || defaultVideoInfo;
-        if (isUser && window.nokVideoDB) {
-            nokVideoDB.get(id).then(function(blob) {
+        function finish() { if (onDone) onDone(); }
+        if (isUploadedLongVideo(vid) && window.nokVideoDB) {
+            nokVideoDB.get(vid).then(function(blob) {
                 if (blob) {
                     currentBlobUrl = URL.createObjectURL(blob);
                     videoEl.src = currentBlobUrl;
-                    videoEl.play();
-                    playBtn.style.display = 'none';
-                    if (controlPlayPause) { var iconPlay = controlPlayPause.querySelector('.long-video__icon-play'); var iconPause = controlPlayPause.querySelector('.long-video__icon-pause'); if (iconPlay) iconPlay.style.display = 'none'; if (iconPause) iconPause.style.display = 'block'; }
+                } else if (data[vid]) {
+                    videoEl.src = DEMO_LONG_SAMPLE_URLS[(data[vid].sampleUrl || 0) % DEMO_LONG_SAMPLE_URLS.length];
+                } else if (userMap[vid] && userMap[vid].videoUrl) {
+                    videoEl.src = userMap[vid].videoUrl;
                 }
-            }).catch(function() {});
+                finish();
+            }).catch(function() {
+                if (data[vid]) videoEl.src = DEMO_LONG_SAMPLE_URLS[(data[vid].sampleUrl || 0) % DEMO_LONG_SAMPLE_URLS.length];
+                else if (userMap[vid] && userMap[vid].videoUrl) videoEl.src = userMap[vid].videoUrl;
+                finish();
+            });
+            return;
         }
+        if (data[vid]) {
+            videoEl.src = DEMO_LONG_SAMPLE_URLS[(data[vid].sampleUrl || 0) % DEMO_LONG_SAMPLE_URLS.length];
+        } else if (userMap[vid] && userMap[vid].videoUrl) {
+            videoEl.src = userMap[vid].videoUrl;
+        }
+        finish();
+    }
+    function switchToVideo(newId) {
+        if (!videoEl || fullVideoList.indexOf(newId) < 0) return;
+        id = newId;
+        updatePageForVideo();
+        if (window.history && window.history.replaceState) history.replaceState({}, '', 'video.html?id=' + encodeURIComponent(id));
+        applyLongVideoSrc(id, function() {
+            if (videoEl) videoEl.play().catch(function() {});
+            if (playBtn) playBtn.style.display = 'none';
+            if (controlPlayPause) {
+                var iconPlay = controlPlayPause.querySelector('.long-video__icon-play');
+                var iconPause = controlPlayPause.querySelector('.long-video__icon-pause');
+                if (iconPlay) iconPlay.style.display = 'none';
+                if (iconPause) iconPause.style.display = 'block';
+            }
+        });
     }
 
     function setupVideo() {
         if (!videoEl || !playBtn) return;
-        var isUser = userMap[id];
         var sampleInfo = userMap[id] || defaultVideoInfo;
         var bindPlaybackDone = false;
 
@@ -801,6 +867,7 @@
             videoEl.addEventListener('click', togglePlay);
             if (playerBg) playerBg.addEventListener('click', togglePlay);
             videoEl.addEventListener('play', function() { playBtn.style.display = 'none'; updatePlayPauseIcon(true); });
+            videoEl.addEventListener('play', function() { recordVideoViewOncePerSession(id); }, { once: true });
             videoEl.addEventListener('pause', function() { playBtn.style.display = 'flex'; updatePlayPauseIcon(false); });
             videoEl.addEventListener('ended', function() {
                 playBtn.style.display = 'flex';
@@ -1423,20 +1490,9 @@
         }
         /* Always bind play button and controls so video can play once src is set */
         bindPlayback();
-        /* No demo: only user blob. No fallback URL. */
-        if (isUser && window.nokVideoDB) {
-            nokVideoDB.get(id).then(function(blob) {
-                if (blob) {
-                    currentBlobUrl = URL.createObjectURL(blob);
-                    videoEl.src = currentBlobUrl;
-                    scheduleAutoplayWhenReady();
-                } else {
-                    scheduleAutoplayWhenReady();
-                }
-            }).catch(function() {
-                scheduleAutoplayWhenReady();
-            });
-        }
+        applyLongVideoSrc(id, function() {
+            scheduleAutoplayWhenReady();
+        });
     }
 
     setupVideo();
