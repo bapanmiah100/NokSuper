@@ -3935,6 +3935,8 @@ html[data-theme="light"] .home-body .long-video__creator-item .long-video__creat
     opacity: 1;
     visibility: visible;
     pointer-events: none;
+    /* Above .home-bottom-nav (z-index 1000) so chat list taps are not stolen */
+    z-index: 10050;
 }
 
 .chat-trigger--float {
@@ -4025,7 +4027,8 @@ html:has(.home-body.chat-overlay-open) {
     touch-action: auto;
 }
 .home-body.chat-overlay-open .nok-chat__list {
-    touch-action: pan-y;
+    /* manipulation: reliable taps on links inside scroll (pan-y alone can eat taps on Android WebView) */
+    touch-action: manipulation;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -4050,6 +4053,7 @@ html:has(.home-body.chat-overlay-open) {
     height: 24px;
     cursor: nwse-resize;
     z-index: 10;
+    touch-action: none;
 }
 
 .chat-overlay__resize-handle::after {
@@ -4085,6 +4089,7 @@ html:has(.home-body.chat-overlay-open) {
     display: flex;
     align-items: center;
     justify-content: center;
+    touch-action: none;
 }
 
 .chat-overlay__drag-bar::before {
@@ -4553,6 +4558,13 @@ html:has(.home-body.chat-overlay-open) {
     min-height: 0;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.nok-chat__list::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
 }
 
 .nok-chat__item {
@@ -4564,6 +4576,8 @@ html:has(.home-body.chat-overlay-open) {
     color: inherit;
     cursor: pointer;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(139, 92, 246, 0.25);
 }
 
 .nok-chat__item:hover {
