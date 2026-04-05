@@ -1,21 +1,22 @@
 # NOK Super — project focus (team preference)
 
-## Scope
+## Scope (current)
 
-- **Android app only.** Day-to-day work targets the **Capacitor Android app** (`android/`), not the public website as a separate product.
-- **Do not change the website for browser users** unless the user explicitly asks. Avoid edits that only exist to tweak the desktop/browser layout.
+- **Website / browser first.** Day-to-day work targets the **site** served from **`www/`** (especially `www/style.css/` HTML, CSS, JS).
+- **Android app work is paused** unless someone explicitly asks to resume it. Do not block web improvements for app-only constraints.
 
-## How the app is built
+## Shared codebase
 
-- Web assets live in **`www/`**. Capacitor copies them with: `npx cap sync android`.
-- The app WebView loads the same HTML as the site; where web vs app must differ, use **Capacitor detection** (e.g. `window.Capacitor` / `document.documentElement.classList.add('android-app-home')`) or app-only CSS, **not** a forked “website” copy.
+- The same **`www/`** tree can still be bundled into the Capacitor app later. If a change must stay app-only when app work resumes, scope it with `window.Capacitor`, `html.android-webview`, `html.android-app-home`, etc.
 
-## Checklist for Android-related UI changes
+## Local dev (website)
 
-1. Prefer **app-only** selectors or runtime checks so **browser** `home.html` (and other pages) stay unchanged unless intended.
-2. After editing files under `www/`, run: `npx cap sync android`.
-3. Rebuild/run the app in Android Studio.
+- Example: `npx serve www -p 8080` → `http://localhost:8080/` (or use VS Code **Launch Chrome against localhost** on port 8080).
+
+## When Android work resumes
+
+- After `www/` edits for the app: `npx cap sync android`, then rebuild in Android Studio.
 
 ---
 
-*Saved per team request: website work paused; focus Android app.*
+*Updated per request: website work active; Android app work on hold.*

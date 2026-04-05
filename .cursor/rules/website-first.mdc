@@ -1,0 +1,11 @@
+---
+description: Website/browser focus; Android app work paused unless user says otherwise
+alwaysApply: true
+---
+
+# Website first (NOK Super)
+
+- **Primary focus:** the **website** in a normal browser — assets under **`www/`** (main pages in `www/style.css/`).
+- **Android app work is on hold:** do not prioritize `android/`, Capacitor-only flows, **`npx cap sync android`**, or app-scoped CSS/JS **unless the user explicitly resumes app work**.
+- Ship **browser-first** UI and behavior; avoid gating features behind `window.Capacitor` unless you are fixing something that must stay different for a future app build.
+- If the team later ships web + app from the same `www/` again, reintroduce app-only scoping where needed.

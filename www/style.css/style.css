@@ -99,22 +99,34 @@ html.android-webview body.home-body .home-layout:has(.long-video__header) {
     padding-top: calc(52px + env(safe-area-inset-top, 0px) + 8px + 6px);
 }
 /* Android WebView: Settings — hide top header; content fills mobile viewport */
+html.android-webview body.home-body:has(.settings-page) {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
 html.android-webview body.home-body .home-layout:has(.settings-page) .long-video__header {
     display: none !important;
 }
 html.android-webview body.home-body .home-layout:has(.settings-page) {
     padding-top: 0 !important;
-    flex: 1 1 auto;
     min-height: var(--app-screen-height, 100dvh);
 }
+/* WebView: fixed bg was stacking above main on some devices → taps never reached toggles/links */
+html.android-webview body.home-body .home-layout:has(.settings-page) .bg {
+    pointer-events: none !important;
+}
+html.android-webview body.home-body .home-layout:has(.settings-page) .header-drawer-backdrop:not(.header-drawer-backdrop--open) {
+    pointer-events: none !important;
+}
+/* Document scroll (not nested flex scroll) — nested overflow broke touch on some Android WebViews */
 html.android-webview body.home-body .home-layout:has(.settings-page) .settings-page {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
+    overflow-y: visible;
     width: 100%;
     max-width: min(100%, var(--app-screen-width, 100vw));
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+    touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
 }
 html.android-webview .settings-card,
 html.android-webview .settings-profile-card {
@@ -143,6 +155,7 @@ html.android-webview body.home-body .settings-page {
     padding-bottom: calc(24px + var(--bottom-nav-height, 66px) + env(safe-area-inset-bottom, 0px)) !important;
     max-width: 100% !important;
     box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
 }
 html.android-webview body.home-body .settings-hero {
     margin-bottom: 22px;
