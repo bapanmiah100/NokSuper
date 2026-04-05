@@ -81,6 +81,73 @@ html.android-webview.screen-compact #home-header-app .home-header__btn--app-auth
 html.android-webview.screen-large #home-header-app .home-search__input {
     font-size: 1.12rem !important;
 }
+
+/* Android WebView: Settings (and other inner pages with same header) — safe-area header, no card blur */
+html.android-webview body.home-body .long-video__header {
+    padding-top: calc(8px + env(safe-area-inset-top, 0px));
+    padding-bottom: 6px;
+    padding-left: max(10px, env(safe-area-inset-left, 0px));
+    padding-right: max(10px, env(safe-area-inset-right, 0px));
+    height: auto;
+    min-height: calc(58px + env(safe-area-inset-top, 0px));
+    box-sizing: border-box;
+    align-items: center;
+}
+html.android-webview body.home-body .home-layout:has(.long-video__header) {
+    padding-top: calc(52px + env(safe-area-inset-top, 0px) + 8px + 6px);
+}
+/* Android WebView: Settings — hide top header; content fills mobile viewport */
+html.android-webview body.home-body .home-layout:has(.settings-page) .long-video__header {
+    display: none !important;
+}
+html.android-webview body.home-body .home-layout:has(.settings-page) {
+    padding-top: 0 !important;
+    flex: 1 1 auto;
+    min-height: var(--app-screen-height, 100dvh);
+}
+html.android-webview body.home-body .home-layout:has(.settings-page) .settings-page {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    width: 100%;
+    max-width: min(100%, var(--app-screen-width, 100vw));
+}
+html.android-webview .settings-card,
+html.android-webview .settings-profile-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+html.android-webview .settings-card {
+    background: rgba(15, 22, 41, 0.94) !important;
+    border-color: rgba(100, 130, 255, 0.18) !important;
+}
+html.android-webview .settings-profile-card {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.32) 0%, rgba(139, 92, 246, 0.24) 100%) !important;
+    border-color: rgba(139, 92, 246, 0.35) !important;
+}
+html[data-theme="light"].android-webview .settings-card {
+    background: rgba(255, 255, 255, 0.96) !important;
+    border-color: rgba(100, 130, 255, 0.2) !important;
+}
+html[data-theme="light"].android-webview .settings-profile-card {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.14) 0%, rgba(139, 92, 246, 0.1) 100%) !important;
+}
+html.android-webview body.home-body .settings-page {
+    padding-left: max(10px, env(safe-area-inset-left, 0px)) !important;
+    padding-right: max(10px, env(safe-area-inset-right, 0px)) !important;
+    padding-top: max(12px, env(safe-area-inset-top, 0px)) !important;
+    padding-bottom: calc(24px + var(--bottom-nav-height, 66px) + env(safe-area-inset-bottom, 0px)) !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+html.android-webview body.home-body .settings-hero {
+    margin-bottom: 22px;
+}
+html.android-webview body.home-body .settings-item {
+    min-height: 48px;
+}
 /* Dark theme: Channel page – black/dark background, no bg.png */
 html[data-theme="dark"] .channel-view-body { background: #0a0a0f !important; }
 html[data-theme="dark"] .channel-view-body .bg { display: none !important; }
@@ -5490,7 +5557,8 @@ body.shorts-body::-webkit-scrollbar { display: none; }
 }
 .shorts-page--fullscreen > .shorts-nav-btns {
     position: fixed;
-    right: max(12px, calc(env(safe-area-inset-right, 0px) + 12px));
+    left: max(12px, calc(env(safe-area-inset-left, 0px) + 12px));
+    right: auto;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
